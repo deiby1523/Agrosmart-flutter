@@ -1,0 +1,83 @@
+name: dashboard_test
+description: "A new Flutter project."
+
+publish_to: 'none' 
+
+version: 1.0.0+1
+
+environment:
+  sdk: ^3.8.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Estado y Arquitectura
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+
+  # Navegación
+  go_router: ^12.1.3
+
+  # HTTP y Networking
+  dio: ^5.3.4
+  json_annotation: ^4.8.1
+
+  # UI y Gráficos
+  fl_chart: ^0.65.0
+  cached_network_image: ^3.3.0
+
+  # Utilidades
+  intl: ^0.18.1
+  uuid: ^4.2.2
+
+  # Manejo de archivos e imágenes
+  image_picker: ^1.0.4
+  #file_picker: ^6.1.1
+
+  # utility packages
+  flutter_svg: ^2.1.0
+  shared_preferences: ^2.2.2
+
+  # icons
+  cupertino_icons: ^1.0.8
+
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+    # Generación de código
+  build_runner: ^2.4.7
+  json_serializable: ^6.7.1
+  riverpod_generator: ^2.3.9
+
+  flutter_lints: ^5.0.0
+
+
+flutter:
+
+  uses-material-design: true
+
+
+  # -------------------- local assets -------------------- #
+  assets:
+    - assets/logos/
+    - assets/images/animations/
+    - assets/images/content/
+    - assets/images/backgrounds/
+    - assets/icons/category-of-icons/
+
+  # -------------------- local fonts --------------------- #
+
+  fonts:
+    - family: Inter
+      fonts:
+        - asset: assets/fonts/inter/Inter-Regular.ttf
+          weight: 400
+        - asset: assets\fonts\inter\Inter-Light.ttf
+          weight: 300
+        - asset: assets\fonts\inter\Inter-Bold.ttf
+          weight: 800
+        - asset: assets\fonts\inter\Inter-Italic.ttf
+          style: italic
