@@ -1,6 +1,6 @@
-import 'package:dashboard_test/domain/entities/breed.dart';
-import 'package:dashboard_test/presentation/pages/breeds/breeds_form_page.dart';
-import 'package:dashboard_test/presentation/providers/breed_provider.dart';
+import 'package:agrosmart_flutter/domain/entities/breed.dart';
+import 'package:agrosmart_flutter/presentation/pages/breeds/breeds_form_page.dart';
+import 'package:agrosmart_flutter/presentation/providers/breed_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 

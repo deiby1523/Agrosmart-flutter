@@ -1,7 +1,7 @@
-name: dashboard_test
-description: "A new Flutter project."
+name: agrosmart_flutter
+description: "AgroSmart is a cross-platform farm management software designed to help livestock farmers manage their operations efficiently. This repository contains the frontend application built with Flutter, which connects to the backend API (Spring Boot with Kotlin)."
 
-publish_to: 'none' 
+publish_to: "none"
 
 version: 1.0.0+1
 
@@ -42,7 +42,6 @@ dependencies:
   # icons
   cupertino_icons: ^1.0.8
 
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -54,11 +53,8 @@ dev_dependencies:
 
   flutter_lints: ^5.0.0
 
-
 flutter:
-
   uses-material-design: true
-
 
   # -------------------- local assets -------------------- #
   assets:

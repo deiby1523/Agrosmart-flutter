@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:dashboard_test/core/utils/responsive.dart';
+import 'package:agrosmart_flutter/core/utils/responsive.dart';
 
 class AuthSwitchText extends StatelessWidget {
   final String message;

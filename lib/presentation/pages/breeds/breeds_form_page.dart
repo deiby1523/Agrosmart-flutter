@@ -1,4 +1,4 @@
-import 'package:dashboard_test/domain/entities/breed.dart';
+import 'package:agrosmart_flutter/domain/entities/breed.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/utils/validators.dart';

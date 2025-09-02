@@ -1,5 +1,5 @@
 // lib/presentation/widgets/dashboard_layout.dart (ACTUALIZADO)
-import 'package:dashboard_test/presentation/providers/theme_provider.dart';
+import 'package:agrosmart_flutter/presentation/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

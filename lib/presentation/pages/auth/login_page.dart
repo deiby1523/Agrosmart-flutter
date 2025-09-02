@@ -1,7 +1,7 @@
-import 'package:dashboard_test/core/utils/responsive.dart';
-import 'package:dashboard_test/presentation/widgets/auth_switch_text.dart';
-import 'package:dashboard_test/presentation/widgets/login_form.dart';
-import 'package:dashboard_test/presentation/widgets/register_form.dart';
+import 'package:agrosmart_flutter/core/utils/responsive.dart';
+import 'package:agrosmart_flutter/presentation/widgets/auth_switch_text.dart';
+import 'package:agrosmart_flutter/presentation/widgets/login_form.dart';
+import 'package:agrosmart_flutter/presentation/widgets/register_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // import '../../providers/auth_provider.dart';
