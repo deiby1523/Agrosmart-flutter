@@ -1,4 +1,4 @@
-# AgroSmart Frontend
+# AgroSmart Flutter
 
 AgroSmart is a cross-platform farm management software designed to help livestock farmers manage their operations efficiently.  
 This repository contains the **frontend application built with Flutter**, which connects to the backend API (Spring Boot with Kotlin).  
