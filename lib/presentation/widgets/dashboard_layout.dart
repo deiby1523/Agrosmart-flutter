@@ -1,6 +1,4 @@
 // lib/presentation/widgets/dashboard_layout.dart (ACTUALIZADO)
-import 'dart:math';
-
 import 'package:agrosmart_flutter/presentation/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

@@ -1,4 +1,3 @@
-import 'package:agrosmart_flutter/core/themes/app_color_schemes.dart';
 import 'package:flutter/material.dart';
 
 class DTextTheme {
