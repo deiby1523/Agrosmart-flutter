@@ -15,11 +15,11 @@ class DAppBarTheme {
       fontSize: 20,
       fontWeight: FontWeight.w600,
     ),
-    iconTheme: IconThemeData(color: Color.fromARGB(255, 51, 51, 51)),
+    iconTheme: IconThemeData(color: Color.fromARGB(255, 88, 88, 88)),
   );
 
   static const AppBarTheme darkAppBarTheme = AppBarTheme(
-    backgroundColor: Color(0xFF1B5E20),
+    backgroundColor: Color.fromARGB(255, 21, 53, 23),
     foregroundColor: Colors.white,
     elevation: 2,
     centerTitle: true,
