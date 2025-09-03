@@ -6,6 +6,49 @@ class Validators {
     return null;
   }
 
+  static String? name(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'El nombre es requerido';
+    }
+
+    final trimmed = value.trim();
+
+    if (trimmed.length < 3) {
+      return 'El nombre debe tener al menos 3 caracteres';
+    }
+
+    if (trimmed.length > 30) {
+      return 'El nombre no puede tener más de 30 caracteres';
+    }
+
+    // No permitir dígitos
+    if (RegExp(r'[0-9]').hasMatch(trimmed)) {
+      return 'El nombre no puede contener números';
+    }
+
+    // Permitir letras (incluye acentos y ñ), espacios, guiones y apóstrofes
+    if (!RegExp(r"^[A-Za-zÁÉÍÓÚáéíóúÑñüÜ' -]+$").hasMatch(trimmed)) {
+      return 'Nombre no válido';
+    }
+
+    return null;
+  }
+
+  static String? dni(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return 'El DNI es requerido';
+    }
+
+    final trimmed = value.trim();
+
+    // Solo permitir dígitos
+    if (!RegExp(r'^[0-9]+$').hasMatch(trimmed)) {
+      return 'El DNI solo debe contener números';
+    }
+
+    return null;
+  }
+
   static String? email(String? value) {
     if (value == null || value.trim().isEmpty) {
       return 'Email es requerido';

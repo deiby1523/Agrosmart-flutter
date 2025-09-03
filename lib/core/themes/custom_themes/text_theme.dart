@@ -1,3 +1,4 @@
+import 'package:agrosmart_flutter/core/themes/app_color_schemes.dart';
 import 'package:flutter/material.dart';
 
 class DTextTheme {
@@ -80,19 +81,19 @@ class DTextTheme {
       fontFamily: 'Inter',
       fontSize: 16,
       fontWeight: FontWeight.w500,
-      color: Color.fromARGB(37, 100, 100, 100),
+      color: Color.fromARGB(255, 147, 147, 147),
     ),
     labelMedium: TextStyle(
       fontFamily: 'Inter',
       fontSize: 14,
       fontWeight: FontWeight.bold,
-      color: Color.fromARGB(37, 100, 100, 100),
+      color: Color.fromARGB(255, 147, 147, 147),
     ),
     labelSmall: TextStyle(
       fontFamily: 'Inter',
       fontSize: 11,
       fontWeight: FontWeight.w500,
-      color: Color.fromARGB(37, 100, 100, 100),
+      color: Color.fromARGB(255, 147, 147, 147),
     ),
   );
 

@@ -18,10 +18,19 @@ RegisterRequest _$RegisterRequestFromJson(Map<String, dynamic> json) =>
     RegisterRequest(
       email: json['email'] as String,
       password: json['password'] as String,
+      dni: json['dni'] as String,
+      name: json['name'] as String,
+      lastName: json['lastName'] as String,
     );
 
 Map<String, dynamic> _$RegisterRequestToJson(RegisterRequest instance) =>
-    <String, dynamic>{'email': instance.email, 'password': instance.password};
+    <String, dynamic>{
+      'email': instance.email,
+      'password': instance.password,
+      'dni': instance.dni,
+      'name': instance.name,
+      'lastName': instance.lastName,
+    };
 
 RefreshTokenRequest _$RefreshTokenRequestFromJson(Map<String, dynamic> json) =>
     RefreshTokenRequest(refreshToken: json['refreshToken'] as String);

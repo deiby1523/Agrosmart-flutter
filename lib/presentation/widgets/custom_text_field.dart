@@ -38,10 +38,11 @@ class CustomTextField extends StatelessWidget {
           validator: validator,
           decoration: InputDecoration(
             hintText: hintText,
-            prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
+            prefixIcon: prefixIcon != null ? Icon(prefixIcon,color: Color.fromARGB(255, 147, 147, 147),) : null,
             suffixIcon: onTogglePassword != null
                 ? IconButton(
                     icon: Icon(
+                      color: Color.fromARGB(255, 147, 147, 147),
                       obscureText
                           ? Icons.visibility
                           : Icons.visibility_off,

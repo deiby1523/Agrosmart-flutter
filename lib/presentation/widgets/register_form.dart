@@ -14,6 +14,9 @@ class RegisterForm extends ConsumerStatefulWidget {
 
 class _RegisterFormState extends ConsumerState<RegisterForm> {
   final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _lastNameController = TextEditingController();
+  final _dniController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
@@ -23,6 +26,9 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
 
   @override
   void dispose() {
+    _nameController.dispose();
+    _lastNameController.dispose();
+    _dniController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
@@ -82,6 +88,32 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
               //   prefixIcon: Icons.person,
               //   validator: Validators.password,
               // ),
+              const SizedBox(height: 32),
+              CustomTextField(
+                controller: _nameController,
+                hintText: 'Ingresa tu nombre',
+                labelText: 'Nombre',
+                prefixIcon: Icons.person,
+                validator: Validators.name,
+              ),
+
+              const SizedBox(height: 32),
+              CustomTextField(
+                controller: _lastNameController,
+                hintText: 'Ingresa tu apellido',
+                labelText: 'Apellido',
+                prefixIcon: Icons.person,
+                validator: Validators.name,
+              ),
+
+              const SizedBox(height: 32),
+              CustomTextField(
+                controller: _dniController,
+                hintText: 'Ingresa tu identificación',
+                labelText: 'Documento',
+                prefixIcon: Icons.credit_card,
+                validator: Validators.dni,
+              ),
 
               const SizedBox(height: 32),
               CustomTextField(
@@ -113,7 +145,8 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                 hintText: 'Ingresa nuevamente la contraseña',
                 labelText: 'Contraseña',
                 prefixIcon: Icons.lock,
-                validator: (value) => Validators.confirmPassword(value, _passwordController.text),
+                validator: (value) =>
+                    Validators.confirmPassword(value, _passwordController.text),
                 obscureText: _obscurePassword,
                 onTogglePassword: () {
                   setState(() {
@@ -155,7 +188,9 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                       decoration: BoxDecoration(
                         color: Colors.red.shade100,
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Theme.of(context).colorScheme.error),
+                        border: Border.all(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
                       ),
                       child: Row(
                         children: [
@@ -185,10 +220,13 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
     if (!_formKey.currentState!.validate()) return;
 
     try {
+      final name = _nameController.text;
+      final lastName = _lastNameController.text;
+      final dni = _dniController.text.trim();
       final email = _emailController.text.trim();
       final password = _passwordController.text;
 
-      await ref.read(authProvider.notifier).register(email, password);
+      await ref.read(authProvider.notifier).register(email,password,dni,name,lastName);
 
       if (mounted) {
         context.go('/dashboard');

@@ -29,10 +29,10 @@ class Auth extends _$Auth {
     }
   }
 
-  Future<void> register(String email, String password) async {
+  Future<void> register(String email, String password, String dni, String name, String lastname) async {
     state = const AsyncLoading();
     try {
-      final user = await ref.read(authRepositoryProvider).register(email, password);
+      final user = await ref.read(authRepositoryProvider).register(email, password, dni, name, lastname);
       state = AsyncData(user);
     } catch (error) {
       state = AsyncError(error, StackTrace.current);
