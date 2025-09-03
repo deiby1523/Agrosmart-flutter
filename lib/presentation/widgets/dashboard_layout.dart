@@ -1,4 +1,6 @@
 // lib/presentation/widgets/dashboard_layout.dart (ACTUALIZADO)
+import 'dart:math';
+
 import 'package:agrosmart_flutter/presentation/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -320,6 +322,7 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
           ),
         ),
         selected: isSelected,
+        hoverColor: Colors.red,
         selectedTileColor: theme.colorScheme.primary.withOpacity(0.1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         dense: isGroupItem,

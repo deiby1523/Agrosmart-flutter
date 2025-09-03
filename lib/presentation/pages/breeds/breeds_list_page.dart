@@ -23,7 +23,9 @@ class _BreedsContent extends ConsumerWidget {
     return Scaffold(
       backgroundColor: Colors.transparent,
       appBar: AppBar(
-        title: const Text('Razas'),
+        actionsPadding: EdgeInsets.symmetric(horizontal: 30),
+        title: Text('Razas',style: Theme.of(context).textTheme.displayMedium,),
+        centerTitle: false,
         backgroundColor: Colors.transparent,
         elevation: 0,
         automaticallyImplyLeading: false,
@@ -32,9 +34,7 @@ class _BreedsContent extends ConsumerWidget {
             onPressed: () => _showBreedForm(context, ref),
             icon: const Icon(Icons.add),
             label: const Text('Nueva Raza'),
-            style: ElevatedButton.styleFrom(
-              padding: const EdgeInsets.only(right: 16),
-            ),
+
           ),
         ],
       ),

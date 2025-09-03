@@ -3,12 +3,9 @@ import 'package:flutter/material.dart';
 class DListTileTheme {
   DListTileTheme._();
 
-  static const ListTileThemeData lightListTileTheme = ListTileThemeData(
+  static ListTileThemeData lightListTileTheme = ListTileThemeData(
     contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-    dense: false,
-    selectedColor: Colors.red,
-    tileColor: Colors.red,
-    selectedTileColor: Colors.red
+    dense: true,
   );
 
   static const ListTileThemeData darkListTileTheme = ListTileThemeData(
