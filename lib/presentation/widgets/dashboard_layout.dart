@@ -152,15 +152,7 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
     return Container(
       width: 250,
       decoration: BoxDecoration(
-        color: Colors.white,
-
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(2, 0),
-          ),
-        ],
+        color: Colors.transparent,
       ),
       child: _buildSidebarContent(context),
     );
@@ -322,7 +314,6 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
           ),
         ),
         selected: isSelected,
-        hoverColor: Colors.red,
         selectedTileColor: theme.colorScheme.primary.withOpacity(0.1),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
         dense: isGroupItem,

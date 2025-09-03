@@ -41,6 +41,6 @@ class DInputTheme {
     ),
     filled: true,
     fillColor: Colors.grey.shade800,
-    hintStyle: TextStyle(fontSize: 50),
+    hintStyle: TextStyle(color: Color.fromARGB(255, 147, 147, 147), fontFamily: 'Inter',fontWeight: FontWeight.w300),
   );
 }
