@@ -51,7 +51,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
               Icon(Icons.agriculture, size: 80),
               const SizedBox(height: 16),
               Text(
-                'Proyecto Ganado',
+                'AgroSmart',
                 style: Theme.of(context).textTheme.displayLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                   color: Theme.of(context).colorScheme.primary,

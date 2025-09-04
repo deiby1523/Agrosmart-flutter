@@ -16,11 +16,11 @@ class BreedTable extends ConsumerWidget {
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 255, 255, 255),
+          color: Theme.of(context).cardColor,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Colors.grey.withOpacity(0.1),
+              color: Theme.of(context).shadowColor.withAlpha(80),
               spreadRadius: 0,
               blurRadius: 10,
               offset: const Offset(0, 2),
@@ -34,7 +34,7 @@ class BreedTable extends ConsumerWidget {
             dataRowHeight: 64,
             columnSpacing: 24,
             horizontalMargin: 24,
-            headingRowColor: MaterialStateProperty.all(Colors.grey.shade50),
+            headingRowColor: MaterialStateProperty.all(Theme.of(context).cardColor),
             columns: [
               DataColumn(
                 label: Text(
@@ -42,7 +42,6 @@ class BreedTable extends ConsumerWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 12,
-                    color: Colors.black87,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -54,7 +53,6 @@ class BreedTable extends ConsumerWidget {
                     style: TextStyle(
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
-                      color: Colors.black87,
                       letterSpacing: 0.5,
                     ),
                   ),
@@ -65,7 +63,6 @@ class BreedTable extends ConsumerWidget {
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     fontSize: 12,
-                    color: Colors.black87,
                     letterSpacing: 0.5,
                   ),
                 ),
@@ -90,7 +87,6 @@ class BreedTable extends ConsumerWidget {
             style: const TextStyle(
               fontWeight: FontWeight.w500,
               fontSize: 14,
-              color: Colors.black87,
             ),
           ),
         ),
