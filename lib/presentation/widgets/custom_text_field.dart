@@ -8,6 +8,8 @@ class CustomTextField extends StatelessWidget {
   final IconData? prefixIcon;
   final bool obscureText;
   final VoidCallback? onTogglePassword;
+  final TextCapitalization? textCapitalization;
+  final int? maxLines;
 
   const CustomTextField({
     super.key,
@@ -18,6 +20,8 @@ class CustomTextField extends StatelessWidget {
     this.prefixIcon,
     this.obscureText = false,
     this.onTogglePassword,
+    this.textCapitalization,
+    this.maxLines = 1,
   });
 
   @override
@@ -26,10 +30,7 @@ class CustomTextField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (labelText != null) ...[
-          Text(
-            labelText!,
-            style: Theme.of(context).textTheme.labelMedium,
-          ),
+          Text(labelText!, style: Theme.of(context).textTheme.labelMedium),
           const SizedBox(height: 5),
         ],
         TextFormField(
@@ -38,20 +39,22 @@ class CustomTextField extends StatelessWidget {
           validator: validator,
           decoration: InputDecoration(
             hintText: hintText,
-            prefixIcon: prefixIcon != null ? Icon(prefixIcon,color: Color.fromARGB(255, 147, 147, 147),) : null,
+            prefixIcon: prefixIcon != null
+                ? Icon(prefixIcon, color: Color.fromARGB(255, 147, 147, 147))
+                : null,
             suffixIcon: onTogglePassword != null
                 ? IconButton(
                     icon: Icon(
                       color: Color.fromARGB(255, 147, 147, 147),
-                      obscureText
-                          ? Icons.visibility
-                          : Icons.visibility_off,
+                      obscureText ? Icons.visibility : Icons.visibility_off,
                     ),
                     onPressed: onTogglePassword,
                   )
                 : null,
             border: const OutlineInputBorder(),
           ),
+          textCapitalization: textCapitalization ?? TextCapitalization.none,
+          maxLines: maxLines,
         ),
       ],
     );

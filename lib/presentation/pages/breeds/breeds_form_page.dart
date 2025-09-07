@@ -1,9 +1,11 @@
+import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:agrosmart_flutter/domain/entities/breed.dart';
+import 'package:agrosmart_flutter/presentation/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/utils/validators.dart';
 import '../../providers/breed_provider.dart';
-
 
 class BreedFormDialog extends ConsumerStatefulWidget {
   final Breed? breed; // null para crear, breed para editar
@@ -38,8 +40,10 @@ class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
+
     final isEditing = widget.breed != null;
-    
+
     return AlertDialog(
       title: Text(isEditing ? 'Editar Raza' : 'Nueva Raza'),
       content: SizedBox(
@@ -49,22 +53,21 @@ class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              TextFormField(
+              CustomTextField(
                 controller: _nameController,
-                decoration: const InputDecoration(
-                  labelText: 'Nombre de la Raza *',
-                  prefixIcon: Icon(Icons.pets),
-                ),
+                hintText: "Nombre de la raza",
+                labelText: "Nombre",
+                prefixIcon: Icons.pets,
                 validator: (value) => Validators.required(value, 'Nombre'),
                 textCapitalization: TextCapitalization.words,
               ),
               const SizedBox(height: 16),
-              TextFormField(
+              CustomTextField(
                 controller: _descriptionController,
-                decoration: const InputDecoration(
-                  labelText: 'Descripción (Opcional)',
-                  prefixIcon: Icon(Icons.description),
-                ),
+                hintText: "Descripción de la raza (opcional)",
+                labelText: "Descripcion",
+                prefixIcon: Icons.description,
+                validator: (value) => Validators.required(value, 'Descripción'),
                 maxLines: 3,
                 textCapitalization: TextCapitalization.sentences,
               ),
@@ -75,6 +78,7 @@ class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
       actions: [
         TextButton(
           onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
+          style: TextButton.styleFrom(foregroundColor: colors.cancelTextButton),
           child: const Text('Cancelar'),
         ),
         ElevatedButton(
@@ -103,23 +107,25 @@ class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
 
       if (widget.breed != null) {
         // Editar
-        await ref.read(breedsProvider.notifier).updateBreed(
-          widget.breed!.id!,
-          name,
-          finalDescription,
-        );
+        await ref
+            .read(breedsProvider.notifier)
+            .updateBreed(widget.breed!.id!, name, finalDescription);
       } else {
         // Crear
-        await ref.read(breedsProvider.notifier).createBreed(name, finalDescription);
+        await ref
+            .read(breedsProvider.notifier)
+            .createBreed(name, finalDescription);
       }
 
       if (mounted) {
         Navigator.of(context).pop();
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(widget.breed != null
-                ? 'Raza actualizada correctamente'
-                : 'Raza creada correctamente'),
+            content: Text(
+              widget.breed != null
+                  ? 'Raza actualizada correctamente'
+                  : 'Raza creada correctamente',
+            ),
             backgroundColor: Colors.green,
           ),
         );
@@ -127,10 +133,7 @@ class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error: $error'),
-            backgroundColor: Colors.red,
-          ),
+          SnackBar(content: Text('Error: $error'), backgroundColor: Colors.red),
         );
       }
     } finally {

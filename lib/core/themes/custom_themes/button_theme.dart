@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../app_color_schemes.dart';
+import '../app_colors.dart';
 
 class DButtonTheme {
   DButtonTheme._();
@@ -60,10 +60,27 @@ class DButtonTheme {
       textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
     ),
   );
+  
+  // Text cancel Button
+  static TextButtonThemeData lightTextCancelButtonTheme = TextButtonThemeData(
+    style: TextButton.styleFrom(
+      foregroundColor: AppColorSchemes.lightTextDisabled,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+    ),
+  );
 
   static TextButtonThemeData darkTextButtonTheme = TextButtonThemeData(
     style: TextButton.styleFrom(
       foregroundColor: AppColorSchemes.darkScheme.primary,
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+    ),
+  );
+  
+  static TextButtonThemeData darkTextCancelButtonTheme = TextButtonThemeData(
+    style: TextButton.styleFrom(
+      foregroundColor: AppColorSchemes.darkTextDisabled,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
     ),

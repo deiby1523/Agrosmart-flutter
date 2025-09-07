@@ -1,7 +1,9 @@
+import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:agrosmart_flutter/core/utils/responsive.dart';
 import 'package:agrosmart_flutter/domain/entities/breed.dart';
 import 'package:agrosmart_flutter/presentation/pages/breeds/breeds_form_page.dart';
 import 'package:agrosmart_flutter/presentation/providers/breed_provider.dart';
+import 'package:agrosmart_flutter/presentation/pages/breeds/widgets/breed_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,14 +15,15 @@ class BreedTable extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
-          color: Theme.of(context).cardColor,
+          color: Theme.of(context).cardTheme.color,
           borderRadius: BorderRadius.circular(12),
           boxShadow: [
             BoxShadow(
-              color: Theme.of(context).shadowColor.withAlpha(80),
+              color: Theme.of(context).shadowColor.withAlpha(30),
               spreadRadius: 0,
               blurRadius: 10,
               offset: const Offset(0, 2),
@@ -34,7 +37,9 @@ class BreedTable extends ConsumerWidget {
             dataRowHeight: 64,
             columnSpacing: 24,
             horizontalMargin: 24,
-            headingRowColor: MaterialStateProperty.all(Theme.of(context).cardColor),
+            headingRowColor: MaterialStateProperty.all(
+              Theme.of(context).cardTheme.color,
+            ),
             columns: [
               DataColumn(
                 label: Text(
@@ -78,79 +83,41 @@ class BreedTable extends ConsumerWidget {
   }
 
   DataRow _buildDataRow(BuildContext context, WidgetRef ref, Breed breed) {
+    final colors = Theme.of(context).extension<AppColors>()!;
     return DataRow(
       cells: [
         // Nombre
         DataCell(
           Text(
             breed.name,
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              fontSize: 14,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
           ),
         ),
         // Descripción
         if (!Responsive.isMobile(context))
-        DataCell(
-          Container(
-            width: 200,
-            child: Text(
-              breed.description?.isNotEmpty == true
-                  ? breed.description!
-                  : 'Sin descripción',
-              style: TextStyle(
-                fontSize: 14,
-                color: breed.description?.isNotEmpty == true
-                    ? Colors.grey.shade700
-                    : Colors.grey.shade400,
+          DataCell(
+            Container(
+              width: 200,
+              child: Text(
+                breed.description?.isNotEmpty == true
+                    ? breed.description!
+                    : 'Sin descripción',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: breed.description?.isNotEmpty == true
+                      ? colors.textDefault
+                      : colors.textDisabled,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
               ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
             ),
           ),
-        ),
         // Acciones
         DataCell(
-          Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Botón Editar
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.blue.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: IconButton(
-                  onPressed: () => _editBreed(context, breed),
-                  icon: Icon(
-                    Icons.edit_outlined,
-                    size: 18,
-                    color: Colors.blue.shade600,
-                  ),
-                  tooltip: 'Editar',
-                  splashRadius: 20,
-                ),
-              ),
-              const SizedBox(width: 8),
-              // Botón Eliminar
-              Container(
-                decoration: BoxDecoration(
-                  color: Colors.red.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: IconButton(
-                  onPressed: () => _confirmDelete(context, ref, breed),
-                  icon: Icon(
-                    Icons.delete_outline,
-                    size: 18,
-                    color: Colors.red.shade600,
-                  ),
-                  tooltip: 'Eliminar',
-                  splashRadius: 20,
-                ),
-              ),
-            ],
+          BreedActions(
+            onEdit: () => _editBreed(context, breed),
+            onDelete: () => _confirmDelete(context, ref, breed),
           ),
         ),
       ],

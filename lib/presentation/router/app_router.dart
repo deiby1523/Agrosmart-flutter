@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../pages/auth/login_page.dart';
 import '../pages/dashboard/dashboard_page.dart';
-import '../pages/breeds/breeds_list_page.dart';
+import '../pages/breeds/breeds_index_page.dart';
 import '../providers/auth_provider.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {

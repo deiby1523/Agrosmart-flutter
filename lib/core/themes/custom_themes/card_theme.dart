@@ -12,7 +12,7 @@ class DCardTheme {
   );
 
   static const CardThemeData darkCardTheme = CardThemeData(
-    color: Color(0xFF1F1F1F),
+    color: Color.fromARGB(255, 49, 49, 49),
     elevation: 2,
     shape: RoundedRectangleBorder(
       borderRadius: BorderRadius.all(Radius.circular(12)),

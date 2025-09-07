@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../app_color_schemes.dart';
+import '../app_colors.dart';
 
 class DIconTheme {
   DIconTheme._();

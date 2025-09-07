@@ -1,4 +1,4 @@
-// lib/presentation/widgets/dashboard_layout.dart (ACTUALIZADO)
+import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:agrosmart_flutter/presentation/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -85,6 +85,7 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
                   icon: isDark ? Icon(Icons.light_mode) : Icon(Icons.dark_mode),
                 ),
                 PopupMenuButton(
+                  position: PopupMenuPosition.under,
                   icon: const Icon(Icons.more_vert_rounded),
                   onSelected: (mode) {
                     ref.read(themeNotifierProvider.notifier).setTheme(mode);
@@ -340,27 +341,38 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   }
 
   void _showLogoutDialog() {
+    final colors = Theme.of(context).extension<AppColors>()!;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Cerrar Sesión'),
         content: const Text('¿Estás seguro que quieres cerrar sesión?'),
         actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Cancelar'),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              ref.read(authProvider.notifier).logout();
-              context.go('/login');
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.red,
-              foregroundColor: Colors.white,
-            ),
-            child: const Text('Cerrar Sesión'),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            spacing: 20,
+            children: [
+              TextButton(
+                onPressed: () => Navigator.of(context).pop(),
+                style: TextButton.styleFrom(
+                  foregroundColor: colors.cancelTextButton
+                ),
+                child: const Text('Cancelar'),
+              ),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  ref.read(authProvider.notifier).logout();
+                  context.go('/login');
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.red,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Cerrar Sesión'),
+              ),
+            ],
           ),
         ],
       ),

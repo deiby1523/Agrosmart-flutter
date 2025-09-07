@@ -1,5 +1,5 @@
 class ApiConstants {
-  static const String baseUrl = 'http://192.168.129.98:8080/api';
+  static const String baseUrl = 'https://agrosmartrest.onrender.com/api';
   
   // Auth Endpoints
   static const String authenticate = '/auth/autenticate';

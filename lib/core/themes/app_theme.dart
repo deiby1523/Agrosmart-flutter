@@ -1,4 +1,4 @@
-import 'package:agrosmart_flutter/core/themes/app_color_schemes.dart';
+import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'custom_themes/appbar_theme.dart';
 import 'custom_themes/card_theme.dart';
@@ -43,6 +43,7 @@ class AppTheme {
         TargetPlatform.macOS: NoTransitionsBuilder(),
       },
     ),
+    extensions: <ThemeExtension<dynamic>>[AppColors.light],
   );
 
   static ThemeData darkTheme = ThemeData(
@@ -74,9 +75,8 @@ class AppTheme {
         TargetPlatform.macOS: NoTransitionsBuilder(),
       },
     ),
+    extensions: <ThemeExtension<dynamic>>[AppColors.dark],
   );
-
-  
 }
 
 /// Custom builder que elimina transiciones
