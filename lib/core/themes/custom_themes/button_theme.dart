@@ -7,50 +7,56 @@ class DButtonTheme {
   // Elevated Button
   static ElevatedButtonThemeData lightElevatedButtonTheme =
       ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-      backgroundColor: AppColorSchemes.lightScheme.primary,
-      foregroundColor: Colors.white,
-      elevation: 2,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-    ),
-  );
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColorSchemes.lightScheme.primary,
+          foregroundColor: Colors.white,
+          elevation: 2,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
+      );
 
   static ElevatedButtonThemeData darkElevatedButtonTheme =
       ElevatedButtonThemeData(
-    style: ElevatedButton.styleFrom(
-      backgroundColor: AppColorSchemes.darkScheme.primary,
-      foregroundColor: Colors.black,
-      elevation: 2,
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
-    ),
-  );
+        style: ElevatedButton.styleFrom(
+          backgroundColor: AppColorSchemes.darkScheme.primary,
+          foregroundColor: Colors.black,
+          elevation: 2,
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+        ),
+      );
 
   // Outlined Button
   static OutlinedButtonThemeData lightOutlinedButtonTheme =
       OutlinedButtonThemeData(
-    style: OutlinedButton.styleFrom(
-      foregroundColor: AppColorSchemes.lightScheme.primary,
-      side: BorderSide(color: AppColorSchemes.lightScheme.primary, width: 1.5),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-    ),
-  );
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColorSchemes.lightScheme.primary,
+          side: BorderSide(
+            color: AppColorSchemes.lightScheme.primary,
+            width: 1.5,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+      );
 
   static OutlinedButtonThemeData darkOutlinedButtonTheme =
       OutlinedButtonThemeData(
-    style: OutlinedButton.styleFrom(
-      foregroundColor: AppColorSchemes.darkScheme.primary,
-      side: BorderSide(color: AppColorSchemes.darkScheme.primary, width: 1.5),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-      textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-    ),
-  );
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColorSchemes.darkScheme.primary,
+          side: BorderSide(
+            color: AppColorSchemes.darkScheme.primary,
+            width: 1.5,
+          ),
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+        ),
+      );
 
   // Text Button
   static TextButtonThemeData lightTextButtonTheme = TextButtonThemeData(
@@ -60,7 +66,7 @@ class DButtonTheme {
       textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
     ),
   );
-  
+
   // Text cancel Button
   static TextButtonThemeData lightTextCancelButtonTheme = TextButtonThemeData(
     style: TextButton.styleFrom(
@@ -77,7 +83,7 @@ class DButtonTheme {
       textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
     ),
   );
-  
+
   static TextButtonThemeData darkTextCancelButtonTheme = TextButtonThemeData(
     style: TextButton.styleFrom(
       foregroundColor: AppColorSchemes.darkTextDisabled,

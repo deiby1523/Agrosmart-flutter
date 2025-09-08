@@ -1,3 +1,5 @@
+import 'package:agrosmart_flutter/core/themes/app_colors.dart';
+import 'package:agrosmart_flutter/core/utils/responsive.dart';
 import 'package:agrosmart_flutter/presentation/providers/auth_provider.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/utils/validators.dart';
 
+/// Login form widget with authentication handling
 class LoginForm extends ConsumerStatefulWidget {
   const LoginForm({super.key});
 
@@ -16,8 +19,10 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
   bool _obscurePassword = true;
+
+  // Clave global para acceder al wrapper animado
+  // final GlobalKey<AnimatedLoginWrapperState> _wrapperKey = GlobalKey();
 
   @override
   void dispose() {
@@ -26,115 +31,194 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     super.dispose();
   }
 
-  // Future<void> _onLogin() async {
-  //   if (_formKey.currentState!.validate()) {
-  //     await ref
-  //         .read(authProvider.notifier)
-  //         .login(_emailController.text, _passwordController.text);
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
+    final colors = Theme.of(context).extension<AppColors>()!;
 
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Logo o título
-              Icon(Icons.agriculture, size: 80),
-              const SizedBox(height: 16),
-              Text(
-                'AgroSmart',
-                style: Theme.of(context).textTheme.displayLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                  color: Theme.of(context).colorScheme.primary,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
-
-              CustomTextField(
-                controller: _emailController,
-                hintText: 'Ingresa tu usuario',
-                labelText: 'Usuario',
-                prefixIcon: Icons.email,
-                validator: Validators.email,
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: _passwordController,
-                hintText: 'Ingresa tu contraseña',
-                labelText: 'Contraseña',
-                prefixIcon: Icons.lock,
-                validator: (value) => Validators.required(value, 'Contraseña'),
-                obscureText: _obscurePassword,
-                onTogglePassword: () {
-                  setState(() {
-                    _obscurePassword = !_obscurePassword;
-                  });
-                },
-              ),
-              const SizedBox(height: 32),
-
-              // Submit Button
-              authState.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
-                data: (_) => ElevatedButton(
-                  onPressed: _loginSubmit,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
+      elevation: 12,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+      ),
+      color: Colors.white,
+      margin: const EdgeInsets.symmetric(horizontal: 24),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 450),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 36),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Bienvenido",
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[800],
                   ),
-                  child: Text('Iniciar Sesión'),
                 ),
-                error: (error, _) => Column(
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: _loginSubmit,
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                            ),
-                            child: Text('Iniciar Sesión'),
-                          ),
-                        ),
-                      ],
+                const SizedBox(height: 8),
+                Text(
+                  "Inicia sesión en tu cuenta",
+                  style: TextStyle(fontSize: 15, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 32),
+          
+                // Email
+                CustomTextField(
+                  controller: _emailController,
+                  hintText: 'Ingresa tu usuario',
+                  labelText: 'Usuario',
+                  prefixIcon: Icons.email,
+                  validator: Validators.email,
+                ),
+                const SizedBox(height: 16),
+          
+                // Password
+                CustomTextField(
+                  controller: _passwordController,
+                  hintText: 'Ingresa tu contraseña',
+                  labelText: 'Contraseña',
+                  prefixIcon: Icons.lock,
+                  validator: (value) =>
+                      Validators.required(value, 'Contraseña'),
+                  obscureText: _obscurePassword,
+                  onTogglePassword: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                ),
+          
+                const SizedBox(height: 12),
+          
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: colors.cancelTextButton,
                     ),
-                    const SizedBox(height: 16),
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade100,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Theme.of(context).colorScheme.error),
+                    onPressed: () {},
+                    child: const Text(
+                      "¿Olvidaste tu contraseña?",
+                      style: TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ),
+          
+                const SizedBox(height: 20),
+          
+                // Botón + estado de autenticación
+                // --- Botón / Estado ---
+                authState.when(
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  data: (_) => SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _loginSubmit,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: Row(
+                      child: Text('Iniciar Sesión'),
+                    ),
+                  ),
+                  error: (error, _) => Column(
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
                         children: [
-                          Icon(Icons.error, color: Colors.red.shade700),
-                          const SizedBox(width: 8),
                           Expanded(
-                            child: Text(
-                              error.toString(),
-                              style: TextStyle(color: Colors.red.shade700),
+                            child: ElevatedButton(
+                              onPressed: _loginSubmit,
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                              ),
+                              child: Text('Iniciar Sesión'),
                             ),
                           ),
                         ],
                       ),
+                      Builder(
+                        builder: (context) {
+                          final colors = Theme.of(
+                            context,
+                          ).extension<AppColors>()!;
+                          // Show error message in a SnackBar
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: colors.deleteButton,
+                                content: Row(
+                                  children: [
+                                    Icon(Icons.error, color: colors.deleteIcon),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      'Error: $error',
+                                      style: TextStyle(
+                                        color: colors.deleteIcon,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.close,
+                                        color: colors.deleteIcon,
+                                      ),
+                                      onPressed: () {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).hideCurrentSnackBar();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                behavior: SnackBarBehavior.floating,
+                                margin: EdgeInsets.only(
+                                  bottom: 20,
+                                  top: MediaQuery.of(context).size.height - 100,
+                                  right: 10,
+                                  left: Responsive.isMobile(context)
+                                      ? 10
+                                      : MediaQuery.of(context).size.width * 0.7,
+                                ),
+                              ),
+                            );
+                          });
+                          return SizedBox.shrink();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+          
+                const SizedBox(height: 24),
+          
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "¿No tienes cuenta?",
+                      style: TextStyle(color: Colors.grey[700]),
                     ),
-                    const SizedBox(height: 16),
+                    TextButton(
+                      onPressed: () async {
+                        // await _wrapperKey.currentState?.animateOut();
+                        if (mounted) {
+                          context.go('/register');
+                        }
+                      },
+                      child: const Text("Regístrate"),
+                    ),
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
@@ -143,17 +227,20 @@ class _LoginFormState extends ConsumerState<LoginForm> {
 
   Future<void> _loginSubmit() async {
     if (!_formKey.currentState!.validate()) return;
-
+    
     try {
       final email = _emailController.text.trim();
       final password = _passwordController.text;
       await ref.read(authProvider.notifier).login(email, password);
-
-      if (mounted) {
-        context.go('/dashboard');
-      }
-    } catch (error) {
-      // El error ya se maneja en el provider
+      
+      
+        // await _wrapperKey.currentState?.animateOut();
+        if (mounted) {
+          context.go('/dashboard');
+        }
+      
+    } catch (_) {
+      // El error se maneja en el authState.when()
     }
   }
 }

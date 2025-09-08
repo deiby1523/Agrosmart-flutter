@@ -3,13 +3,14 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../pages/auth/login_page.dart';
+import '../pages/auth/register_page.dart';
 import '../pages/dashboard/dashboard_page.dart';
 import '../pages/breeds/breeds_index_page.dart';
 import '../providers/auth_provider.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
-  
+
   return GoRouter(
     initialLocation: '/dashboard',
     redirect: (context, state) {
@@ -18,53 +19,57 @@ final routerProvider = Provider<GoRouter>((ref) {
         orElse: () => false,
       );
 
-      final isLoginRoute = state.uri.path == '/login';
+      // Permitir acceso a las rutas de autenticación cuando NO esté autenticado
+      final isAuthRoute =
+          state.uri.path == '/login' || state.uri.path == '/register';
 
-      // Si no está autenticado y no está en login, ir a login
-      if (!isAuthenticated && !isLoginRoute) {
+      // Si no está autenticado y no está en una ruta de auth (login/register), ir a login
+      if (!isAuthenticated && !isAuthRoute) {
         return '/login';
       }
-      
-      // Si está autenticado y está en login, ir a dashboard
-      if (isAuthenticated && isLoginRoute) {
-        return '/dashboard';
+
+      // Si está autenticado y está en una ruta de auth (login/register), ir a dashboard
+      if (isAuthenticated && isAuthRoute) {
+        return '/login';
       }
-      
+
       return null;
     },
     routes: [
+      GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
       GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginPage(),
+        path: '/register',
+        builder: (context, state) => const RegisterPage(),
       ),
       GoRoute(
         path: '/dashboard',
-        builder: (context, state) => const DashboardPage(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const DashboardPage(),
+          transitionsBuilder: (_, __, ___, child) => child, // sin animación
+          transitionDuration: Duration.zero,
+        ),
       ),
       GoRoute(
-        path: '/breeds',
-        builder: (context, state) => const BreedsListPage(),
-      ),
+  path: '/breeds',
+  pageBuilder: (context, state) => CustomTransitionPage(
+    key: state.pageKey,
+    child: const BreedsListPage(),
+    transitionsBuilder: (_, __, ___, child) => child, // sin animación
+    transitionDuration: Duration.zero,
+  ),
+),
       // Redirigir la ruta raíz al dashboard
-      GoRoute(
-        path: '/',
-        redirect: (context, state) => '/dashboard',
-      ),
+      GoRoute(path: '/', redirect: (context, state) => '/dashboard'),
     ],
     // Página de error personalizada
     errorBuilder: (context, state) => Scaffold(
-      appBar: AppBar(
-        title: const Text('Página No Encontrada'),
-      ),
+      appBar: AppBar(title: const Text('Página No Encontrada')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Colors.orange,
-            ),
+            const Icon(Icons.error_outline, size: 64, color: Colors.orange),
             const SizedBox(height: 16),
             Text(
               'Página No Encontrada',

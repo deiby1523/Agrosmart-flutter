@@ -10,6 +10,10 @@ class CustomTextField extends StatelessWidget {
   final VoidCallback? onTogglePassword;
   final TextCapitalization? textCapitalization;
   final int? maxLines;
+  final TextInputType? keyboardType;
+  final TextInputAction? textInputAction;
+  final ValueChanged<String>? onFieldSubmitted;
+  final Iterable<String>? autofillHints;
 
   const CustomTextField({
     super.key,
@@ -22,6 +26,10 @@ class CustomTextField extends StatelessWidget {
     this.onTogglePassword,
     this.textCapitalization,
     this.maxLines = 1,
+    this.keyboardType,
+    this.textInputAction,
+    this.onFieldSubmitted,
+    this.autofillHints,
   });
 
   @override
@@ -40,13 +48,16 @@ class CustomTextField extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hintText,
             prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, color: Color.fromARGB(255, 147, 147, 147))
+                ? Icon(
+                    prefixIcon,
+                    color: const Color.fromARGB(255, 147, 147, 147),
+                  )
                 : null,
             suffixIcon: onTogglePassword != null
                 ? IconButton(
                     icon: Icon(
-                      color: Color.fromARGB(255, 147, 147, 147),
                       obscureText ? Icons.visibility : Icons.visibility_off,
+                      color: const Color.fromARGB(255, 147, 147, 147),
                     ),
                     onPressed: onTogglePassword,
                   )
@@ -55,6 +66,11 @@ class CustomTextField extends StatelessWidget {
           ),
           textCapitalization: textCapitalization ?? TextCapitalization.none,
           maxLines: maxLines,
+          keyboardType: keyboardType,
+          textInputAction: textInputAction,
+          onFieldSubmitted: onFieldSubmitted,
+          autofillHints: autofillHints,
+          autocorrect: false,
         ),
       ],
     );

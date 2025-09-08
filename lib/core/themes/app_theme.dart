@@ -1,5 +1,7 @@
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
+import 'package:agrosmart_flutter/core/themes/custom_themes/snackbar_theme.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'custom_themes/appbar_theme.dart';
 import 'custom_themes/card_theme.dart';
 import 'custom_themes/button_theme.dart';
@@ -30,19 +32,25 @@ class AppTheme {
     chipTheme: DChipTheme.lightChipTheme,
     dividerTheme: DDividerTheme.lightDividerTheme,
     listTileTheme: DListTileTheme.lightListTileTheme,
+    snackBarTheme: DSnackbarTheme.lightSnackBarTheme,
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: AppColorSchemes.lightScheme.primary,
       selectionColor: Color.fromARGB(90, 155, 210, 36),
       selectionHandleColor: AppColorSchemes.lightScheme.primary,
     ),
-    pageTransitionsTheme: const PageTransitionsTheme(
+    pageTransitionsTheme: PageTransitionsTheme(
       builders: {
-        TargetPlatform.android: NoTransitionsBuilder(),
-        TargetPlatform.iOS: NoTransitionsBuilder(),
-        TargetPlatform.windows: NoTransitionsBuilder(),
-        TargetPlatform.macOS: NoTransitionsBuilder(),
+        TargetPlatform.windows: PredictiveBackPageTransitionsBuilder(),
       },
     ),
+    // pageTransitionsTheme: const PageTransitionsTheme(
+    //   builders: {
+    //     TargetPlatform.android: NoTransitionsBuilder(),
+    //     TargetPlatform.iOS: NoTransitionsBuilder(),
+    //     TargetPlatform.windows: NoTransitionsBuilder(),
+    //     TargetPlatform.macOS: NoTransitionsBuilder(),
+    //   },
+    // ),
     extensions: <ThemeExtension<dynamic>>[AppColors.light],
   );
 
@@ -62,35 +70,13 @@ class AppTheme {
     chipTheme: DChipTheme.darkChipTheme,
     dividerTheme: DDividerTheme.darkDividerTheme,
     listTileTheme: DListTileTheme.darkListTileTheme,
+    snackBarTheme: DSnackbarTheme.darkSnackBarTheme,
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: AppColorSchemes.lightScheme.primary,
       selectionColor: Color.fromARGB(90, 155, 210, 36),
       selectionHandleColor: AppColorSchemes.lightScheme.primary,
     ),
-    pageTransitionsTheme: const PageTransitionsTheme(
-      builders: {
-        TargetPlatform.android: NoTransitionsBuilder(),
-        TargetPlatform.iOS: NoTransitionsBuilder(),
-        TargetPlatform.windows: NoTransitionsBuilder(),
-        TargetPlatform.macOS: NoTransitionsBuilder(),
-      },
-    ),
+    
     extensions: <ThemeExtension<dynamic>>[AppColors.dark],
   );
-}
-
-/// Custom builder que elimina transiciones
-class NoTransitionsBuilder extends PageTransitionsBuilder {
-  const NoTransitionsBuilder();
-
-  @override
-  Widget buildTransitions<T>(
-    PageRoute<T> route,
-    BuildContext context,
-    Animation<double> animation,
-    Animation<double> secondaryAnimation,
-    Widget child,
-  ) {
-    return child; // sin animación
-  }
 }

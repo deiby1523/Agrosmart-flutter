@@ -1,3 +1,5 @@
+import 'package:agrosmart_flutter/core/themes/app_colors.dart';
+import 'package:agrosmart_flutter/core/utils/responsive.dart';
 import 'package:agrosmart_flutter/presentation/providers/auth_provider.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
@@ -5,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../../core/utils/validators.dart';
 
+/// Register form widget with authentication handling
 class RegisterForm extends ConsumerStatefulWidget {
   const RegisterForm({super.key});
 
@@ -14,6 +17,7 @@ class RegisterForm extends ConsumerStatefulWidget {
 
 class _RegisterFormState extends ConsumerState<RegisterForm> {
   final _formKey = GlobalKey<FormState>();
+
   final _nameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _dniController = TextEditingController();
@@ -22,10 +26,62 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
   final _confirmPasswordController = TextEditingController();
 
   bool _obscurePassword = true;
-  // bool _obscureConfirmPassword = true;
+
+  // late AnimationController _animationController;
+  // late Animation<double> _scaleAnimation;
+  // late Animation<double> _fadeAnimation;
+  // late Animation<Offset> _slideAnimation;
+
+  // bool _hasAnimated = false;
+
+  // @override
+  // void initState() {
+  //   super.initState();
+
+    // _animationController = AnimationController(
+    //   vsync: this,
+    //   duration: const Duration(milliseconds: 600),
+    // );
+
+    // _scaleAnimation =
+    //     Tween<double>(
+    //       begin: 0.3, // empieza un poco más pequeño
+    //       end: 1.0, // termina en tamaño normal
+    //     ).animate(
+    //       CurvedAnimation(
+    //         parent: _animationController,
+    //         curve: Curves.easeOutBack,
+    //       ),
+    //     );
+
+    // _slideAnimation =
+    //     Tween<Offset>(
+    //       begin: const Offset(5.0, 0.0), // empieza un poco abajo
+    //       end: Offset.zero,
+    //     ).animate(
+    //       CurvedAnimation(
+    //         parent: _animationController,
+    //         curve: Curves.decelerate,
+    //       ),
+    //     );
+
+    // _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
+    //   CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
+    // );
+
+    // if (!_hasAnimated) {
+    //   _animationController.forward();
+    //   _hasAnimated = true;
+    // } else {
+    //   _animationController.value = 1.0; // salta al final
+    // }
+
+    // _animationController.forward();
+  // }
 
   @override
   void dispose() {
+    // _animationController.dispose();
     _nameController.dispose();
     _lastNameController.dispose();
     _dniController.dispose();
@@ -35,188 +91,222 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
     super.dispose();
   }
 
-  // Future<void> _onRegister() async {
-  //   if (_formKey.currentState!.validate()) {
-  //     await ref
-  //         .read(authProvider.notifier)
-  //         .register(_emailController.text, _passwordController.text);
-  //   }
-  // }
-
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
+    final colors = Theme.of(context).extension<AppColors>()!;
 
     return Card(
-      child: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              // Logo o título
-              /*
-                                              Icon(
-                                                Icons.agriculture,
-                                                size: 80,
-                                                color: Theme.of(
-                                                  context,
-                                                ).primaryColor,
-                                              ),*/
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  Text(
-                    'Registro',
-                    style: Theme.of(context).textTheme.displayMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                    textAlign: TextAlign.center,
+      elevation: 12,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      color: Colors.white,
+      margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 500),
+        child: SingleChildScrollView(
+          physics: const BouncingScrollPhysics(),
+          padding: const EdgeInsets.symmetric(horizontal: 28, vertical: 36),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  "Registro",
+                  style: TextStyle(
+                    fontSize: 28,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.grey[800],
                   ),
-                ],
-              ),
-
-              // const SizedBox(height: 32),
-              // CustomTextField(
-              //   controller: _emailController,
-              //   labelText: 'Nombre',
-              //   hintText: 'Ingresa tu nombre',
-              //   prefixIcon: Icons.person,
-              //   validator: Validators.password,
-              // ),
-              const SizedBox(height: 32),
-              CustomTextField(
-                controller: _nameController,
-                hintText: 'Ingresa tu nombre',
-                labelText: 'Nombre',
-                prefixIcon: Icons.person,
-                validator: Validators.name,
-              ),
-
-              const SizedBox(height: 32),
-              CustomTextField(
-                controller: _lastNameController,
-                hintText: 'Ingresa tu apellido',
-                labelText: 'Apellido',
-                prefixIcon: Icons.person,
-                validator: Validators.name,
-              ),
-
-              const SizedBox(height: 32),
-              CustomTextField(
-                controller: _dniController,
-                hintText: 'Ingresa tu identificación',
-                labelText: 'Documento',
-                prefixIcon: Icons.credit_card,
-                validator: Validators.dni,
-              ),
-
-              const SizedBox(height: 32),
-              CustomTextField(
-                controller: _emailController,
-                labelText: 'Usuario',
-                hintText: 'Ingresa correo electrónico',
-                prefixIcon: Icons.email,
-                validator: Validators.email,
-              ),
-
-              const SizedBox(height: 32),
-              CustomTextField(
-                controller: _passwordController,
-                hintText: 'Ingresa tu contraseña',
-                labelText: 'Contraseña',
-                prefixIcon: Icons.lock,
-                validator: Validators.password,
-                obscureText: _obscurePassword,
-                onTogglePassword: () {
-                  setState(() {
-                    _obscurePassword = !_obscurePassword;
-                  });
-                },
-              ),
-
-              const SizedBox(height: 32),
-              CustomTextField(
-                controller: _confirmPasswordController,
-                hintText: 'Ingresa nuevamente la contraseña',
-                labelText: 'Contraseña',
-                prefixIcon: Icons.lock,
-                validator: (value) =>
-                    Validators.confirmPassword(value, _passwordController.text),
-                obscureText: _obscurePassword,
-                onTogglePassword: () {
-                  setState(() {
-                    _obscurePassword = !_obscurePassword;
-                  });
-                },
-              ),
-              const SizedBox(height: 32),
-
-              // Submit Button
-              authState.when(
-                loading: () => const Center(child: CircularProgressIndicator()),
-                data: (_) => ElevatedButton(
-                  onPressed: _registerSubmit,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                  ),
-                  child: Text('Registrarse'),
                 ),
-                error: (error, _) => Column(
-                  children: [
-                    Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Expanded(
-                          child: ElevatedButton(
-                            onPressed: _registerSubmit,
-                            style: ElevatedButton.styleFrom(
-                              padding: const EdgeInsets.symmetric(vertical: 16),
-                            ),
-                            child: Text('Registrarse'),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 16),
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: Colors.red.shade100,
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(
-                          color: Theme.of(context).colorScheme.error,
-                        ),
+                const SizedBox(height: 8),
+                Text(
+                  "Crea tu cuenta",
+                  style: TextStyle(fontSize: 15, color: Colors.grey[600]),
+                ),
+                const SizedBox(height: 32),
+
+                // --- Campos de texto ---
+                CustomTextField(
+                  controller: _nameController,
+                  hintText: 'Ingresa tu nombre',
+                  labelText: 'Nombre',
+                  prefixIcon: Icons.person,
+                  validator: Validators.name,
+                ),
+                const SizedBox(height: 16),
+
+                CustomTextField(
+                  controller: _lastNameController,
+                  hintText: 'Ingresa tu apellido',
+                  labelText: 'Apellido',
+                  prefixIcon: Icons.person,
+                  validator: Validators.name,
+                ),
+                const SizedBox(height: 16),
+
+                CustomTextField(
+                  controller: _dniController,
+                  hintText: 'Ingresa tu identificación',
+                  labelText: 'Documento',
+                  prefixIcon: Icons.credit_card,
+                  validator: Validators.dni,
+                ),
+                const SizedBox(height: 16),
+
+                CustomTextField(
+                  controller: _emailController,
+                  hintText: 'Ingresa tu correo electrónico',
+                  labelText: 'Usuario',
+                  prefixIcon: Icons.email,
+                  validator: Validators.email,
+                ),
+                const SizedBox(height: 16),
+
+                CustomTextField(
+                  controller: _passwordController,
+                  hintText: 'Ingresa tu contraseña',
+                  labelText: 'Contraseña',
+                  prefixIcon: Icons.lock,
+                  validator: Validators.password,
+                  obscureText: _obscurePassword,
+                  onTogglePassword: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                ),
+                const SizedBox(height: 16),
+
+                CustomTextField(
+                  controller: _confirmPasswordController,
+                  hintText: 'Confirma tu contraseña',
+                  labelText: 'Confirmar contraseña',
+                  prefixIcon: Icons.lock,
+                  validator: (value) => Validators.confirmPassword(
+                    value,
+                    _passwordController.text,
+                  ),
+                  obscureText: _obscurePassword,
+                  onTogglePassword: () {
+                    setState(() {
+                      _obscurePassword = !_obscurePassword;
+                    });
+                  },
+                ),
+                const SizedBox(height: 20),
+
+                // --- Botón / Estado ---
+                authState.when(
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                  data: (_) => SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: _registerSubmit,
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: Row(
+                      child: Text('Registrarse'),
+                    ),
+                  ),
+                  error: (error, _) => Column(
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
                         children: [
-                          Icon(Icons.error, color: Colors.red.shade700),
-                          const SizedBox(width: 8),
                           Expanded(
-                            child: Text(
-                              error.toString(),
-                              style: TextStyle(color: Colors.red.shade700),
+                            child: ElevatedButton(
+                              onPressed: _registerSubmit,
+                              style: ElevatedButton.styleFrom(
+                                padding: const EdgeInsets.symmetric(
+                                  vertical: 16,
+                                ),
+                              ),
+                              child: Text('Registrarse'),
                             ),
                           ),
                         ],
                       ),
+                      Builder(
+                        builder: (context) {
+                          final colors = Theme.of(
+                            context,
+                          ).extension<AppColors>()!;
+                          // Show error message in a SnackBar
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                backgroundColor: colors.deleteButton,
+                                content: Row(
+                                  children: [
+                                    Icon(Icons.error, color: colors.deleteIcon),
+                                    const SizedBox(width: 10),
+                                    Text(
+                                      'Error: $error',
+                                      style: TextStyle(
+                                        color: colors.deleteIcon,
+                                      ),
+                                    ),
+                                    const Spacer(),
+                                    IconButton(
+                                      icon: Icon(
+                                        Icons.close,
+                                        color: colors.deleteIcon,
+                                      ),
+                                      onPressed: () {
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).hideCurrentSnackBar();
+                                      },
+                                    ),
+                                  ],
+                                ),
+                                behavior: SnackBarBehavior.floating,
+                                margin: EdgeInsets.only(
+                                  bottom: 20,
+                                  top: MediaQuery.of(context).size.height - 100,
+                                  right: 10,
+                                  left: Responsive.isMobile(context)
+                                      ? 10
+                                      : MediaQuery.of(context).size.width * 0.7,
+                                ),
+                              ),
+                            );
+                          });
+                          return SizedBox.shrink();
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+
+                // --- Redirección a login ---
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "¿Ya tienes una cuenta?",
+                      style: TextStyle(color: Colors.grey[700]),
                     ),
-                    const SizedBox(height: 16),
+                    TextButton(
+                      onPressed: () {
+                        // await _animationController.reverse();
+                        context.go('/login');
+                      },
+                      child: const Text("Inicia sesión"),
+                    ),
                   ],
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Future<void> _registerSubmit() async {
+ Future<void> _registerSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
     try {
