@@ -37,7 +37,7 @@ class BreedTable extends ConsumerWidget {
             dataRowHeight: 64,
             columnSpacing: 24,
             horizontalMargin: 24,
-            headingRowColor: MaterialStateProperty.all(
+            headingRowColor: WidgetStateProperty.all(
               Theme.of(context).cardTheme.color,
             ),
             columns: [
@@ -96,7 +96,7 @@ class BreedTable extends ConsumerWidget {
         // Descripción
         if (!Responsive.isMobile(context))
           DataCell(
-            Container(
+            SizedBox(
               width: 200,
               child: Text(
                 breed.description?.isNotEmpty == true

@@ -86,8 +86,6 @@ class AppColorSchemes {
     onTertiary: lightOnTertiary,
     error: lightError,
     onError: lightOnError,
-    background: lightBackground,
-    onBackground: lightOnBackground,
     surface: lightSurface,
     onSurface: lightOnSurface,
   );
@@ -102,8 +100,6 @@ class AppColorSchemes {
     onTertiary: darkOnTertiary,
     error: darkError,
     onError: darkOnError,
-    background: darkBackground,
-    onBackground: darkOnBackground,
     surface: darkSurface,
     onSurface: darkOnSurface,
   );

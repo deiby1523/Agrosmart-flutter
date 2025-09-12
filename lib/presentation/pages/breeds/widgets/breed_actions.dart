@@ -5,8 +5,7 @@ class BreedActions extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
-  const BreedActions({Key? key, required this.onEdit, required this.onDelete})
-    : super(key: key);
+  const BreedActions({super.key, required this.onEdit, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {

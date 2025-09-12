@@ -1,7 +1,6 @@
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:agrosmart_flutter/core/themes/custom_themes/snackbar_theme.dart';
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
 import 'custom_themes/appbar_theme.dart';
 import 'custom_themes/card_theme.dart';
 import 'custom_themes/button_theme.dart';

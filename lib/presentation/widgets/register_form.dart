@@ -99,7 +99,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
     return Card(
       elevation: 12,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
-      color: Colors.white,
+      color: colors.card,
       margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 500),
@@ -124,7 +124,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                   "Crea tu cuenta",
                   style: TextStyle(fontSize: 15, color: Colors.grey[600]),
                 ),
-                const SizedBox(height: 32),
+                const SizedBox(height: 24),
 
                 // --- Campos de texto ---
                 CustomTextField(
@@ -280,6 +280,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                     ],
                   ),
                 ),
+                const SizedBox(height: 24),
 
                 // --- Redirección a login ---
                 Row(

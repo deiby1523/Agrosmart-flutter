@@ -41,7 +41,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
       ),
-      color: Colors.white,
+      color: colors.card,
       margin: const EdgeInsets.symmetric(horizontal: 24),
       child: ConstrainedBox(
         constraints: const BoxConstraints(maxWidth: 450),
