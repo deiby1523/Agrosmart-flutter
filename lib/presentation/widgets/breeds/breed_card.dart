@@ -1,6 +1,7 @@
 import 'package:agrosmart_flutter/domain/entities/breed.dart';
 import 'package:agrosmart_flutter/presentation/pages/breeds/breeds_form_page.dart';
 import 'package:agrosmart_flutter/presentation/providers/breed_provider.dart';
+import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -114,22 +115,15 @@ class BreedCard extends ConsumerWidget {
               try {
                 await ref.read(breedsProvider.notifier).deleteBreed(breed.id!);
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text(
-                        'Raza "${breed.name}" eliminada correctamente',
-                      ),
-                      backgroundColor: Colors.green,
-                    ),
+                  context.showSuccessSnack(
+                    'Raza "${breed.name}" eliminada correctamente',
                   );
                 }
               } catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text('Error al eliminar: $e'),
-                      backgroundColor: Colors.red,
-                    ),
+                  context.showErrorSnack(
+                    'Error al eliminar: $e',
+                    showCloseButton: true,
                   );
                 }
               }

@@ -5,7 +5,8 @@ import 'package:agrosmart_flutter/presentation/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/utils/validators.dart';
+import '../../../../core/utils/validators.dart';
+import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart';
 
 /// Login form widget with authentication handling
 class LoginForm extends ConsumerStatefulWidget {
@@ -38,9 +39,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
 
     return Card(
       elevation: 12,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(20),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       color: colors.card,
       margin: const EdgeInsets.symmetric(horizontal: 24),
       child: ConstrainedBox(
@@ -66,7 +65,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                   style: TextStyle(fontSize: 15, color: Colors.grey[600]),
                 ),
                 const SizedBox(height: 32),
-          
+
                 // Email
                 CustomTextField(
                   controller: _emailController,
@@ -76,7 +75,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                   validator: Validators.email,
                 ),
                 const SizedBox(height: 16),
-          
+
                 // Password
                 CustomTextField(
                   controller: _passwordController,
@@ -92,9 +91,9 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                     });
                   },
                 ),
-          
+
                 const SizedBox(height: 12),
-          
+
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -108,9 +107,9 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                     ),
                   ),
                 ),
-          
+
                 const SizedBox(height: 20),
-          
+
                 // Botón + estado de autenticación
                 // --- Botón / Estado ---
                 authState.when(
@@ -151,43 +150,11 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                           ).extension<AppColors>()!;
                           // Show error message in a SnackBar
                           WidgetsBinding.instance.addPostFrameCallback((_) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: colors.deleteButton,
-                                content: Row(
-                                  children: [
-                                    Icon(Icons.error, color: colors.deleteIcon),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      'Error: $error',
-                                      style: TextStyle(
-                                        color: colors.deleteIcon,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.close,
-                                        color: colors.deleteIcon,
-                                      ),
-                                      onPressed: () {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).hideCurrentSnackBar();
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                behavior: SnackBarBehavior.floating,
-                                margin: EdgeInsets.only(
-                                  bottom: 20,
-                                  top: MediaQuery.of(context).size.height - 100,
-                                  right: 10,
-                                  left: Responsive.isMobile(context)
-                                      ? 10
-                                      : MediaQuery.of(context).size.width * 0.7,
-                                ),
-                              ),
+                            context.showErrorSnack(
+                              'Error: $error',
+                              showCloseButton: true,
+                              backgroundColor: colors.deleteButton,
+                              iconColor: colors.deleteIcon,
                             );
                           });
                           return SizedBox.shrink();
@@ -196,9 +163,9 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                     ],
                   ),
                 ),
-          
+
                 const SizedBox(height: 24),
-          
+
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -227,18 +194,16 @@ class _LoginFormState extends ConsumerState<LoginForm> {
 
   Future<void> _loginSubmit() async {
     if (!_formKey.currentState!.validate()) return;
-    
+
     try {
       final email = _emailController.text.trim();
       final password = _passwordController.text;
       await ref.read(authProvider.notifier).login(email, password);
-      
-      
-        // await _wrapperKey.currentState?.animateOut();
-        if (mounted) {
-          context.go('/dashboard');
-        }
-      
+
+      // await _wrapperKey.currentState?.animateOut();
+      if (mounted) {
+        context.go('/dashboard');
+      }
     } catch (_) {
       // El error se maneja en el authState.when()
     }

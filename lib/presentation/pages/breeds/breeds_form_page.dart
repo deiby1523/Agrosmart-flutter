@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/utils/validators.dart';
 import '../../providers/breed_provider.dart';
+import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart';
 
 class BreedFormDialog extends ConsumerStatefulWidget {
   final Breed? breed; // null para crear, breed para editar
@@ -66,7 +67,7 @@ class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
                 hintText: "Descripción de la raza (opcional)",
                 labelText: "Descripcion",
                 prefixIcon: Icons.description,
-                validator: (value) => Validators.required(value, 'Descripción'),
+                validator: (value) => Validators.breedDescription(value),
                 maxLines: 3,
                 textCapitalization: TextCapitalization.sentences,
               ),
@@ -118,22 +119,15 @@ class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
 
       if (mounted) {
         Navigator.of(context).pop();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(
-              widget.breed != null
-                  ? 'Raza actualizada correctamente'
-                  : 'Raza creada correctamente',
-            ),
-            backgroundColor: Colors.green,
-          ),
+        context.showSuccessSnack(
+          widget.breed != null
+              ? 'Raza actualizada correctamente'
+              : 'Raza creada correctamente',
         );
       }
     } catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: $error'), backgroundColor: Colors.red),
-        );
+        context.showErrorSnack('Error: $error', showCloseButton: true);
       }
     } finally {
       if (mounted) {

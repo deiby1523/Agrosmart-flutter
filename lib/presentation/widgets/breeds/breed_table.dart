@@ -3,19 +3,19 @@ import 'package:agrosmart_flutter/core/utils/responsive.dart';
 import 'package:agrosmart_flutter/domain/entities/breed.dart';
 import 'package:agrosmart_flutter/presentation/pages/breeds/breeds_form_page.dart';
 import 'package:agrosmart_flutter/presentation/providers/breed_provider.dart';
-import 'package:agrosmart_flutter/presentation/pages/breeds/widgets/breed_actions.dart';
+import 'package:agrosmart_flutter/presentation/widgets/custom_actions.dart';
+import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class BreedTable extends ConsumerWidget {
   final List<Breed> breeds;
+  
 
   const BreedTable({super.key, required this.breeds});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final colors = Theme.of(context).extension<AppColors>()!;
+  Widget build(BuildContext context, WidgetRef ref) {    
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -115,7 +115,7 @@ class BreedTable extends ConsumerWidget {
           ),
         // Acciones
         DataCell(
-          BreedActions(
+          CustomActions(
             onEdit: () => _editBreed(context, breed),
             onDelete: () => _confirmDelete(context, ref, breed),
           ),
@@ -184,53 +184,15 @@ class BreedTable extends ConsumerWidget {
           ),
           ElevatedButton(
             onPressed: () async {
-              Navigator.of(context).pop();
               try {
                 await ref.read(breedsProvider.notifier).deleteBreed(breed.id!);
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Row(
-                        children: [
-                          const Icon(
-                            Icons.check_circle_outline,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Text('Raza "${breed.name}" eliminada correctamente'),
-                        ],
-                      ),
-                      backgroundColor: Colors.green.shade600,
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  );
+                  context.showSuccessSnack('Raza "${breed.name}" eliminada correctamente');
+                  Navigator.of(context).pop();
                 }
               } catch (e) {
                 if (context.mounted) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Row(
-                        children: [
-                          const Icon(
-                            Icons.error_outline,
-                            color: Colors.white,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(child: Text('Error al eliminar: $e')),
-                        ],
-                      ),
-                      backgroundColor: Colors.red.shade600,
-                      behavior: SnackBarBehavior.floating,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8),
-                      ),
-                    ),
-                  );
+                  context.showErrorSnack('Error al eliminar: $e', showCloseButton: true);
                 }
               }
             },

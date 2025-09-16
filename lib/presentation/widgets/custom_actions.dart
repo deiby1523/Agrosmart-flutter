@@ -1,11 +1,11 @@
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 
-class BreedActions extends StatelessWidget {
+class CustomActions extends StatelessWidget {
   final VoidCallback onEdit;
   final VoidCallback onDelete;
 
-  const BreedActions({super.key, required this.onEdit, required this.onDelete});
+  const CustomActions({super.key, required this.onEdit, required this.onDelete});
 
   @override
   Widget build(BuildContext context) {

@@ -5,7 +5,8 @@ import 'package:agrosmart_flutter/presentation/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/utils/validators.dart';
+import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart';
+import '../../../../core/utils/validators.dart';
 
 /// Register form widget with authentication handling
 class RegisterForm extends ConsumerStatefulWidget {
@@ -38,45 +39,45 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
   // void initState() {
   //   super.initState();
 
-    // _animationController = AnimationController(
-    //   vsync: this,
-    //   duration: const Duration(milliseconds: 600),
-    // );
+  // _animationController = AnimationController(
+  //   vsync: this,
+  //   duration: const Duration(milliseconds: 600),
+  // );
 
-    // _scaleAnimation =
-    //     Tween<double>(
-    //       begin: 0.3, // empieza un poco más pequeño
-    //       end: 1.0, // termina en tamaño normal
-    //     ).animate(
-    //       CurvedAnimation(
-    //         parent: _animationController,
-    //         curve: Curves.easeOutBack,
-    //       ),
-    //     );
+  // _scaleAnimation =
+  //     Tween<double>(
+  //       begin: 0.3, // empieza un poco más pequeño
+  //       end: 1.0, // termina en tamaño normal
+  //     ).animate(
+  //       CurvedAnimation(
+  //         parent: _animationController,
+  //         curve: Curves.easeOutBack,
+  //       ),
+  //     );
 
-    // _slideAnimation =
-    //     Tween<Offset>(
-    //       begin: const Offset(5.0, 0.0), // empieza un poco abajo
-    //       end: Offset.zero,
-    //     ).animate(
-    //       CurvedAnimation(
-    //         parent: _animationController,
-    //         curve: Curves.decelerate,
-    //       ),
-    //     );
+  // _slideAnimation =
+  //     Tween<Offset>(
+  //       begin: const Offset(5.0, 0.0), // empieza un poco abajo
+  //       end: Offset.zero,
+  //     ).animate(
+  //       CurvedAnimation(
+  //         parent: _animationController,
+  //         curve: Curves.decelerate,
+  //       ),
+  //     );
 
-    // _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-    //   CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
-    // );
+  // _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
+  //   CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
+  // );
 
-    // if (!_hasAnimated) {
-    //   _animationController.forward();
-    //   _hasAnimated = true;
-    // } else {
-    //   _animationController.value = 1.0; // salta al final
-    // }
+  // if (!_hasAnimated) {
+  //   _animationController.forward();
+  //   _hasAnimated = true;
+  // } else {
+  //   _animationController.value = 1.0; // salta al final
+  // }
 
-    // _animationController.forward();
+  // _animationController.forward();
   // }
 
   @override
@@ -235,43 +236,11 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                           ).extension<AppColors>()!;
                           // Show error message in a SnackBar
                           WidgetsBinding.instance.addPostFrameCallback((_) {
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
-                                backgroundColor: colors.deleteButton,
-                                content: Row(
-                                  children: [
-                                    Icon(Icons.error, color: colors.deleteIcon),
-                                    const SizedBox(width: 10),
-                                    Text(
-                                      'Error: $error',
-                                      style: TextStyle(
-                                        color: colors.deleteIcon,
-                                      ),
-                                    ),
-                                    const Spacer(),
-                                    IconButton(
-                                      icon: Icon(
-                                        Icons.close,
-                                        color: colors.deleteIcon,
-                                      ),
-                                      onPressed: () {
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).hideCurrentSnackBar();
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                behavior: SnackBarBehavior.floating,
-                                margin: EdgeInsets.only(
-                                  bottom: 20,
-                                  top: MediaQuery.of(context).size.height - 100,
-                                  right: 10,
-                                  left: Responsive.isMobile(context)
-                                      ? 10
-                                      : MediaQuery.of(context).size.width * 0.7,
-                                ),
-                              ),
+                            context.showErrorSnack(
+                              'Error: $error',
+                              showCloseButton: true,
+                              backgroundColor: colors.deleteButton,
+                              iconColor: colors.deleteIcon,
                             );
                           });
                           return SizedBox.shrink();
@@ -307,7 +276,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
     );
   }
 
- Future<void> _registerSubmit() async {
+  Future<void> _registerSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
     try {
@@ -317,7 +286,9 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
       final email = _emailController.text.trim();
       final password = _passwordController.text;
 
-      await ref.read(authProvider.notifier).register(email,password,dni,name,lastName);
+      await ref
+          .read(authProvider.notifier)
+          .register(email, password, dni, name, lastName);
 
       if (mounted) {
         context.go('/dashboard');

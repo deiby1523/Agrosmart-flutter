@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/breed_provider.dart';
 import '../../widgets/dashboard_layout.dart';
-import 'widgets/breed_table.dart';
+import '../../widgets/breeds/breed_table.dart';
 
 class BreedsListPage extends ConsumerWidget {
   const BreedsListPage({super.key});

@@ -78,4 +78,22 @@ class Validators {
     }
     return null;
   }
+
+  static String? breedDescription(String? value) {
+    if (value == null || value.trim().isEmpty) {
+      return null;
+    } else {
+      final trimmed = value.trim();
+
+      if (trimmed.length < 3) {
+        return 'La descripción debe tener al menos 3 caracteres';
+      }
+
+      if (trimmed.length > 200) {
+        return 'La descripción no puede tener más de 200 caracteres';
+      }
+
+      return null;
+    }
+  }
 }

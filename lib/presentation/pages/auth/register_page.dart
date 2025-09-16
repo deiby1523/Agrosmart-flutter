@@ -1,4 +1,4 @@
-import 'package:agrosmart_flutter/presentation/widgets/register_form.dart';
+import 'package:agrosmart_flutter/presentation/widgets/auth/register_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
