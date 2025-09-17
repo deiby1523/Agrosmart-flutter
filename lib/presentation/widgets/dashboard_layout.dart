@@ -150,9 +150,7 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   Widget _buildSidebar(BuildContext context) {
     return Container(
       width: 250,
-      decoration: BoxDecoration(
-        color: Colors.transparent,
-      ),
+      decoration: BoxDecoration(color: Colors.transparent),
       child: _buildSidebarContent(context),
     );
   }
@@ -216,12 +214,21 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
               ),
 
               const SizedBox(height: 8),
-
+              _buildGroupHeader(context, 'Finca'),
+              _buildMenuItem(
+                context,
+                icon: Icons.grid_view_rounded,
+                title: 'Lotes',
+                route: '/lots',
+                isSelected: currentRoute == '/lots',
+                isGroupItem: true,
+              ),
+              
               // Grupo Animales
               _buildGroupHeader(context, 'Animales'),
               _buildMenuItem(
                 context,
-                icon: Icons.category,
+                icon: Icons.pets,
                 title: 'Razas',
                 route: '/breeds',
                 isSelected: currentRoute == '/breeds',
@@ -356,7 +363,7 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
               TextButton(
                 onPressed: () => Navigator.of(context).pop(),
                 style: TextButton.styleFrom(
-                  foregroundColor: colors.cancelTextButton
+                  foregroundColor: colors.cancelTextButton,
                 ),
                 child: const Text('Cancelar'),
               ),

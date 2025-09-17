@@ -1,22 +1,22 @@
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
-import 'package:agrosmart_flutter/domain/entities/breed.dart';
+import 'package:agrosmart_flutter/domain/entities/lot.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/utils/validators.dart';
-import '../../providers/breed_provider.dart';
+import '../../providers/lot_provider.dart';
 import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart';
 
-class BreedFormDialog extends ConsumerStatefulWidget {
-  final Breed? breed; // null para crear, breed para editar
+class LotFormDialog extends ConsumerStatefulWidget {
+  final Lot? lot; // null para crear, lot para editar
 
-  const BreedFormDialog({super.key, this.breed});
+  const LotFormDialog({super.key, this.lot});
 
   @override
-  ConsumerState<BreedFormDialog> createState() => _BreedFormDialogState();
+  ConsumerState<LotFormDialog> createState() => _LotFormDialogState();
 }
 
-class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
+class _LotFormDialogState extends ConsumerState<LotFormDialog> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -25,9 +25,9 @@ class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
   @override
   void initState() {
     super.initState();
-    if (widget.breed != null) {
-      _nameController.text = widget.breed!.name;
-      _descriptionController.text = widget.breed!.description ?? '';
+    if (widget.lot != null) {
+      _nameController.text = widget.lot!.name;
+      _descriptionController.text = widget.lot!.description ?? '';
     }
   }
 
@@ -42,10 +42,10 @@ class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>()!;
 
-    final isEditing = widget.breed != null;
+    final isEditing = widget.lot != null;
 
     return AlertDialog(
-      title: Text(isEditing ? 'Editar Raza' : 'Nueva Raza'),
+      title: Text(isEditing ? 'Editar Lote' : 'Nuevo Lote'),
       content: SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,
         child: Form(
@@ -55,16 +55,16 @@ class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
             children: [
               CustomTextField(
                 controller: _nameController,
-                hintText: "Nombre de la raza",
+                hintText: "Nombre del lote",
                 labelText: "Nombre",
-                prefixIcon: Icons.pets,
+                prefixIcon: Icons.grid_view_rounded,
                 validator: (value) => Validators.required(value, 'Nombre'),
                 textCapitalization: TextCapitalization.words,
               ),
               const SizedBox(height: 16),
               CustomTextField(
                 controller: _descriptionController,
-                hintText: "Descripción de la raza (opcional)",
+                hintText: "Descripción de del lote (opcional)",
                 labelText: "Descripcion",
                 prefixIcon: Icons.description,
                 validator: (value) => Validators.description(value),
@@ -105,24 +105,24 @@ class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
       final description = _descriptionController.text.trim();
       final finalDescription = description.isEmpty ? null : description;
 
-      if (widget.breed != null) {
+      if (widget.lot != null) {
         // Editar
         await ref
-            .read(breedsProvider.notifier)
-            .updateBreed(widget.breed!.id!, name, finalDescription);
+            .read(lotsProvider.notifier)
+            .updateLot(widget.lot!.id!, name, finalDescription);
       } else {
         // Crear
         await ref
-            .read(breedsProvider.notifier)
-            .createBreed(name, finalDescription);
+            .read(lotsProvider.notifier)
+            .createLot(name, finalDescription);
       }
 
       if (mounted) {
         Navigator.of(context).pop();
         context.showSuccessSnack(
-          widget.breed != null
-              ? 'Raza actualizada correctamente'
-              : 'Raza creada correctamente',
+          widget.lot != null
+              ? 'Lote actualizado correctamente'
+              : 'Lote creado correctamente',
         );
       }
     } catch (error) {

@@ -1,4 +1,5 @@
 // lib/presentation/router/app_router.dart
+import 'package:agrosmart_flutter/presentation/pages/lots/lots_index_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -51,14 +52,23 @@ final routerProvider = Provider<GoRouter>((ref) {
         ),
       ),
       GoRoute(
-  path: '/breeds',
-  pageBuilder: (context, state) => CustomTransitionPage(
-    key: state.pageKey,
-    child: const BreedsListPage(),
-    transitionsBuilder: (_, __, ___, child) => child, // sin animación
-    transitionDuration: Duration.zero,
-  ),
-),
+        path: '/breeds',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const BreedsListPage(),
+          transitionsBuilder: (_, __, ___, child) => child, // sin animación
+          transitionDuration: Duration.zero,
+        ),
+      ),
+      GoRoute(
+        path: '/lots',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const LotsListPage(),
+          transitionsBuilder: (_, __, ___, child) => child, // sin animación
+          transitionDuration: Duration.zero,
+        ),
+      ),
       // Redirigir la ruta raíz al dashboard
       GoRoute(path: '/', redirect: (context, state) => '/dashboard'),
     ],

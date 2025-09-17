@@ -79,7 +79,7 @@ class Validators {
     return null;
   }
 
-  static String? breedDescription(String? value) {
+  static String? description(String? value) {
     if (value == null || value.trim().isEmpty) {
       return null;
     } else {
