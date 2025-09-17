@@ -12,6 +12,9 @@ class ApiConstants {
   // Lot Endpoints
   static const String lots = '/lots';
 
+  // Paddock Endpoints
+  static const String paddocks = '/paddocks';
+
   // Otros endpoints...
   static const String animals = '/animals';
   static const String insumos = '/insumos';

@@ -1,5 +1,6 @@
 // lib/presentation/router/app_router.dart
 import 'package:agrosmart_flutter/presentation/pages/lots/lots_index_page.dart';
+import 'package:agrosmart_flutter/presentation/pages/paddocks/paddocks_index_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -65,6 +66,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const LotsListPage(),
+          transitionsBuilder: (_, __, ___, child) => child, // sin animación
+          transitionDuration: Duration.zero,
+        ),
+      ),
+      GoRoute(
+        path: '/paddocks',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const PaddocksListPage(),
           transitionsBuilder: (_, __, ___, child) => child, // sin animación
           transitionDuration: Duration.zero,
         ),

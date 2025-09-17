@@ -45,18 +45,21 @@ class AuthInterceptor extends Interceptor {
     if (err.response?.statusCode == 401 || err.response?.statusCode == 403) {
       final refreshed = await _refreshToken();
       if (refreshed) {
-        // Reintentar la request original
-        final opts = err.requestOptions;
         final prefs = await SharedPreferences.getInstance();
         final newToken = prefs.getString('auth_token');
+
+        // Reintentar la request original con un Dio limpio (sin interceptores)
+        final retryDio = Dio();
+        final opts = err.requestOptions;
+
         opts.headers['Authorization'] = 'Bearer $newToken';
-        
+
         try {
-          final response = await ApiClient().dio.fetch(opts);
+          final response = await retryDio.fetch(opts);
           handler.resolve(response);
           return;
         } catch (e) {
-          // Si falla el retry, continuar con el error original
+          print("Error reintentando petición después del refresh: $e");
         }
       } else {
         // Si no se puede refrescar, redirigir al login
@@ -86,8 +89,16 @@ class AuthInterceptor extends Interceptor {
 
       if (response.statusCode == 200) {
         final data = response.data;
-        await prefs.setString('auth_token', data['token']);
-        await prefs.setString('refresh_token', data['refreshToken']);
+
+        final newAccessToken = data['token'];
+        final newRefreshToken = data['refreshToken'];
+
+        if (newAccessToken == null || newRefreshToken == null) {
+          return false;
+        }
+
+        await prefs.setString('auth_token', newAccessToken);
+        await prefs.setString('refresh_token', newRefreshToken);
         return true;
       }
     } catch (e) {

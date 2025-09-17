@@ -223,6 +223,14 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
                 isSelected: currentRoute == '/lots',
                 isGroupItem: true,
               ),
+              _buildMenuItem(
+                context,
+                icon: Icons.fence,
+                title: 'Corrales',
+                route: '/paddocks',
+                isSelected: currentRoute == '/paddocks',
+                isGroupItem: true,
+              ),
               
               // Grupo Animales
               _buildGroupHeader(context, 'Animales'),
