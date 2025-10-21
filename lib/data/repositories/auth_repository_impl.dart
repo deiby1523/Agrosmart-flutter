@@ -1,131 +1,139 @@
-import 'package:shared_preferences/shared_preferences.dart';
-import '../../core/network/api_client.dart';
-import '../../core/constants/api_constants.dart';
+import 'package:agrosmart_flutter/data/models/farm_model.dart';
+import '../datasources/auth_remote_datasource.dart';
+import '../datasources/auth_local_datasource.dart';
 import '../models/auth_models.dart';
 import '../../domain/entities/user.dart';
+import '../../domain/entities/auth_session.dart';
 import '../../domain/repositories/auth_repository.dart';
+import '../../domain/entities/farm.dart';
+import '../mappers/auth_mapper.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
-  final ApiClient _apiClient = ApiClient();
-  static const String _tokenKey = 'auth_token';
-  static const String _refreshTokenKey = 'refresh_token';
-  static const String _emailKey = 'user_email';
+  final AuthRemoteDataSource remoteDataSource;
+  final AuthLocalDataSource localDataSource;
+
+  AuthRepositoryImpl({
+    required this.remoteDataSource,
+    required this.localDataSource,
+  });
 
   @override
-  Future<User> login(String email, String password) async {
+  Future<AuthSession> login(String email, String password) async {
     try {
       final request = LoginRequest(email: email, password: password);
-      
-      final response = await _apiClient.dio.post(
-        ApiConstants.authenticate,
-        data: request.toJson(),
+      final authResponse = await remoteDataSource.login(request);
+
+      // Guardar tokens en almacenamiento local (secure)
+      await localDataSource.saveTokens(
+        email,
+        authResponse.token,
+        authResponse.refreshToken,
       );
 
-      final authResponse = AuthResponse.fromJson(response.data);
-      
-      // Guardar tokens en storage local
-      await _saveUserData(email, authResponse.token, authResponse.refreshToken);
-      
-      return User(
-        email: email,
-        token: authResponse.token,
-        refreshToken: authResponse.refreshToken,
-      );
+      return authSessionFromResponse(authResponse, email: email);
     } catch (e) {
-      throw _handleAuthError(e);
+      throw Exception(_handleAuthError(e));
     }
   }
 
   @override
-  Future<User> register(String email, String password, String dni, String name, String lastname) async {
+  Future<AuthSession> register(
+    String email,
+    String password,
+    String dni,
+    String name,
+    String lastName,
+    Farm farm,
+  ) async {
     try {
-      final request = RegisterRequest(email: email, password: password, dni: dni, name: name, lastName: lastname);
-      
-      final response = await _apiClient.dio.post(
-        ApiConstants.register,
-        data: request.toJson(),
+      // Convert domain Farm to FarmModel to send to API
+      final farmModel = FarmModel.fromEntity(
+        farm,
       );
 
-      final authResponse = AuthResponse.fromJson(response.data);
-      
-      // Guardar tokens en storage local
-      await _saveUserData(email, authResponse.token, authResponse.refreshToken);
-      
-      return User(
+      final request = RegisterRequest(
         email: email,
-        token: authResponse.token,
-        refreshToken: authResponse.refreshToken,
+        password: password,
+        dni: dni,
+        name: name,
+        lastName: lastName,
+        farm: farmModel,
+      );
+
+      final authResponse = await remoteDataSource.register(request);
+
+      await localDataSource.saveTokens(
+        email,
+        authResponse.token,
+        authResponse.refreshToken,
+      );
+
+      return authSessionFromResponse(
+        authResponse,
+        email: email,
+        dni: dni,
+        name: name,
+        lastName: lastName,
+        farm: farmModel.toEntity(),
       );
     } catch (e) {
-      throw _handleAuthError(e);
+      throw Exception(_handleAuthError(e));
     }
   }
 
   @override
-  Future<User> refreshToken(String refreshToken) async {
+  Future<AuthSession> refreshToken(String refreshToken) async {
     try {
-      final request = RefreshTokenRequest(refreshToken: refreshToken);
-      
-      final response = await _apiClient.dio.post(
-        ApiConstants.refresh,
-        data: request.toJson(),
-      );
+      final authResponse = await remoteDataSource.refresh(refreshToken);
 
-      final authResponse = AuthResponse.fromJson(response.data);
-      
       // Obtener email guardado
-      final prefs = await SharedPreferences.getInstance();
-      final email = prefs.getString(_emailKey) ?? '';
-      
-      // Actualizar tokens en storage local
-      await _saveUserData(email, authResponse.token, authResponse.refreshToken);
-      
-      return User(
-        email: email,
-        token: authResponse.token,
-        refreshToken: authResponse.refreshToken,
+      final stored = await localDataSource.getTokensAndEmail();
+      final email = stored['email'] ?? '';
+
+      await localDataSource.saveTokens(
+        email,
+        authResponse.token,
+        authResponse.refreshToken,
       );
+
+      return authSessionFromResponse(authResponse, email: email);
     } catch (e) {
-      throw _handleAuthError(e);
+      throw Exception(_handleAuthError(e));
     }
   }
 
   @override
   Future<void> logout() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(_tokenKey);
-    await prefs.remove(_refreshTokenKey);
-    await prefs.remove(_emailKey);
+    await localDataSource.clear();
   }
 
   @override
-  Future<User?> getCurrentUser() async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString(_tokenKey);
-    final refreshToken = prefs.getString(_refreshTokenKey);
-    final email = prefs.getString(_emailKey);
+  Future<AuthSession?> getCurrentSession() async {
+    final stored = await localDataSource.getTokensAndEmail();
+    final token = stored['token'];
+    final refreshToken = stored['refreshToken'];
+    final email = stored['email'];
 
     if (token != null && refreshToken != null && email != null) {
-      return User(
+      final user = User(
         email: email,
+        dni: '',
+        name: '',
+        lastName: '',
+        farm: const Farm(id: 0, name: '', description: '', location: ''),
         token: token,
         refreshToken: refreshToken,
       );
+
+      return AuthSession(token: token, refreshToken: refreshToken, user: user);
     }
     return null;
   }
 
   @override
   Future<bool> isUserLoggedIn() async {
-    final user = await getCurrentUser();
-    return user != null;
-  }
-
-  Future<void> _saveUserData(String email, String token, String refreshToken) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_emailKey, email);
-    await prefs.setString(_tokenKey, token);
-    await prefs.setString(_refreshTokenKey, refreshToken);
+    final session = await getCurrentSession();
+    return session != null;
   }
 
   String _handleAuthError(dynamic error) {

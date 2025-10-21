@@ -4,6 +4,7 @@ import 'core/network/api_client.dart';
 import 'core/themes/app_theme.dart';
 import 'presentation/providers/theme_provider.dart';
 import 'presentation/router/app_router.dart';
+import 'core/navigation/navigation_service.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();

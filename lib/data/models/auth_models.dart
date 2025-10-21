@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'farm_model.dart';
 
 part 'auth_models.g.dart';
 
@@ -16,7 +17,6 @@ class LoginRequest {
   Map<String, dynamic> toJson() => _$LoginRequestToJson(this);
 }
 
-// Modelo para Register Request
 @JsonSerializable()
 class RegisterRequest {
   final String email;
@@ -24,6 +24,7 @@ class RegisterRequest {
   final String dni;
   final String name;
   final String lastName;
+  final FarmModel farm;
 
   const RegisterRequest({
     required this.email,
@@ -31,25 +32,13 @@ class RegisterRequest {
     required this.dni,
     required this.name,
     required this.lastName,
+    required this.farm,
   });
 
   factory RegisterRequest.fromJson(Map<String, dynamic> json) =>
       _$RegisterRequestFromJson(json);
 
   Map<String, dynamic> toJson() => _$RegisterRequestToJson(this);
-}
-
-// Modelo para Refresh Token Request
-@JsonSerializable()
-class RefreshTokenRequest {
-  final String refreshToken;
-
-  const RefreshTokenRequest({required this.refreshToken});
-
-  factory RefreshTokenRequest.fromJson(Map<String, dynamic> json) =>
-      _$RefreshTokenRequestFromJson(json);
-
-  Map<String, dynamic> toJson() => _$RefreshTokenRequestToJson(this);
 }
 
 // Modelo para Auth Response

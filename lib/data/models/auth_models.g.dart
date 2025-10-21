@@ -21,6 +21,7 @@ RegisterRequest _$RegisterRequestFromJson(Map<String, dynamic> json) =>
       dni: json['dni'] as String,
       name: json['name'] as String,
       lastName: json['lastName'] as String,
+      farm: FarmModel.fromJson(json['farm'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$RegisterRequestToJson(RegisterRequest instance) =>
@@ -30,14 +31,8 @@ Map<String, dynamic> _$RegisterRequestToJson(RegisterRequest instance) =>
       'dni': instance.dni,
       'name': instance.name,
       'lastName': instance.lastName,
+      'farm': instance.farm,
     };
-
-RefreshTokenRequest _$RefreshTokenRequestFromJson(Map<String, dynamic> json) =>
-    RefreshTokenRequest(refreshToken: json['refreshToken'] as String);
-
-Map<String, dynamic> _$RefreshTokenRequestToJson(
-  RefreshTokenRequest instance,
-) => <String, dynamic>{'refreshToken': instance.refreshToken};
 
 AuthResponse _$AuthResponseFromJson(Map<String, dynamic> json) => AuthResponse(
   token: json['token'] as String,

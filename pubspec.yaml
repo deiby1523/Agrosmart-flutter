@@ -38,6 +38,7 @@ dependencies:
   # utility packages
   flutter_svg: ^2.1.0
   shared_preferences: ^2.2.2
+  flutter_secure_storage: ^9.0.0
 
   # icons
   cupertino_icons: ^1.0.8

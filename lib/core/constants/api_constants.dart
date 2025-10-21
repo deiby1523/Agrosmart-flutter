@@ -1,8 +1,9 @@
 class ApiConstants {
-  static const String baseUrl = 'https://agrosmartrest.onrender.com/api';
+  // static const String baseUrl = 'https://agrosmartrest.onrender.com/api';
+  static const String baseUrl = 'http://localhost:8080/api';
 
   // Auth Endpoints
-  static const String authenticate = '/auth/autenticate';
+  static const String authenticate = '/auth/authenticate';
   static const String register = '/auth/register';
   static const String refresh = '/auth/refresh';
 
@@ -15,7 +16,7 @@ class ApiConstants {
   // Paddock Endpoints
   static const String paddocks = '/paddocks';
 
-  // Otros endpoints...
+  // Other endpoints...
   static const String animals = '/animals';
   static const String insumos = '/insumos';
   static const String dashboard = '/dashboard';

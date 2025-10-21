@@ -9,15 +9,17 @@ import '../pages/auth/register_page.dart';
 import '../pages/dashboard/dashboard_page.dart';
 import '../pages/breeds/breeds_index_page.dart';
 import '../providers/auth_provider.dart';
+import '../../core/navigation/navigation_service.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
 
   return GoRouter(
+    navigatorKey: NavigationService.navigatorKey,
     initialLocation: '/dashboard',
     redirect: (context, state) {
       final isAuthenticated = authState.maybeWhen(
-        data: (user) => user != null,
+        data: (session) => session != null,
         orElse: () => false,
       );
 
@@ -32,7 +34,7 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // Si está autenticado y está en una ruta de auth (login/register), ir a dashboard
       if (isAuthenticated && isAuthRoute) {
-        return '/login';
+        return '/dashboard';
       }
 
       return null;

@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../constants/api_constants.dart';
+import '../navigation/navigation_service.dart';
 
 class ApiClient {
   static final ApiClient _instance = ApiClient._internal();
@@ -12,30 +14,35 @@ class ApiClient {
   Dio get dio => _dio;
 
   void initialize() {
-    _dio = Dio(BaseOptions(
-      baseUrl: ApiConstants.baseUrl,
-      connectTimeout: const Duration(milliseconds: 30000),
-      receiveTimeout: const Duration(milliseconds: 30000),
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    ));
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: ApiConstants.baseUrl,
+        connectTimeout: const Duration(milliseconds: 30000),
+        receiveTimeout: const Duration(milliseconds: 30000),
+        headers: {'Content-Type': 'application/json'},
+      ),
+    );
 
     _dio.interceptors.add(AuthInterceptor());
-    _dio.interceptors.add(LogInterceptor(responseBody: true, requestBody: true));
+    _dio.interceptors.add(
+      LogInterceptor(responseBody: true, requestBody: true),
+    );
   }
 }
 
 class AuthInterceptor extends Interceptor {
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('auth_token');
-    
+  void onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    final secure = const FlutterSecureStorage();
+    final token = await secure.read(key: 'auth_token');
+
     if (token != null) {
       options.headers['Authorization'] = 'Bearer $token';
     }
-    
+
     handler.next(options);
   }
 
@@ -45,8 +52,9 @@ class AuthInterceptor extends Interceptor {
     if (err.response?.statusCode == 401 || err.response?.statusCode == 403) {
       final refreshed = await _refreshToken();
       if (refreshed) {
-        final prefs = await SharedPreferences.getInstance();
-        final newToken = prefs.getString('auth_token');
+        final newToken = await const FlutterSecureStorage().read(
+          key: 'auth_token',
+        );
 
         // Reintentar la request original con un Dio limpio (sin interceptores)
         final retryDio = Dio();
@@ -71,16 +79,19 @@ class AuthInterceptor extends Interceptor {
 
   Future<bool> _refreshToken() async {
     try {
+      final secure = const FlutterSecureStorage();
       final prefs = await SharedPreferences.getInstance();
-      final refreshToken = prefs.getString('refresh_token');
-      
+      final refreshToken = await secure.read(key: 'refresh_token');
+
       if (refreshToken == null) return false;
 
       // Crear un Dio separado para evitar interceptores
-      final refreshDio = Dio(BaseOptions(
-        baseUrl: ApiConstants.baseUrl,
-        headers: {'Content-Type': 'application/json'},
-      ));
+      final refreshDio = Dio(
+        BaseOptions(
+          baseUrl: ApiConstants.baseUrl,
+          headers: {'Content-Type': 'application/json'},
+        ),
+      );
 
       final response = await refreshDio.post(
         ApiConstants.refresh,
@@ -97,8 +108,13 @@ class AuthInterceptor extends Interceptor {
           return false;
         }
 
-        await prefs.setString('auth_token', newAccessToken);
-        await prefs.setString('refresh_token', newRefreshToken);
+        await secure.write(key: 'auth_token', value: newAccessToken);
+        await secure.write(key: 'refresh_token', value: newRefreshToken);
+        // mantener email en prefs
+        final email = prefs.getString('user_email');
+        if (email != null) {
+          await prefs.setString('user_email', email);
+        }
         return true;
       }
     } catch (e) {
@@ -110,11 +126,12 @@ class AuthInterceptor extends Interceptor {
 
   Future<void> _handleAuthFailure() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove('auth_token');
-    await prefs.remove('refresh_token');
+    final secure = const FlutterSecureStorage();
+    await secure.delete(key: 'auth_token');
+    await secure.delete(key: 'refresh_token');
     await prefs.remove('user_email');
-    
-    // Aquí puedes redirigir al login o mostrar un mensaje
-    // NavigationService.navigateToLogin();
+
+    // Redirigir al login o mostrar un mensaje
+    NavigationService.navigateToLogin();
   }
 }

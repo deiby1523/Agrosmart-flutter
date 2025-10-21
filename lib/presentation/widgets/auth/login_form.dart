@@ -1,5 +1,4 @@
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
-import 'package:agrosmart_flutter/core/utils/responsive.dart';
 import 'package:agrosmart_flutter/presentation/providers/auth_provider.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';

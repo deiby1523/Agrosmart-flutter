@@ -1,10 +1,18 @@
-import '../entities/user.dart';
+import '../entities/auth_session.dart';
+import '../entities/farm.dart';
 
 abstract class AuthRepository {
-  Future<User> login(String email, String password);
-  Future<User> register(String email, String password, String dni, String name, String lastname);
-  Future<User> refreshToken(String refreshToken);
+  Future<AuthSession> login(String email, String password);
+  Future<AuthSession> register(
+    String email,
+    String password,
+    String dni,
+    String name,
+    String lastname,
+    Farm farm,
+  );
+  Future<AuthSession> refreshToken(String refreshToken);
   Future<void> logout();
-  Future<User?> getCurrentUser();
+  Future<AuthSession?> getCurrentSession();
   Future<bool> isUserLoggedIn();
 }

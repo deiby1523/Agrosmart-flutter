@@ -43,7 +43,8 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   }
 
   PreferredSizeWidget _buildAppBar(BuildContext context, bool isLargeScreen) {
-    final user = ref.watch(authProvider).value;
+    final session = ref.watch(authProvider).value;
+    final user = session?.user;
     final themeMode = ref.watch(themeNotifierProvider);
     // Detectar si está en modo oscuro
     bool isDark =
@@ -119,6 +120,15 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
                 const SizedBox(width: 8),
                 Text(
                   user.email.split('@')[0],
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium, // Solo la parte antes del @
+                ),
+
+                Icon(Icons.account_circle),
+                const SizedBox(width: 8),
+                Text(
+                  user.farm.id.toString(),
                   style: Theme.of(
                     context,
                   ).textTheme.bodyMedium, // Solo la parte antes del @
@@ -231,7 +241,7 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
                 isSelected: currentRoute == '/paddocks',
                 isGroupItem: true,
               ),
-              
+
               // Grupo Animales
               _buildGroupHeader(context, 'Animales'),
               _buildMenuItem(

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart';
 import '../../../../core/utils/validators.dart';
+import 'package:agrosmart_flutter/domain/entities/farm.dart';
 
 /// Register form widget with authentication handling
 class RegisterForm extends ConsumerStatefulWidget {
@@ -26,59 +27,12 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
+  // Campos de la finca
+  final _farmNameController = TextEditingController();
+  final _farmDescriptionController = TextEditingController();
+  final _farmLocationController = TextEditingController();
+
   bool _obscurePassword = true;
-
-  // late AnimationController _animationController;
-  // late Animation<double> _scaleAnimation;
-  // late Animation<double> _fadeAnimation;
-  // late Animation<Offset> _slideAnimation;
-
-  // bool _hasAnimated = false;
-
-  // @override
-  // void initState() {
-  //   super.initState();
-
-  // _animationController = AnimationController(
-  //   vsync: this,
-  //   duration: const Duration(milliseconds: 600),
-  // );
-
-  // _scaleAnimation =
-  //     Tween<double>(
-  //       begin: 0.3, // empieza un poco más pequeño
-  //       end: 1.0, // termina en tamaño normal
-  //     ).animate(
-  //       CurvedAnimation(
-  //         parent: _animationController,
-  //         curve: Curves.easeOutBack,
-  //       ),
-  //     );
-
-  // _slideAnimation =
-  //     Tween<Offset>(
-  //       begin: const Offset(5.0, 0.0), // empieza un poco abajo
-  //       end: Offset.zero,
-  //     ).animate(
-  //       CurvedAnimation(
-  //         parent: _animationController,
-  //         curve: Curves.decelerate,
-  //       ),
-  //     );
-
-  // _fadeAnimation = Tween<double>(begin: 0, end: 1).animate(
-  //   CurvedAnimation(parent: _animationController, curve: Curves.easeIn),
-  // );
-
-  // if (!_hasAnimated) {
-  //   _animationController.forward();
-  //   _hasAnimated = true;
-  // } else {
-  //   _animationController.value = 1.0; // salta al final
-  // }
-
-  // _animationController.forward();
-  // }
 
   @override
   void dispose() {
@@ -89,6 +43,9 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
     _emailController.dispose();
     _passwordController.dispose();
     _confirmPasswordController.dispose();
+    _farmNameController.dispose();
+    _farmDescriptionController.dispose();
+    _farmLocationController.dispose();
     super.dispose();
   }
 
@@ -195,6 +152,34 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                     });
                   },
                 ),
+                const SizedBox(height: 16),
+
+                // Campos de la finca
+                CustomTextField(
+                  controller: _farmNameController,
+                  hintText: 'Nombre de la finca',
+                  labelText: 'Finca - Nombre',
+                  prefixIcon: Icons.landscape,
+                  validator: (value) => Validators.required(value, 'Nombre de la finca'),
+                ),
+                const SizedBox(height: 12),
+
+                CustomTextField(
+                  controller: _farmDescriptionController,
+                  hintText: 'Descripción de la finca',
+                  labelText: 'Finca - Descripción',
+                  prefixIcon: Icons.description,
+                  validator: (value) => null,
+                ),
+                const SizedBox(height: 12),
+
+                CustomTextField(
+                  controller: _farmLocationController,
+                  hintText: 'Ubicación de la finca',
+                  labelText: 'Finca - Ubicación',
+                  prefixIcon: Icons.location_on,
+                  validator: (value) => null,
+                ),
                 const SizedBox(height: 20),
 
                 // --- Botón / Estado ---
@@ -286,9 +271,18 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
       final email = _emailController.text.trim();
       final password = _passwordController.text;
 
+      // Construir entidad Farm desde los campos del formulario
+      final farm = Farm(
+        id: 0,
+        name: _farmNameController.text.trim(),
+        description: _farmDescriptionController.text.trim(),
+        location: _farmLocationController.text.trim(),
+        ownerId: null,
+      );
+
       await ref
           .read(authProvider.notifier)
-          .register(email, password, dni, name, lastName);
+          .register(email, password, dni, name, lastName, farm);
 
       if (mounted) {
         context.go('/dashboard');
