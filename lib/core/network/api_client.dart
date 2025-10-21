@@ -1,8 +1,10 @@
+import 'package:agrosmart_flutter/main.dart';
+import 'package:agrosmart_flutter/presentation/providers/auth_provider.dart';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import '../constants/api_constants.dart';
-import '../navigation/navigation_service.dart';
+import '../services/jwt_service.dart';
 
 class ApiClient {
   static final ApiClient _instance = ApiClient._internal();
@@ -24,9 +26,41 @@ class ApiClient {
     );
 
     _dio.interceptors.add(AuthInterceptor());
+    _dio.interceptors.add(FarmIdInterceptor());
     _dio.interceptors.add(
       LogInterceptor(responseBody: true, requestBody: true),
     );
+  }
+}
+
+class FarmIdInterceptor extends Interceptor {
+  static const String _activeFarmKey = 'active_farm';
+
+  @override
+  void onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    if (options.path.contains('{farmId}')) {
+      final prefs = await SharedPreferences.getInstance();
+      final farmId = prefs.getInt(_activeFarmKey);
+
+      if (farmId != null) {
+        // Reemplazar {farmId} en cualquier parte de la URL
+        options.path = options.path.replaceAll('{farmId}', farmId.toString());
+        handler.next(options);
+      } else {
+        handler.reject(
+          DioException(
+            requestOptions: options,
+            error: 'No hay una granja activa seleccionada',
+            type: DioExceptionType.unknown,
+          ),
+        );
+      }
+    } else {
+      handler.next(options);
+    }
   }
 }
 
@@ -110,6 +144,10 @@ class AuthInterceptor extends Interceptor {
 
         await secure.write(key: 'auth_token', value: newAccessToken);
         await secure.write(key: 'refresh_token', value: newRefreshToken);
+
+        // Procesar el nuevo token para extraer la información de la granja
+        await JwtService.processJwtToken(newAccessToken);
+
         // mantener email en prefs
         final email = prefs.getString('user_email');
         if (email != null) {
@@ -125,13 +163,14 @@ class AuthInterceptor extends Interceptor {
   }
 
   Future<void> _handleAuthFailure() async {
-    final prefs = await SharedPreferences.getInstance();
-    final secure = const FlutterSecureStorage();
-    await secure.delete(key: 'auth_token');
-    await secure.delete(key: 'refresh_token');
-    await prefs.remove('user_email');
+  final prefs = await SharedPreferences.getInstance();
+  final secure = const FlutterSecureStorage();
+  await secure.delete(key: 'auth_token');
+  await secure.delete(key: 'refresh_token');
+  await prefs.remove('user_email');
+  await JwtService.clearFarmData();
 
-    // Redirigir al login o mostrar un mensaje
-    NavigationService.navigateToLogin();
-  }
+  // Notificar al provider global
+  globalProviderContainer.read(authProvider.notifier).logout();
+}
 }

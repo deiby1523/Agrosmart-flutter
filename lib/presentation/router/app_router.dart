@@ -9,13 +9,11 @@ import '../pages/auth/register_page.dart';
 import '../pages/dashboard/dashboard_page.dart';
 import '../pages/breeds/breeds_index_page.dart';
 import '../providers/auth_provider.dart';
-import '../../core/navigation/navigation_service.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authProvider);
 
   return GoRouter(
-    navigatorKey: NavigationService.navigatorKey,
     initialLocation: '/dashboard',
     redirect: (context, state) {
       final isAuthenticated = authState.maybeWhen(
@@ -40,10 +38,20 @@ final routerProvider = Provider<GoRouter>((ref) {
       return null;
     },
     routes: [
-      GoRoute(path: '/login', builder: (context, state) => const LoginPage()),
+      GoRoute(
+        path: '/login',
+        builder: (BuildContext context, GoRouterState state) {
+            return const LoginPage();
+          },
+      ),
       GoRoute(
         path: '/register',
-        builder: (context, state) => const RegisterPage(),
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const RegisterPage(),
+          transitionsBuilder: (_, __, ___, child) => child,
+          transitionDuration: Duration.zero,
+        ),
       ),
       GoRoute(
         path: '/dashboard',

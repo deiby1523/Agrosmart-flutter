@@ -124,15 +124,6 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
                     context,
                   ).textTheme.bodyMedium, // Solo la parte antes del @
                 ),
-
-                Icon(Icons.account_circle),
-                const SizedBox(width: 8),
-                Text(
-                  user.farm.id.toString(),
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyMedium, // Solo la parte antes del @
-                ),
               ],
             ),
           ),
@@ -218,7 +209,7 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
               _buildMenuItem(
                 context,
                 icon: Icons.home,
-                title: 'Home',
+                title: 'Inicio',
                 route: '/dashboard',
                 isSelected: currentRoute == '/dashboard',
               ),

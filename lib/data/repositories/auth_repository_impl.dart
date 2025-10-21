@@ -1,20 +1,25 @@
+import 'dart:developer';
+
 import 'package:agrosmart_flutter/data/models/farm_model.dart';
+import 'package:agrosmart_flutter/domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_datasource.dart';
 import '../datasources/auth_local_datasource.dart';
 import '../models/auth_models.dart';
+import '../services/jwt_service.dart';
 import '../../domain/entities/user.dart';
 import '../../domain/entities/auth_session.dart';
-import '../../domain/repositories/auth_repository.dart';
 import '../../domain/entities/farm.dart';
 import '../mappers/auth_mapper.dart';
 
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
   final AuthLocalDataSource localDataSource;
+  final JwtService jwtService;
 
   AuthRepositoryImpl({
     required this.remoteDataSource,
     required this.localDataSource,
+    required this.jwtService,
   });
 
   @override
@@ -23,7 +28,15 @@ class AuthRepositoryImpl implements AuthRepository {
       final request = LoginRequest(email: email, password: password);
       final authResponse = await remoteDataSource.login(request);
 
-      // Guardar tokens en almacenamiento local (secure)
+      // Decodificar el token para obtener la información de la granja
+      final claims = jwtService.decodeToken(authResponse.token);
+      if (claims != null && claims.farms.isNotEmpty) {
+        // Guardamos la primera granja como activa
+        await jwtService.saveActiveFarm(claims.farms.first);
+        log("El id de la granja recuperado es ${claims.farms.first.id}");
+      }
+
+      // Guardar tokens en almacenamiento local
       await localDataSource.saveTokens(
         email,
         authResponse.token,
@@ -46,11 +59,7 @@ class AuthRepositoryImpl implements AuthRepository {
     Farm farm,
   ) async {
     try {
-      // Convert domain Farm to FarmModel to send to API
-      final farmModel = FarmModel.fromEntity(
-        farm,
-      );
-
+      final farmModel = FarmModel.fromEntity(farm);
       final request = RegisterRequest(
         email: email,
         password: password,
@@ -62,20 +71,21 @@ class AuthRepositoryImpl implements AuthRepository {
 
       final authResponse = await remoteDataSource.register(request);
 
+      // Decodificar el token para obtener la información de la granja
+      final claims = jwtService.decodeToken(authResponse.token);
+      if (claims != null && claims.farms.isNotEmpty) {
+        // Guardamos la primera granja como activa
+        await jwtService.saveActiveFarm(claims.farms.first);
+      }
+
+      // Guardar tokens en almacenamiento local
       await localDataSource.saveTokens(
         email,
         authResponse.token,
         authResponse.refreshToken,
       );
 
-      return authSessionFromResponse(
-        authResponse,
-        email: email,
-        dni: dni,
-        name: name,
-        lastName: lastName,
-        farm: farmModel.toEntity(),
-      );
+      return authSessionFromResponse(authResponse, email: email);
     } catch (e) {
       throw Exception(_handleAuthError(e));
     }
@@ -85,10 +95,15 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<AuthSession> refreshToken(String refreshToken) async {
     try {
       final authResponse = await remoteDataSource.refresh(refreshToken);
-
-      // Obtener email guardado
       final stored = await localDataSource.getTokensAndEmail();
       final email = stored['email'] ?? '';
+
+      // Actualizar información de la granja al refrescar el token
+      final claims = jwtService.decodeToken(authResponse.token);
+      if (claims != null && claims.farms.isNotEmpty) {
+        await jwtService.saveActiveFarm(claims.farms.first);
+        log("El id de la granja recuperado es ${claims.farms.first.id}");
+      }
 
       await localDataSource.saveTokens(
         email,
@@ -105,6 +120,7 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> logout() async {
     await localDataSource.clear();
+    await jwtService.clearFarmData();
   }
 
   @override
@@ -115,12 +131,21 @@ class AuthRepositoryImpl implements AuthRepository {
     final email = stored['email'];
 
     if (token != null && refreshToken != null && email != null) {
+      // Obtener información de la granja activa
+      final activeFarm = await jwtService.getActiveFarm();
+
       final user = User(
         email: email,
-        dni: '',
+        dni:
+            '', // Estos campos podrían venir del token JWT si están disponibles
         name: '',
         lastName: '',
-        farm: const Farm(id: 0, name: '', description: '', location: ''),
+        farm: Farm(
+          id: activeFarm?.id ?? 0,
+          name: activeFarm?.name ?? '',
+          description: '',
+          location: '',
+        ),
         token: token,
         refreshToken: refreshToken,
       );
