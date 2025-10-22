@@ -1,3 +1,24 @@
+// =============================================================================
+// BREEDS TABLE WIDGET - Tabla de razas
+// =============================================================================
+// Componente que muestra un listado de razas (`Breed`) en formato de tabla.
+// Adaptable a distintos dispositivos mediante la verificación de `Responsive`.
+//
+// Capa: presentation/widgets/breeds
+//
+// Integra:
+// - Riverpod (`breedsProvider`) para acciones de edición y eliminación.
+// - Componentes personalizados: `CustomActions` para las acciones de cada fila.
+// - Funcionalidad de diálogo modal (`BreedFormDialog`) para editar razas.
+// - Feedback visual mediante snackbars extendidos (`showSuccessSnack`, `showErrorSnack`).
+//
+// Flujo general:
+// 1. Recibe la lista de razas como parámetro.
+// 2. Genera un `DataTable` con columnas: nombre, descripción (desktop/tablet), acciones.
+// 3. Cada fila incluye acciones de editar y eliminar.
+// 4. Al eliminar, se confirma la acción con un `AlertDialog` y se notifica al usuario.
+// =============================================================================
+
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:agrosmart_flutter/core/utils/responsive.dart';
 import 'package:agrosmart_flutter/domain/entities/breed.dart';
@@ -8,14 +29,24 @@ import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// ---------------------------------------------------------------------------
+/// # BreedTable
+///
+/// Widget que muestra una tabla con la lista de razas (`Breed`).
+/// Incluye columnas de:
+/// - Nombre
+/// - Descripción (solo en tablet/escritorio)
+/// - Acciones (editar, eliminar)
+///
+/// La tabla es adaptativa y escalable gracias a `Expanded` y `Responsive`.
+/// ---------------------------------------------------------------------------
 class BreedTable extends ConsumerWidget {
   final List<Breed> breeds;
-  
 
   const BreedTable({super.key, required this.breeds});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {    
+  Widget build(BuildContext context, WidgetRef ref) {
     return Expanded(
       child: Container(
         decoration: BoxDecoration(
@@ -41,6 +72,7 @@ class BreedTable extends ConsumerWidget {
               Theme.of(context).cardTheme.color,
             ),
             columns: [
+              // Columna: Nombre de la raza
               DataColumn(
                 label: Text(
                   'NOMBRE',
@@ -51,6 +83,7 @@ class BreedTable extends ConsumerWidget {
                   ),
                 ),
               ),
+              // Columna: Descripción (solo en tablet/escritorio)
               if (!Responsive.isMobile(context))
                 DataColumn(
                   label: Text(
@@ -62,6 +95,7 @@ class BreedTable extends ConsumerWidget {
                     ),
                   ),
                 ),
+              // Columna: Acciones
               DataColumn(
                 label: Text(
                   'ACCIONES',
@@ -82,6 +116,14 @@ class BreedTable extends ConsumerWidget {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // _buildDataRow
+  // ---------------------------------------------------------------------------
+  /// Construye cada fila de la tabla (`DataRow`) para una raza.
+  /// Incluye:
+  /// - Nombre de la raza
+  /// - Descripción (solo desktop/tablet)
+  /// - Acciones: editar y eliminar mediante `CustomActions`
   DataRow _buildDataRow(BuildContext context, WidgetRef ref, Breed breed) {
     final colors = Theme.of(context).extension<AppColors>()!;
     return DataRow(
@@ -93,7 +135,7 @@ class BreedTable extends ConsumerWidget {
             style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
           ),
         ),
-        // Descripción
+        // Descripción (si aplica)
         if (!Responsive.isMobile(context))
           DataCell(
             SizedBox(
@@ -124,6 +166,10 @@ class BreedTable extends ConsumerWidget {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // _editBreed
+  // ---------------------------------------------------------------------------
+  /// Abre el diálogo modal `BreedFormDialog` para editar la raza seleccionada.
   void _editBreed(BuildContext context, Breed breed) {
     showDialog(
       context: context,
@@ -131,6 +177,12 @@ class BreedTable extends ConsumerWidget {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // _confirmDelete
+  // ---------------------------------------------------------------------------
+  /// Muestra un `AlertDialog` para confirmar la eliminación de la raza.
+  /// - Si el usuario confirma, se elimina mediante `breedsProvider`.
+  /// - Se muestran snackbars de éxito o error según corresponda.
   void _confirmDelete(BuildContext context, WidgetRef ref, Breed breed) {
     showDialog(
       context: context,

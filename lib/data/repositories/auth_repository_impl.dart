@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:agrosmart_flutter/data/models/farm_model.dart';
 import 'package:agrosmart_flutter/domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_datasource.dart';
@@ -11,32 +10,53 @@ import '../../domain/entities/auth_session.dart';
 import '../../domain/entities/farm.dart';
 import '../mappers/auth_mapper.dart';
 
+/// =============================================================================
+/// # AUTH REPOSITORY IMPLEMENTATION
+/// Implementación del repositorio de autenticación según los principios
+/// de *Clean Architecture*.
+/// 
+/// Coordina las fuentes de datos (`AuthRemoteDataSource`, `AuthLocalDataSource`)
+/// y servicios (`JwtService`) para manejar:
+/// 
+/// - **Login:** Autenticación y persistencia local de tokens.
+/// - **Register:** Registro de nuevos usuarios con su primera granja.
+/// - **Refresh:** Renovación automática de tokens.
+/// - **Logout:** Limpieza completa de la sesión.
+/// - **Session Management:** Recuperación de la sesión actual.
+/// =============================================================================
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource remoteDataSource;
   final AuthLocalDataSource localDataSource;
   final JwtService jwtService;
 
+  /// Constructor principal que inyecta las dependencias requeridas.
   AuthRepositoryImpl({
     required this.remoteDataSource,
     required this.localDataSource,
     required this.jwtService,
   });
 
+  /// ---------------------------------------------------------------------------
+  /// ## Login: Autenticación de Usuario
+  /// 
+  /// 1. Envía las credenciales del usuario al servidor.
+  /// 2. Decodifica el JWT para obtener las granjas asociadas.
+  /// 3. Guarda la primera granja como activa por defecto.
+  /// 4. Persiste los tokens y el email localmente.
+  /// 5. Retorna la sesión activa (`AuthSession`).
+  /// ---------------------------------------------------------------------------
   @override
   Future<AuthSession> login(String email, String password) async {
     try {
       final request = LoginRequest(email: email, password: password);
       final authResponse = await remoteDataSource.login(request);
 
-      // Decodificar el token para obtener la información de la granja
       final claims = jwtService.decodeToken(authResponse.token);
       if (claims != null && claims.farms.isNotEmpty) {
-        // Guardamos la primera granja como activa
         await jwtService.saveActiveFarm(claims.farms.first);
-        log("El id de la granja recuperado es ${claims.farms.first.id}");
+        log("Granja activa establecida con ID: ${claims.farms.first.id}");
       }
 
-      // Guardar tokens en almacenamiento local
       await localDataSource.saveTokens(
         email,
         authResponse.token,
@@ -49,6 +69,18 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  /// ---------------------------------------------------------------------------
+  /// ## Register: Registro de Nuevo Usuario
+  /// 
+  /// Crea un nuevo usuario y su primera granja asociada.
+  /// 
+  /// Flujo:
+  /// 1. Convierte la entidad `Farm` en `FarmModel`.
+  /// 2. Envía el `RegisterRequest` a la API.
+  /// 3. Decodifica el JWT para obtener y guardar la granja activa.
+  /// 4. Persiste los tokens localmente.
+  /// 5. Retorna la sesión del nuevo usuario.
+  /// ---------------------------------------------------------------------------
   @override
   Future<AuthSession> register(
     String email,
@@ -71,14 +103,11 @@ class AuthRepositoryImpl implements AuthRepository {
 
       final authResponse = await remoteDataSource.register(request);
 
-      // Decodificar el token para obtener la información de la granja
       final claims = jwtService.decodeToken(authResponse.token);
       if (claims != null && claims.farms.isNotEmpty) {
-        // Guardamos la primera granja como activa
         await jwtService.saveActiveFarm(claims.farms.first);
       }
 
-      // Guardar tokens en almacenamiento local
       await localDataSource.saveTokens(
         email,
         authResponse.token,
@@ -91,18 +120,27 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  /// ---------------------------------------------------------------------------
+  /// ## Refresh Token: Renovar Access Token
+  /// 
+  /// 1. Solicita nuevos tokens a la API usando el refresh token actual.
+  /// 2. Recupera el email almacenado localmente.
+  /// 3. Decodifica el nuevo JWT y actualiza la granja activa.
+  /// 4. Guarda los nuevos tokens localmente.
+  /// 5. Retorna la sesión actualizada.
+  /// ---------------------------------------------------------------------------
   @override
   Future<AuthSession> refreshToken(String refreshToken) async {
     try {
       final authResponse = await remoteDataSource.refresh(refreshToken);
+
       final stored = await localDataSource.getTokensAndEmail();
       final email = stored['email'] ?? '';
 
-      // Actualizar información de la granja al refrescar el token
       final claims = jwtService.decodeToken(authResponse.token);
       if (claims != null && claims.farms.isNotEmpty) {
         await jwtService.saveActiveFarm(claims.farms.first);
-        log("El id de la granja recuperado es ${claims.farms.first.id}");
+        log("Token renovado. Nueva granja activa ID: ${claims.farms.first.id}");
       }
 
       await localDataSource.saveTokens(
@@ -117,12 +155,26 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
+  /// ---------------------------------------------------------------------------
+  /// ## Logout: Cerrar Sesión
+  /// 
+  /// Elimina los tokens locales y la información de granja activa.
+  /// ---------------------------------------------------------------------------
   @override
   Future<void> logout() async {
     await localDataSource.clear();
     await jwtService.clearFarmData();
   }
 
+  /// ---------------------------------------------------------------------------
+  /// ## Get Current Session: Recuperar Sesión Activa
+  /// 
+  /// 1. Obtiene tokens y email desde almacenamiento local.
+  /// 2. Valida la existencia de datos de sesión.
+  /// 3. Recupera la granja activa.
+  /// 4. Construye la entidad `User`.
+  /// 5. Retorna una instancia de `AuthSession` si hay sesión válida.
+  /// ---------------------------------------------------------------------------
   @override
   Future<AuthSession?> getCurrentSession() async {
     final stored = await localDataSource.getTokensAndEmail();
@@ -131,13 +183,11 @@ class AuthRepositoryImpl implements AuthRepository {
     final email = stored['email'];
 
     if (token != null && refreshToken != null && email != null) {
-      // Obtener información de la granja activa
       final activeFarm = await jwtService.getActiveFarm();
 
       final user = User(
         email: email,
-        dni:
-            '', // Estos campos podrían venir del token JWT si están disponibles
+        dni: '', // TODO: Considerar extraer estos datos del JWT si están presentes.
         name: '',
         lastName: '',
         farm: Farm(
@@ -152,15 +202,26 @@ class AuthRepositoryImpl implements AuthRepository {
 
       return AuthSession(token: token, refreshToken: refreshToken, user: user);
     }
+
     return null;
   }
 
+  /// ---------------------------------------------------------------------------
+  /// ## isUserLoggedIn
+  /// 
+  /// Retorna `true` si existe una sesión válida, `false` en caso contrario.
+  /// ---------------------------------------------------------------------------
   @override
   Future<bool> isUserLoggedIn() async {
     final session = await getCurrentSession();
     return session != null;
   }
 
+  /// ---------------------------------------------------------------------------
+  /// ## _handleAuthError (Privado)
+  /// 
+  /// Traduce errores HTTP comunes en mensajes legibles para el usuario.
+  /// ---------------------------------------------------------------------------
   String _handleAuthError(dynamic error) {
     if (error.toString().contains('400')) {
       return 'Credenciales inválidas';

@@ -1,3 +1,24 @@
+// =============================================================================
+// LOTS TABLE WIDGET - Tabla de lotes
+// =============================================================================
+// Componente que muestra un listado de lotes (`Lot`) en formato de tabla.
+// Adaptable a distintos dispositivos mediante la verificación de `Responsive`.
+//
+// Capa: presentation/widgets/lots
+//
+// Integra:
+// - Riverpod (`lotsProvider`) para acciones de edición y eliminación.
+// - Componentes personalizados: `CustomActions` para las acciones de cada fila.
+// - Funcionalidad de diálogo modal (`LotFormDialog`) para editar lotes.
+// - Feedback visual mediante snackbars extendidos (`showSuccessSnack`, `showErrorSnack`).
+//
+// Flujo general:
+// 1. Recibe la lista de lotes como parámetro.
+// 2. Genera un `DataTable` con columnas: nombre, descripción (desktop/tablet), acciones.
+// 3. Cada fila incluye acciones de editar y eliminar.
+// 4. Al eliminar, se confirma la acción con un `AlertDialog` y se notifica al usuario.
+// =============================================================================
+
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:agrosmart_flutter/core/utils/responsive.dart';
 import 'package:agrosmart_flutter/domain/entities/lot.dart';
@@ -8,82 +29,101 @@ import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+/// ---------------------------------------------------------------------------
+/// # LotTable
+///
+/// Widget que muestra una tabla con la lista de lotes (`Lot`).
+/// Incluye columnas de:
+/// - Nombre
+/// - Descripción (solo en tablet/escritorio)
+/// - Acciones (editar, eliminar)
+///
+/// La tabla es adaptativa y escalable gracias a `Expanded` y `Responsive`.
+/// ---------------------------------------------------------------------------
 class LotTable extends ConsumerWidget {
   final List<Lot> lots;
-  
 
   const LotTable({super.key, required this.lots});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {    
-    return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardTheme.color,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(context).shadowColor.withAlpha(30),
-              spreadRadius: 0,
-              blurRadius: 10,
-              offset: const Offset(0, 2),
+  Widget build(BuildContext context, WidgetRef ref) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).shadowColor.withAlpha(30),
+            spreadRadius: 0,
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: DataTable(
+          headingRowHeight: 56,
+          dataRowHeight: 64,
+          columnSpacing: 24,
+          horizontalMargin: 24,
+          headingRowColor: WidgetStateProperty.all(
+            Theme.of(context).cardTheme.color,
+          ),
+          columns: [
+            // Columna: Nombre del lote
+            DataColumn(
+              label: Text(
+                'NOMBRE',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+            // Columna: Descripción (solo tablet/escritorio)
+            if (!Responsive.isMobile(context))
+              DataColumn(
+                label: Text(
+                  'DESCRIPCIÓN',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            // Columna: Acciones
+            DataColumn(
+              label: Text(
+                'ACCIONES',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                  letterSpacing: 0.5,
+                ),
+              ),
             ),
           ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: DataTable(
-            headingRowHeight: 56,
-            dataRowHeight: 64,
-            columnSpacing: 24,
-            horizontalMargin: 24,
-            headingRowColor: WidgetStateProperty.all(
-              Theme.of(context).cardTheme.color,
-            ),
-            columns: [
-              DataColumn(
-                label: Text(
-                  'NOMBRE',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
-              if (!Responsive.isMobile(context))
-                DataColumn(
-                  label: Text(
-                    'DESCRIPCIÓN',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
-              DataColumn(
-                label: Text(
-                  'ACCIONES',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
-            ],
-            rows: lots
-                .map((lot) => _buildDataRow(context, ref, lot))
-                .toList(),
-          ),
+          rows: lots.map((lot) => _buildDataRow(context, ref, lot)).toList(),
         ),
       ),
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // _buildDataRow
+  // ---------------------------------------------------------------------------
+  /// Construye cada fila de la tabla (`DataRow`) para un lote.
+  /// Incluye:
+  /// - Nombre del lote
+  /// - Descripción (solo desktop/tablet)
+  /// - Acciones: editar y eliminar mediante `CustomActions`
   DataRow _buildDataRow(BuildContext context, WidgetRef ref, Lot lot) {
     final colors = Theme.of(context).extension<AppColors>()!;
+    final hasDescription = lot.description?.isNotEmpty == true; // Optimización
+
     return DataRow(
       cells: [
         // Nombre
@@ -93,20 +133,16 @@ class LotTable extends ConsumerWidget {
             style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
           ),
         ),
-        // Descripción
+        // Descripción (si aplica)
         if (!Responsive.isMobile(context))
           DataCell(
             SizedBox(
               width: 200,
               child: Text(
-                lot.description?.isNotEmpty == true
-                    ? lot.description!
-                    : 'Sin descripción',
+                hasDescription ? lot.description! : 'Sin descripción',
                 style: TextStyle(
                   fontSize: 14,
-                  color: lot.description?.isNotEmpty == true
-                      ? colors.textDefault
-                      : colors.textDisabled,
+                  color: hasDescription ? colors.textDefault : colors.textDisabled,
                 ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
@@ -124,6 +160,10 @@ class LotTable extends ConsumerWidget {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // _editLot
+  // ---------------------------------------------------------------------------
+  /// Abre el diálogo modal `LotFormDialog` para editar el lote seleccionado.
   void _editLot(BuildContext context, Lot lot) {
     showDialog(
       context: context,
@@ -131,6 +171,12 @@ class LotTable extends ConsumerWidget {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // _confirmDelete
+  // ---------------------------------------------------------------------------
+  /// Muestra un `AlertDialog` para confirmar la eliminación del lote.
+  /// - Si el usuario confirma, se elimina mediante `lotsProvider`.
+  /// - Se muestran snackbars de éxito o error según corresponda.
   void _confirmDelete(BuildContext context, WidgetRef ref, Lot lot) {
     showDialog(
       context: context,

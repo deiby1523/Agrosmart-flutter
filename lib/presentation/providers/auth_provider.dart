@@ -1,4 +1,5 @@
 import 'package:agrosmart_flutter/data/services/jwt_service.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,15 +13,15 @@ import '../../domain/entities/farm.dart';
 part 'auth_provider.g.dart';
 
 @riverpod
-Future<AuthRepositoryImpl> authRepository(AuthRepositoryRef ref) async {
+Future<AuthRepositoryImpl> authRepository(Ref ref) async {
   final apiClient = ApiClient();
   apiClient.initialize();
-  final prefs = await SharedPreferences.getInstance();
 
   final remote = AuthRemoteDataSource(apiClient: apiClient);
   final local = AuthLocalDataSource(
     secureStorage: const FlutterSecureStorage(),
   );
+  final prefs = await SharedPreferences.getInstance();
   final jwtService = JwtService(prefs);
 
   return AuthRepositoryImpl(

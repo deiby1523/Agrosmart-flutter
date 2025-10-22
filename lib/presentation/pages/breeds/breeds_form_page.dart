@@ -1,14 +1,32 @@
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:agrosmart_flutter/domain/entities/breed.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_text_field.dart';
+import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/utils/validators.dart';
 import '../../providers/breed_provider.dart';
-import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart';
 
+/// =============================================================================
+/// # BREED FORM DIALOG
+/// 
+/// Diálogo modal para **crear o editar razas de ganado**.
+/// 
+/// Se adapta dinámicamente según si se recibe una instancia existente de [Breed]:
+/// - Si `breed` es `null`: el formulario opera en modo **creación**.
+/// - Si `breed` contiene datos: se habilita el modo **edición**.
+/// 
+/// ## Características principales:
+/// - Validaciones integradas mediante `Validators`.
+/// - Control de estado de carga para evitar envíos múltiples.
+/// - Interacción directa con Riverpod (`breedsProvider`).
+/// - Retroalimentación visual mediante snackbars personalizados.
+/// - Diseño responsivo y compatible con temas oscuros o personalizados.
+/// 
+/// =============================================================================
 class BreedFormDialog extends ConsumerStatefulWidget {
-  final Breed? breed; // null para crear, breed para editar
+  /// Instancia opcional de [Breed] utilizada en modo edición.
+  final Breed? breed;
 
   const BreedFormDialog({super.key, this.breed});
 
@@ -16,15 +34,25 @@ class BreedFormDialog extends ConsumerStatefulWidget {
   ConsumerState<BreedFormDialog> createState() => _BreedFormDialogState();
 }
 
+// -----------------------------------------------------------------------------
+// STATE: _BreedFormDialogState
+// -----------------------------------------------------------------------------
 class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
+  /// Llave global del formulario para validación y manejo del estado.
   final _formKey = GlobalKey<FormState>();
+
+  /// Controladores de texto para los campos de entrada.
   final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
+
+  /// Bandera para evitar envíos múltiples mientras se procesa la petición.
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
+
+    // Carga inicial de datos si el formulario está en modo edición.
     if (widget.breed != null) {
       _nameController.text = widget.breed!.name;
       _descriptionController.text = widget.breed!.description ?? '';
@@ -38,10 +66,12 @@ class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
     super.dispose();
   }
 
+  // ---------------------------------------------------------------------------
+  // BUILD
+  // ---------------------------------------------------------------------------
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>()!;
-
     final isEditing = widget.breed != null;
 
     return AlertDialog(
@@ -53,19 +83,22 @@ class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // Campo: Nombre de la raza
               CustomTextField(
                 controller: _nameController,
-                hintText: "Nombre de la raza",
                 labelText: "Nombre",
+                hintText: "Nombre de la raza",
                 prefixIcon: Icons.pets,
                 validator: (value) => Validators.required(value, 'Nombre'),
                 textCapitalization: TextCapitalization.words,
               ),
               const SizedBox(height: 16),
+
+              // Campo: Descripción de la raza
               CustomTextField(
                 controller: _descriptionController,
+                labelText: "Descripción",
                 hintText: "Descripción de la raza (opcional)",
-                labelText: "Descripcion",
                 prefixIcon: Icons.description,
                 validator: (value) => Validators.description(value),
                 maxLines: 3,
@@ -75,10 +108,16 @@ class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
           ),
         ),
       ),
+
+      // -----------------------------------------------------------------------
+      // ACCIONES DEL DIÁLOGO
+      // -----------------------------------------------------------------------
       actions: [
         TextButton(
           onPressed: _isLoading ? null : () => Navigator.of(context).pop(),
-          style: TextButton.styleFrom(foregroundColor: colors.cancelTextButton),
+          style: TextButton.styleFrom(
+            foregroundColor: colors.cancelTextButton,
+          ),
           child: const Text('Cancelar'),
         ),
         ElevatedButton(
@@ -95,6 +134,18 @@ class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // MÉTODO PRIVADO: _submitForm
+  // ---------------------------------------------------------------------------
+  /// Valida los datos del formulario y ejecuta la acción correspondiente
+  /// (crear o actualizar raza) mediante el `breedsProvider`.
+  /// 
+  /// Durante el proceso:
+  /// - Se muestra un indicador de carga.
+  /// - Se bloquean las acciones del usuario.
+  /// - Se muestran mensajes de éxito o error según el resultado.
+  /// 
+
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -106,12 +157,12 @@ class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
       final finalDescription = description.isEmpty ? null : description;
 
       if (widget.breed != null) {
-        // Editar
+        // --- EDITAR RAZA EXISTENTE ---
         await ref
             .read(breedsProvider.notifier)
             .updateBreed(widget.breed!.id!, name, finalDescription);
       } else {
-        // Crear
+        // --- CREAR NUEVA RAZA ---
         await ref
             .read(breedsProvider.notifier)
             .createBreed(name, finalDescription);
@@ -127,12 +178,13 @@ class _BreedFormDialogState extends ConsumerState<BreedFormDialog> {
       }
     } catch (error) {
       if (mounted) {
-        context.showErrorSnack('Error: $error', showCloseButton: true);
+        context.showErrorSnack(
+          'Error: $error',
+          showCloseButton: true,
+        );
       }
     } finally {
-      if (mounted) {
-        setState(() => _isLoading = false);
-      }
+      if (mounted) setState(() => _isLoading = false);
     }
   }
 }

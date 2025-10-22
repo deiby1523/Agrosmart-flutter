@@ -1,48 +1,89 @@
-// lib/presentation/router/app_router.dart
-import 'package:agrosmart_flutter/presentation/pages/lots/lots_index_page.dart';
-import 'package:agrosmart_flutter/presentation/pages/paddocks/paddocks_index_page.dart';
+// =============================================================================
+// APP ROUTER - Configuración principal de rutas de la aplicación AgroSmart
+// =============================================================================
+// Este archivo define toda la navegación de la aplicación utilizando GoRouter,
+// integrado con Riverpod para reaccionar al estado de autenticación en tiempo real.
+//
+// Capa: presentation/router
+//
+// Responsabilidades:
+// - Definir las rutas principales (login, registro, dashboard, módulos).
+// - Controlar el acceso a rutas protegidas según el estado del usuario.
+// - Establecer redirecciones automáticas basadas en autenticación.
+// - Manejar transiciones personalizadas y páginas de error.
+//
+// Dependencias principales:
+// - go_router: para la gestión declarativa de rutas.
+// - flutter_riverpod: para la reactividad del estado global.
+// - authProvider: determina si el usuario está autenticado.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+// Páginas principales
 import '../pages/auth/login_page.dart';
 import '../pages/auth/register_page.dart';
 import '../pages/dashboard/dashboard_page.dart';
 import '../pages/breeds/breeds_index_page.dart';
+import '../pages/lots/lots_index_page.dart';
+import '../pages/paddocks/paddocks_index_page.dart';
+
+// Provider de autenticación
 import '../providers/auth_provider.dart';
 
+/// ---------------------------------------------------------------------------
+/// # routerProvider
+///
+/// Provider global de Riverpod que expone la instancia de `GoRouter`.
+/// Permite que toda la app escuche el estado de autenticación para gestionar
+/// redirecciones automáticas y proteger rutas privadas.
+/// ---------------------------------------------------------------------------
 final routerProvider = Provider<GoRouter>((ref) {
+  // Escucha el estado actual de autenticación (session o null)
   final authState = ref.watch(authProvider);
 
   return GoRouter(
+    // Ruta inicial por defecto al abrir la aplicación
     initialLocation: '/dashboard',
+
+    // -------------------------------------------------------------------------
+    // REDIRECCIONES SEGÚN AUTENTICACIÓN
+    // -------------------------------------------------------------------------
     redirect: (context, state) {
       final isAuthenticated = authState.maybeWhen(
         data: (session) => session != null,
         orElse: () => false,
       );
 
-      // Permitir acceso a las rutas de autenticación cuando NO esté autenticado
       final isAuthRoute =
           state.uri.path == '/login' || state.uri.path == '/register';
 
-      // Si no está autenticado y no está en una ruta de auth (login/register), ir a login
+      // Caso 1: Usuario no autenticado → redirigir al login
       if (!isAuthenticated && !isAuthRoute) {
         return '/login';
       }
 
-      // Si está autenticado y está en una ruta de auth (login/register), ir a dashboard
+      // Caso 2: Usuario autenticado → impedir acceso a rutas de login/register
       if (isAuthenticated && isAuthRoute) {
         return '/dashboard';
       }
 
+      // Caso 3: No se requiere redirección
       return null;
     },
+
+    // -------------------------------------------------------------------------
+    // DEFINICIÓN DE RUTAS PRINCIPALES
+    // -------------------------------------------------------------------------
     routes: [
+      // -------------------------------
+      // Rutas de autenticación
+      // -------------------------------
       GoRoute(
         path: '/login',
-        builder: (BuildContext context, GoRouterState state) {
-            return const LoginPage();
-          },
+        builder: (context, state) => const LoginPage(),
       ),
       GoRoute(
         path: '/register',
@@ -50,15 +91,19 @@ final routerProvider = Provider<GoRouter>((ref) {
           key: state.pageKey,
           child: const RegisterPage(),
           transitionsBuilder: (_, __, ___, child) => child,
-          transitionDuration: Duration.zero,
+          transitionDuration: Duration.zero, // sin animación
         ),
       ),
+
+      // -------------------------------
+      // Rutas internas (dashboard y módulos)
+      // -------------------------------
       GoRoute(
         path: '/dashboard',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const DashboardPage(),
-          transitionsBuilder: (_, __, ___, child) => child, // sin animación
+          transitionsBuilder: (_, __, ___, child) => child,
           transitionDuration: Duration.zero,
         ),
       ),
@@ -67,7 +112,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const BreedsListPage(),
-          transitionsBuilder: (_, __, ___, child) => child, // sin animación
+          transitionsBuilder: (_, __, ___, child) => child,
           transitionDuration: Duration.zero,
         ),
       ),
@@ -76,7 +121,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const LotsListPage(),
-          transitionsBuilder: (_, __, ___, child) => child, // sin animación
+          transitionsBuilder: (_, __, ___, child) => child,
           transitionDuration: Duration.zero,
         ),
       ),
@@ -85,14 +130,23 @@ final routerProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const PaddocksListPage(),
-          transitionsBuilder: (_, __, ___, child) => child, // sin animación
+          transitionsBuilder: (_, __, ___, child) => child,
           transitionDuration: Duration.zero,
         ),
       ),
-      // Redirigir la ruta raíz al dashboard
-      GoRoute(path: '/', redirect: (context, state) => '/dashboard'),
+
+      // -------------------------------
+      // Redirección raíz → dashboard
+      // -------------------------------
+      GoRoute(
+        path: '/',
+        redirect: (context, state) => '/dashboard',
+      ),
     ],
-    // Página de error personalizada
+
+    // -------------------------------------------------------------------------
+    // PÁGINA DE ERROR PERSONALIZADA
+    // -------------------------------------------------------------------------
     errorBuilder: (context, state) => Scaffold(
       appBar: AppBar(title: const Text('Página No Encontrada')),
       body: Center(

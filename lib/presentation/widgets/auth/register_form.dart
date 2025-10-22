@@ -1,5 +1,4 @@
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
-import 'package:agrosmart_flutter/core/utils/responsive.dart';
 import 'package:agrosmart_flutter/presentation/providers/auth_provider.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_text_field.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,19 @@ import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart'
 import '../../../../core/utils/validators.dart';
 import 'package:agrosmart_flutter/domain/entities/farm.dart';
 
-/// Register form widget with authentication handling
+/// ---------------------------------------------------------------------------
+/// # RegisterForm
+///
+/// Formulario de registro de usuario con validación y manejo de autenticación.
+///
+/// Incluye:
+/// - Datos personales: nombre, apellido, documento, correo y contraseña.
+/// - Confirmación de contraseña.
+/// - Información de la finca: nombre, descripción y ubicación.
+/// - Estados de autenticación: carga, éxito y error.
+/// - Feedback visual mediante Snackbars personalizados.
+/// - Navegación automática al dashboard al registrar correctamente.
+/// ---------------------------------------------------------------------------
 class RegisterForm extends ConsumerStatefulWidget {
   const RegisterForm({super.key});
 
@@ -17,9 +28,15 @@ class RegisterForm extends ConsumerStatefulWidget {
   ConsumerState<RegisterForm> createState() => _RegisterFormState();
 }
 
+// -----------------------------------------------------------------------------
+// _RegisterFormState
+// -----------------------------------------------------------------------------
 class _RegisterFormState extends ConsumerState<RegisterForm> {
   final _formKey = GlobalKey<FormState>();
 
+  // -------------------
+  // Campos de usuario
+  // -------------------
   final _nameController = TextEditingController();
   final _lastNameController = TextEditingController();
   final _dniController = TextEditingController();
@@ -27,7 +44,9 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
 
+  // -------------------
   // Campos de la finca
+  // -------------------
   final _farmNameController = TextEditingController();
   final _farmDescriptionController = TextEditingController();
   final _farmLocationController = TextEditingController();
@@ -36,7 +55,6 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
 
   @override
   void dispose() {
-    // _animationController.dispose();
     _nameController.dispose();
     _lastNameController.dispose();
     _dniController.dispose();
@@ -69,6 +87,9 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // -------------------------------
+                // Título y subtítulo
+                // -------------------------------
                 Text(
                   "Registro",
                   style: TextStyle(
@@ -84,7 +105,9 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                 ),
                 const SizedBox(height: 24),
 
-                // --- Campos de texto ---
+                // -------------------------------
+                // Campos de usuario
+                // -------------------------------
                 CustomTextField(
                   controller: _nameController,
                   hintText: 'Ingresa tu nombre',
@@ -93,7 +116,6 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                   validator: Validators.name,
                 ),
                 const SizedBox(height: 16),
-
                 CustomTextField(
                   controller: _lastNameController,
                   hintText: 'Ingresa tu apellido',
@@ -102,7 +124,6 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                   validator: Validators.name,
                 ),
                 const SizedBox(height: 16),
-
                 CustomTextField(
                   controller: _dniController,
                   hintText: 'Ingresa tu identificación',
@@ -111,7 +132,6 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                   validator: Validators.dni,
                 ),
                 const SizedBox(height: 16),
-
                 CustomTextField(
                   controller: _emailController,
                   hintText: 'Ingresa tu correo electrónico',
@@ -120,7 +140,6 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                   validator: Validators.email,
                 ),
                 const SizedBox(height: 16),
-
                 CustomTextField(
                   controller: _passwordController,
                   hintText: 'Ingresa tu contraseña',
@@ -128,61 +147,55 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                   prefixIcon: Icons.lock,
                   validator: Validators.password,
                   obscureText: _obscurePassword,
-                  onTogglePassword: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
-                  },
+                  onTogglePassword: () =>
+                      setState(() => _obscurePassword = !_obscurePassword),
                 ),
                 const SizedBox(height: 16),
-
                 CustomTextField(
                   controller: _confirmPasswordController,
                   hintText: 'Confirma tu contraseña',
                   labelText: 'Confirmar contraseña',
                   prefixIcon: Icons.lock,
-                  validator: (value) => Validators.confirmPassword(
-                    value,
-                    _passwordController.text,
-                  ),
+                  validator: (value) =>
+                      Validators.confirmPassword(value, _passwordController.text),
                   obscureText: _obscurePassword,
-                  onTogglePassword: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
-                  },
+                  onTogglePassword: () =>
+                      setState(() => _obscurePassword = !_obscurePassword),
                 ),
                 const SizedBox(height: 16),
 
-                // Campos de la finca
+                // -------------------------------
+                // Campos de finca
+                // -------------------------------
                 CustomTextField(
                   controller: _farmNameController,
                   hintText: 'Nombre de la finca',
                   labelText: 'Finca - Nombre',
                   prefixIcon: Icons.landscape,
-                  validator: (value) => Validators.required(value, 'Nombre de la finca'),
+                  validator: (value) =>
+                      Validators.required(value, 'Nombre de la finca'),
                 ),
                 const SizedBox(height: 12),
-
                 CustomTextField(
                   controller: _farmDescriptionController,
                   hintText: 'Descripción de la finca',
                   labelText: 'Finca - Descripción',
                   prefixIcon: Icons.description,
-                  validator: (value) => null,
+                  validator: (_) => null,
                 ),
                 const SizedBox(height: 12),
-
                 CustomTextField(
                   controller: _farmLocationController,
                   hintText: 'Ubicación de la finca',
                   labelText: 'Finca - Ubicación',
                   prefixIcon: Icons.location_on,
-                  validator: (value) => null,
+                  validator: (_) => null,
                 ),
                 const SizedBox(height: 20),
 
-                // --- Botón / Estado ---
+                // -------------------------------
+                // Botón de registro y estado
+                // -------------------------------
                 authState.when(
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
@@ -193,33 +206,24 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: Text('Registrarse'),
+                      child: const Text('Registrarse'),
                     ),
                   ),
                   error: (error, _) => Column(
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: _registerSubmit,
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                              ),
-                              child: Text('Registrarse'),
-                            ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _registerSubmit,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
-                        ],
+                          child: const Text('Registrarse'),
+                        ),
                       ),
                       Builder(
                         builder: (context) {
-                          final colors = Theme.of(
-                            context,
-                          ).extension<AppColors>()!;
-                          // Show error message in a SnackBar
+                          final colors = Theme.of(context).extension<AppColors>()!;
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             context.showErrorSnack(
                               'Error: $error',
@@ -228,7 +232,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                               iconColor: colors.deleteIcon,
                             );
                           });
-                          return SizedBox.shrink();
+                          return const SizedBox.shrink();
                         },
                       ),
                     ],
@@ -236,7 +240,9 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                 ),
                 const SizedBox(height: 24),
 
-                // --- Redirección a login ---
+                // -------------------------------
+                // Redirección a login
+                // -------------------------------
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -245,10 +251,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                       style: TextStyle(color: Colors.grey[700]),
                     ),
                     TextButton(
-                      onPressed: () {
-                        // await _animationController.reverse();
-                        context.go('/login');
-                      },
+                      onPressed: () => context.go('/login'),
                       child: const Text("Inicia sesión"),
                     ),
                   ],
@@ -261,17 +264,16 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // _registerSubmit()
+  // ---------------------------------------------------------------------------
+  /// Valida el formulario y llama al provider para registrar al usuario.
+  /// Construye la entidad [Farm] desde los campos del formulario.
+  /// Redirige al dashboard al registrar correctamente.
   Future<void> _registerSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
     try {
-      final name = _nameController.text;
-      final lastName = _lastNameController.text;
-      final dni = _dniController.text.trim();
-      final email = _emailController.text.trim();
-      final password = _passwordController.text;
-
-      // Construir entidad Farm desde los campos del formulario
       final farm = Farm(
         id: 0,
         name: _farmNameController.text.trim(),
@@ -280,15 +282,18 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
         ownerId: null,
       );
 
-      await ref
-          .read(authProvider.notifier)
-          .register(email, password, dni, name, lastName, farm);
+      await ref.read(authProvider.notifier).register(
+            _emailController.text.trim(),
+            _passwordController.text,
+            _dniController.text.trim(),
+            _nameController.text,
+            _lastNameController.text,
+            farm,
+          );
 
-      if (mounted) {
-        context.go('/dashboard');
-      }
-    } catch (error) {
-      // El error ya se maneja en el provider
+      if (mounted) context.go('/dashboard');
+    } catch (_) {
+      // El error se maneja en authState.when()
     }
   }
 }

@@ -75,7 +75,7 @@ class AppTheme {
       selectionColor: Color.fromARGB(90, 155, 210, 36),
       selectionHandleColor: AppColorSchemes.lightScheme.primary,
     ),
-    
+
     extensions: <ThemeExtension<dynamic>>[AppColors.dark],
   );
 }

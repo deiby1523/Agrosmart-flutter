@@ -1,3 +1,14 @@
+// =============================================================================
+// RESPONSIVE - Widget para Diseño Adaptativo
+// =============================================================================
+// Widget que renderiza diferentes interfaces basado en el tamaño de pantalla.
+//
+// Breakpoints:
+// - Mobile: < 600px
+// - Tablet: 600px - 1023px
+// - Desktop: >= 1024px
+// =============================================================================
+
 import 'package:flutter/material.dart';
 
 class Responsive extends StatelessWidget {
@@ -5,6 +16,7 @@ class Responsive extends StatelessWidget {
   final Widget? tablet;
   final Widget desktop;
 
+  // Breakpoints para dispositivos
   static const mobileWidth = 600;
   static const tabletWidth = 1024;
 
@@ -15,27 +27,33 @@ class Responsive extends StatelessWidget {
     required this.desktop,
   });
 
+  // Métodos estáticos para verificar el tipo de dispositivo
   static bool isMobile(BuildContext context) =>
       MediaQuery.of(context).size.width < mobileWidth;
 
-  static bool isTablet(BuildContext context) =>
-      MediaQuery.of(context).size.width < tabletWidth &&
-      MediaQuery.of(context).size.width >= mobileWidth;
+  static bool isTablet(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    return width >= mobileWidth && width < tabletWidth;
+  }
 
   static bool isDesktop(BuildContext context) =>
       MediaQuery.of(context).size.width >= tabletWidth;
 
   @override
   Widget build(BuildContext context) {
-    Widget widget;
-    final Size size = MediaQuery.of(context).size;
-    if (size.width >= tabletWidth) {
-      widget = desktop;
-    } else if (size.width >= mobileWidth && tablet != null) {
-      widget = tablet!;
-    } else {
-      widget = mobile;
+    final width = MediaQuery.of(context).size.width;
+
+    // Desktop
+    if (width >= tabletWidth) {
+      return desktop;
     }
-    return widget;
+
+    // Tablet (si existe)
+    if (width >= mobileWidth && tablet != null) {
+      return tablet!;
+    }
+
+    // Mobile
+    return mobile;
   }
 }

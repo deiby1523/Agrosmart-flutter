@@ -33,7 +33,7 @@ class MyApp extends ConsumerWidget {
       debugShowCheckedModeBanner: false,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
-      routerConfig: router, // GoRouter ya maneja su propio navigatorKey
+      routerConfig: router,
     );
   }
 }

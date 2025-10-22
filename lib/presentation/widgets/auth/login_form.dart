@@ -7,7 +7,16 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/utils/validators.dart';
 import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart';
 
-/// Login form widget with authentication handling
+/// ---------------------------------------------------------------------------
+/// # LoginForm
+///
+/// Formulario de inicio de sesión con validación y manejo de autenticación.
+/// 
+/// - Valida correo/usuario y contraseña.
+/// - Muestra estados: carga, error y datos.
+/// - Integra feedback visual mediante Snackbars personalizados.
+/// - Navega automáticamente al dashboard al iniciar sesión correctamente.
+/// ---------------------------------------------------------------------------
 class LoginForm extends ConsumerStatefulWidget {
   const LoginForm({super.key});
 
@@ -15,14 +24,14 @@ class LoginForm extends ConsumerStatefulWidget {
   ConsumerState<LoginForm> createState() => _LoginFormState();
 }
 
+// -----------------------------------------------------------------------------
+// _LoginFormState
+// -----------------------------------------------------------------------------
 class _LoginFormState extends ConsumerState<LoginForm> {
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   bool _obscurePassword = true;
-
-  // Clave global para acceder al wrapper animado
-  // final GlobalKey<AnimatedLoginWrapperState> _wrapperKey = GlobalKey();
 
   @override
   void dispose() {
@@ -50,6 +59,9 @@ class _LoginFormState extends ConsumerState<LoginForm> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                // -------------------------------
+                // Título y subtítulo
+                // -------------------------------
                 Text(
                   "Bienvenido",
                   style: TextStyle(
@@ -65,7 +77,9 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                 ),
                 const SizedBox(height: 32),
 
-                // Email
+                // -------------------------------
+                // Campo de email/usuario
+                // -------------------------------
                 CustomTextField(
                   controller: _emailController,
                   hintText: 'Ingresa tu usuario',
@@ -75,7 +89,9 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                 ),
                 const SizedBox(height: 16),
 
-                // Password
+                // -------------------------------
+                // Campo de contraseña
+                // -------------------------------
                 CustomTextField(
                   controller: _passwordController,
                   hintText: 'Ingresa tu contraseña',
@@ -85,32 +101,32 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                       Validators.required(value, 'Contraseña'),
                   obscureText: _obscurePassword,
                   onTogglePassword: () {
-                    setState(() {
-                      _obscurePassword = !_obscurePassword;
-                    });
+                    setState(() => _obscurePassword = !_obscurePassword);
                   },
                 ),
-
                 const SizedBox(height: 12),
 
+                // -------------------------------
+                // Enlace "Olvidaste tu contraseña"
+                // -------------------------------
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
                     style: TextButton.styleFrom(
                       foregroundColor: colors.cancelTextButton,
                     ),
-                    onPressed: () {},
+                    onPressed: () {}, // Implementar recuperación
                     child: const Text(
                       "¿Olvidaste tu contraseña?",
                       style: TextStyle(fontSize: 14),
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 20),
 
-                // Botón + estado de autenticación
-                // --- Botón / Estado ---
+                // -------------------------------
+                // Botón de inicio de sesión
+                // -------------------------------
                 authState.when(
                   loading: () =>
                       const Center(child: CircularProgressIndicator()),
@@ -121,33 +137,24 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                       style: ElevatedButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
-                      child: Text('Iniciar Sesión'),
+                      child: const Text('Iniciar Sesión'),
                     ),
                   ),
                   error: (error, _) => Column(
                     children: [
-                      Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          Expanded(
-                            child: ElevatedButton(
-                              onPressed: _loginSubmit,
-                              style: ElevatedButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 16,
-                                ),
-                              ),
-                              child: Text('Iniciar Sesión'),
-                            ),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: _loginSubmit,
+                          style: ElevatedButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 16),
                           ),
-                        ],
+                          child: const Text('Iniciar Sesión'),
+                        ),
                       ),
                       Builder(
                         builder: (context) {
-                          final colors = Theme.of(
-                            context,
-                          ).extension<AppColors>()!;
-                          // Show error message in a SnackBar
+                          // Mostrar error mediante SnackBar
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             context.showErrorSnack(
                               'Error: $error',
@@ -156,15 +163,17 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                               iconColor: colors.deleteIcon,
                             );
                           });
-                          return SizedBox.shrink();
+                          return const SizedBox.shrink();
                         },
                       ),
                     ],
                   ),
                 ),
-
                 const SizedBox(height: 24),
 
+                // -------------------------------
+                // Enlace a registro
+                // -------------------------------
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
@@ -173,8 +182,7 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                       style: TextStyle(color: Colors.grey[700]),
                     ),
                     TextButton(
-                      onPressed: () async {
-                        // await _wrapperKey.currentState?.animateOut();
+                      onPressed: () {
                         if (mounted) {
                           context.go('/register');
                         }
@@ -191,6 +199,11 @@ class _LoginFormState extends ConsumerState<LoginForm> {
     );
   }
 
+  // ---------------------------------------------------------------------------
+  // _loginSubmit()
+  // ---------------------------------------------------------------------------
+  /// Valida el formulario y llama al provider para autenticar al usuario.
+  /// Redirige al dashboard en caso de éxito.
   Future<void> _loginSubmit() async {
     if (!_formKey.currentState!.validate()) return;
 
@@ -199,12 +212,11 @@ class _LoginFormState extends ConsumerState<LoginForm> {
       final password = _passwordController.text;
       await ref.read(authProvider.notifier).login(email, password);
 
-      // await _wrapperKey.currentState?.animateOut();
       if (mounted) {
         context.go('/dashboard');
       }
     } catch (_) {
-      // El error se maneja en el authState.when()
+      // El error se maneja en authState.when()
     }
   }
 }

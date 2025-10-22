@@ -5,7 +5,11 @@ class DInputTheme {
   DInputTheme._();
 
   static InputDecorationTheme lightInputDecorationTheme = InputDecorationTheme(
-    hintStyle: TextStyle(color: Color.fromARGB(255, 147, 147, 147), fontFamily: 'Inter',fontWeight: FontWeight.w300),
+    hintStyle: TextStyle(
+      color: Color.fromARGB(255, 147, 147, 147),
+      fontFamily: 'Inter',
+      fontWeight: FontWeight.w300,
+    ),
     border: OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
       borderSide: const BorderSide(color: Colors.grey),
@@ -37,10 +41,17 @@ class DInputTheme {
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(8),
-      borderSide: BorderSide(color: AppColorSchemes.darkScheme.primary, width: 2),
+      borderSide: BorderSide(
+        color: AppColorSchemes.darkScheme.primary,
+        width: 2,
+      ),
     ),
     filled: true,
     fillColor: Colors.grey.shade800,
-    hintStyle: TextStyle(color: Color.fromARGB(255, 147, 147, 147), fontFamily: 'Inter',fontWeight: FontWeight.w300),
+    hintStyle: TextStyle(
+      color: Color.fromARGB(255, 147, 147, 147),
+      fontFamily: 'Inter',
+      fontWeight: FontWeight.w300,
+    ),
   );
 }

@@ -1,18 +1,22 @@
+// =============================================================================
+// API CONSTANTS - Endpoints del Backend Springboot
+// =============================================================================
+
 class ApiConstants {
-  // Base URL
+  // --- Base URL ---
   static const String baseUrl = 'http://localhost:8080/api';
 
-  // Auth Endpoints - These remain unchanged
-  static const String authenticate = '/auth/authenticate';
-  static const String register = '/auth/register';
-  static const String refresh = '/auth/refresh';
+  // --- Authentication ---
+  static const String authenticate = '/auth/authenticate'; // Login
+  static const String register = '/auth/register'; // Registro
+  static const String refresh = '/auth/refresh'; // Refresh token
 
-  // Farm-specific endpoints
-  static const String breeds = '/farm/{farmId}/breeds';
-  static const String lots = '/farm/{farmId}/lots';
-  static const String paddocks = '/farm/{farmId}/paddocks';
-  static const String animals = '/farm/{farmId}/animals';
-  static const String insumos = '/farm/{farmId}/insumos';
-  static const String dashboard = '/farm/{farmId}/dashboard';
-  static const String upload = '/farm/{farmId}/upload';
+  // --- Farm Resources ---
+  static const String breeds = '/farm/{farmId}/breeds'; // CRUD Razas
+  static const String lots = '/farm/{farmId}/lots'; // CRUD Lotes
+  static const String paddocks = '/farm/{farmId}/paddocks'; // CRUD Potreros
+  static const String animals = '/farm/{farmId}/animals'; // CRUD Animales
+  static const String insumos = '/farm/{farmId}/insumos'; // CRUD Insumos
+  static const String dashboard = '/farm/{farmId}/dashboard'; // Estadísticas
+  static const String upload = '/farm/{farmId}/upload'; // Subir archivos
 }

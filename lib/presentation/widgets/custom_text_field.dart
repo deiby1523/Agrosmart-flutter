@@ -1,5 +1,22 @@
+// =============================================================================
+// CUSTOM TEXT FIELD - Campo de texto personalizado
+// =============================================================================
+// Widget reutilizable para formularios que permite:
+// - Mostrar un hint y label opcional.
+// - Validación de entrada.
+// - Icono al inicio (prefixIcon) y opcional de visibilidad de contraseña.
+// - Configuración de tipo de teclado, acción de teclado y capitalización.
+// - Compatibilidad con autofill y múltiples líneas.
+// =============================================================================
+
 import 'package:flutter/material.dart';
 
+/// ---------------------------------------------------------------------------
+/// # CustomTextField
+///
+/// Campo de texto flexible para formularios.
+/// Soporta texto normal, contraseñas y validaciones personalizadas.
+/// ---------------------------------------------------------------------------
 class CustomTextField extends StatelessWidget {
   final TextEditingController controller;
   final String hintText;
@@ -37,10 +54,17 @@ class CustomTextField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
+        // -------------------------------------------------------------------
+        // Label opcional
+        // -------------------------------------------------------------------
         if (labelText != null) ...[
           Text(labelText!, style: Theme.of(context).textTheme.labelMedium),
           const SizedBox(height: 5),
         ],
+
+        // -------------------------------------------------------------------
+        // TextFormField principal
+        // -------------------------------------------------------------------
         TextFormField(
           controller: controller,
           obscureText: obscureText,
@@ -48,10 +72,7 @@ class CustomTextField extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hintText,
             prefixIcon: prefixIcon != null
-                ? Icon(
-                    prefixIcon,
-                    color: const Color.fromARGB(255, 147, 147, 147),
-                  )
+                ? Icon(prefixIcon, color: const Color.fromARGB(255, 147, 147, 147))
                 : null,
             suffixIcon: onTogglePassword != null
                 ? IconButton(
