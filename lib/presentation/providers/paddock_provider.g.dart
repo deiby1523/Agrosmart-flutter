@@ -6,9 +6,31 @@ part of 'paddock_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$paddockRepositoryHash() => r'7a1826b3312bba053ea6a6e3b186592bfa00bd3c';
+String _$paddockRepositoryHash() => r'be845ede28bdb1b5160b81591054b4b8eea1b9de';
 
-/// See also [paddockRepository].
+/// =============================================================================
+/// # PADDOCK PROVIDER
+///
+/// Este módulo define los providers encargados de manejar la lógica de negocio
+/// y el estado relacionado con los **potreros (Paddocks)** en la aplicación.
+///
+/// Implementa un enfoque basado en **Riverpod + Clean Architecture**, separando
+/// la obtención, creación, actualización y eliminación de potreros mediante
+/// el repositorio correspondiente.
+///
+/// - `paddockRepositoryProvider`: expone el repositorio de datos de potreros.
+/// - `Paddocks`: gestiona el estado reactivo y asíncrono de la lista de potreros.
+/// =============================================================================
+/// -----------------------------------------------------------------------------
+/// ## Provider: `paddockRepositoryProvider`
+///
+/// Inyecta una instancia de `PaddockRepositoryImpl`, la cual proporciona acceso
+/// a las operaciones CRUD del dominio de potreros.
+///
+/// Se utiliza dentro de otros providers o controladores de estado.
+/// -----------------------------------------------------------------------------
+///
+/// Copied from [paddockRepository].
 @ProviderFor(paddockRepository)
 final paddockRepositoryProvider =
     AutoDisposeProvider<PaddockRepositoryImpl>.internal(
@@ -26,7 +48,22 @@ final paddockRepositoryProvider =
 typedef PaddockRepositoryRef = AutoDisposeProviderRef<PaddockRepositoryImpl>;
 String _$paddocksHash() => r'9540d9da14bdbe891b73fa3cafecb9ec728f1a75';
 
-/// See also [Paddocks].
+/// -----------------------------------------------------------------------------
+/// ## Provider de Estado: `Paddocks`
+///
+/// Maneja la lista de potreros (`List<Paddock>`) usando un `AsyncNotifier`.
+/// Permite ejecutar operaciones de creación, actualización y eliminación,
+/// asegurando que el estado de la lista se mantenga sincronizado con la fuente
+/// de datos tras cada modificación.
+///
+/// ### Métodos principales:
+/// - `build()`: Carga inicial de potreros.
+/// - `createPaddock()`: Crea un nuevo potrero.
+/// - `updatePaddock()`: Actualiza los datos de un potrero existente.
+/// - `deletePaddock()`: Elimina un potrero.
+/// -----------------------------------------------------------------------------
+///
+/// Copied from [Paddocks].
 @ProviderFor(Paddocks)
 final paddocksProvider =
     AutoDisposeAsyncNotifierProvider<Paddocks, List<Paddock>>.internal(

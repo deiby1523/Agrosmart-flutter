@@ -73,10 +73,10 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   // ===========================================================================
   // CONSTRUCCIÓN PRINCIPAL
   // ===========================================================================
-  
+
   /// --------------------------------------------------------------------------
   /// # build()
-  /// 
+  ///
   /// Construye la estructura principal del dashboard con:
   /// - Scaffold con AppBar y cuerpo responsive
   /// - Sidebar fijo en desktop / Drawer en mobile
@@ -98,16 +98,16 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   // ===========================================================================
   // MÉTODOS PRIVADOS - CONSTRUCCIÓN DE ESTRUCTURA PRINCIPAL
   // ===========================================================================
-  
+
   /// --------------------------------------------------------------------------
   /// # _buildBody()
-  /// 
+  ///
   /// Construye el cuerpo principal del layout con disposición responsive.
-  /// 
+  ///
   /// Parameters:
   /// - `context`: Contexto de build
   /// - `isLargeScreen`: Indica si está en modo desktop
-  /// 
+  ///
   /// Returns:
   /// - `Widget` con la estructura body completa
   /// --------------------------------------------------------------------------
@@ -116,7 +116,7 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
       children: [
         // Sidebar fijo en pantallas grandes
         if (isLargeScreen) _buildSidebar(context),
-        
+
         // Área principal de contenido
         Expanded(
           child: Container(
@@ -131,16 +131,16 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   // ===========================================================================
   // MÉTODOS PRIVADOS - CONSTRUCCIÓN DE APP BAR
   // ===========================================================================
-  
+
   /// --------------------------------------------------------------------------
   /// # _buildAppBar()
-  /// 
+  ///
   /// Construye la AppBar superior con controles de usuario y tema.
-  /// 
+  ///
   /// Parameters:
   /// - `context`: Contexto de build
   /// - `isLargeScreen`: Indica si está en modo desktop
-  /// 
+  ///
   /// Returns:
   /// - `PreferredSizeWidget` configurado como AppBar
   /// --------------------------------------------------------------------------
@@ -159,12 +159,12 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
 
   /// --------------------------------------------------------------------------
   /// # _buildAppBarLeading()
-  /// 
+  ///
   /// Construye el leading de la AppBar (menú hamburguesa en mobile).
-  /// 
+  ///
   /// Parameters:
   /// - `isLargeScreen`: Indica si está en modo desktop
-  /// 
+  ///
   /// Returns:
   /// - `Widget` con el leading apropiado o `null`
   /// --------------------------------------------------------------------------
@@ -179,13 +179,13 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
 
   /// --------------------------------------------------------------------------
   /// # _buildAppBarActions()
-  /// 
+  ///
   /// Construye las acciones de la AppBar (controles de tema y usuario).
-  /// 
+  ///
   /// Parameters:
   /// - `user`: Usuario actual (puede ser null)
   /// - `isDark`: Indica si el tema actual es oscuro
-  /// 
+  ///
   /// Returns:
   /// - `List<Widget>` con todas las acciones de la AppBar
   /// --------------------------------------------------------------------------
@@ -211,12 +211,12 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
 
   /// --------------------------------------------------------------------------
   /// # _buildThemeToggleButton()
-  /// 
+  ///
   /// Construye el botón de cambio rápido de tema (dark/light).
-  /// 
+  ///
   /// Parameters:
   /// - `isDark`: Indica si el tema actual es oscuro
-  /// 
+  ///
   /// Returns:
   /// - `IconButton` configurado para cambio de tema
   /// --------------------------------------------------------------------------
@@ -233,9 +233,9 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
 
   /// --------------------------------------------------------------------------
   /// # _buildThemeMenuButton()
-  /// 
+  ///
   /// Construye el menú de selección de tema (system/light/dark).
-  /// 
+  ///
   /// Returns:
   /// - `PopupMenuButton` con opciones de tema
   /// --------------------------------------------------------------------------
@@ -252,9 +252,9 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
 
   /// --------------------------------------------------------------------------
   /// # _buildThemeMenuItems()
-  /// 
+  ///
   /// Construye los items del menú de temas.
-  /// 
+  ///
   /// Returns:
   /// - `List<PopupMenuItem<ThemeMode>>` con opciones de tema
   /// --------------------------------------------------------------------------
@@ -268,22 +268,19 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
         value: ThemeMode.light,
         child: Text(_Texts.themeLight),
       ),
-      const PopupMenuItem(
-        value: ThemeMode.dark,
-        child: Text(_Texts.themeDark),
-      ),
+      const PopupMenuItem(value: ThemeMode.dark, child: Text(_Texts.themeDark)),
     ];
   }
 
   /// --------------------------------------------------------------------------
   /// # _buildUserInfoSection()
-  /// 
+  ///
   /// Construye la sección de información del usuario.
-  /// 
+  ///
   /// Parameters:
   /// - `user`: Usuario actual
   /// - `context`: Contexto de build
-  /// 
+  ///
   /// Returns:
   /// - `Row` con información del usuario
   /// --------------------------------------------------------------------------
@@ -314,9 +311,9 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
 
   /// --------------------------------------------------------------------------
   /// # _buildLogoutMenuButton()
-  /// 
+  ///
   /// Construye el menú de logout.
-  /// 
+  ///
   /// Returns:
   /// - `PopupMenuButton` con opción de cerrar sesión
   /// --------------------------------------------------------------------------
@@ -330,9 +327,9 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
 
   /// --------------------------------------------------------------------------
   /// # _buildLogoutMenuItems()
-  /// 
+  ///
   /// Construye los items del menú de logout.
-  /// 
+  ///
   /// Returns:
   /// - `List<PopupMenuItem<String>>` con opción de logout
   /// --------------------------------------------------------------------------
@@ -354,15 +351,15 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   // ===========================================================================
   // MÉTODOS PRIVADOS - CONSTRUCCIÓN DE SIDEBAR/DRAWER
   // ===========================================================================
-  
+
   /// --------------------------------------------------------------------------
   /// # _buildSidebar()
-  /// 
+  ///
   /// Construye el sidebar lateral para desktop.
-  /// 
+  ///
   /// Parameters:
   /// - `context`: Contexto de build
-  /// 
+  ///
   /// Returns:
   /// - `Widget` con el sidebar de desktop
   /// --------------------------------------------------------------------------
@@ -376,12 +373,12 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
 
   /// --------------------------------------------------------------------------
   /// # _buildDrawer()
-  /// 
+  ///
   /// Construye el drawer para mobile.
-  /// 
+  ///
   /// Parameters:
   /// - `context`: Contexto de build
-  /// 
+  ///
   /// Returns:
   /// - `Widget` con el drawer de mobile
   /// --------------------------------------------------------------------------
@@ -390,86 +387,97 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   }
 
   /// --------------------------------------------------------------------------
-  /// # _buildSidebarContent()
-  /// 
-  /// Construye el contenido común del sidebar/drawer.
-  /// 
-  /// Parameters:
-  /// - `context`: Contexto de build
-  /// 
-  /// Returns:
-  /// - `Widget` con el contenido de navegación
-  /// --------------------------------------------------------------------------
-  Widget _buildSidebarContent(BuildContext context) {
-    final currentRoute = GoRouterState.of(context).uri.path;
+/// # _buildSidebarContent()
+///
+/// Construye el contenido común del sidebar/drawer.
+///
+/// Parameters:
+/// - `context`: Contexto de build
+///
+/// Returns:
+/// - `Widget` con el contenido de navegación
+/// --------------------------------------------------------------------------
+Widget _buildSidebarContent(BuildContext context) {
+  // SOLUCIÓN CORREGIDA: Usar las propiedades correctas de GoRouter
 
-    return Column(
-      children: [
-        // Menú de navegación expandible
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            children: [
-              // Inicio
-              _buildMenuItem(
-                context,
-                icon: Icons.home,
-                title: _Texts.menuHome,
-                route: '/dashboard',
-                isSelected: currentRoute == '/dashboard',
-              ),
+  final currentRoute = GoRouterState.of(context).uri.path;
+  // final currentRoute = goRouter.location.path; // Usar .location.path
 
-              const SizedBox(height: _userInfoSpacing),
-              
-              // Grupo Finca
-              _buildGroupHeader(context, _Texts.groupFarm),
-              _buildMenuItem(
-                context,
-                icon: Icons.grid_view_rounded,
-                title: _Texts.menuLots,
-                route: '/lots',
-                isSelected: currentRoute == '/lots',
-                isGroupItem: true,
-              ),
-              _buildMenuItem(
-                context,
-                icon: Icons.fence,
-                title: _Texts.menuPaddocks,
-                route: '/paddocks',
-                isSelected: currentRoute == '/paddocks',
-                isGroupItem: true,
-              ),
+  return Column(
+    children: [
+      // Menú de navegación expandible
+      Expanded(
+        child: ListView(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          children: [
+            // Inicio
+            _buildMenuItem(
+              context,
+              icon: Icons.home,
+              title: _Texts.menuHome,
+              route: '/dashboard',
+              isSelected: currentRoute == '/dashboard',
+            ),
 
-              // Grupo Animales
-              _buildGroupHeader(context, _Texts.groupAnimals),
-              _buildMenuItem(
-                context,
-                icon: Icons.pets,
-                title: _Texts.menuBreeds,
-                route: '/breeds',
-                isSelected: currentRoute == '/breeds',
-                isGroupItem: true,
-              ),
+            const SizedBox(height: _userInfoSpacing),
 
-              // Espacio para futuros grupos (Insumos, Reportes, etc.)
-            ],
-          ),
+            // Grupo Finca
+            _buildGroupHeader(context, _Texts.groupFarm),
+            _buildMenuItem(
+              context,
+              icon: Icons.grid_view_rounded,
+              title: _Texts.menuLots,
+              route: '/lots',
+              isSelected: currentRoute == '/lots',
+              isGroupItem: true,
+            ),
+            _buildMenuItem(
+              context,
+              icon: Icons.fence,
+              title: _Texts.menuPaddocks,
+              route: '/paddocks',
+              isSelected: currentRoute == '/paddocks',
+              isGroupItem: true,
+            ),
+
+            // Grupo Animales
+            _buildGroupHeader(context, _Texts.groupAnimals),
+            _buildMenuItem(
+              context,
+              icon: Icons.help_center,
+              title: _Texts.menuAnimals,
+              route: '/animals',
+              isSelected: (currentRoute == '/animals' || currentRoute == '/animals/create'),
+              isGroupItem: true,
+            ),
+            _buildMenuItem(
+              context,
+              icon: Icons.pets,
+              title: _Texts.menuBreeds,
+              route: '/breeds',
+              isSelected: currentRoute == '/breeds',
+              isGroupItem: true,
+            ),
+
+            // Espacio para futuros grupos (Insumos, Reportes, etc.)
+          ],
         ),
+      ),
 
-        // Footer del sidebar
-        _buildSidebarFooter(context),
-      ],
-    );
-  }
+      // Footer del sidebar
+      _buildSidebarFooter(context),
+    ],
+  );
+}
 
   /// --------------------------------------------------------------------------
   /// # _buildSidebarFooter()
-  /// 
+  ///
   /// Construye el footer del sidebar con información de versión.
-  /// 
+  ///
   /// Parameters:
   /// - `context`: Contexto de build
-  /// 
+  ///
   /// Returns:
   /// - `Widget` con el footer del sidebar
   /// --------------------------------------------------------------------------
@@ -481,10 +489,7 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
           padding: EdgeInsets.all(16),
           child: Text(
             _Texts.version,
-            style: TextStyle(
-              fontSize: 12,
-              color: Colors.grey,
-            ),
+            style: TextStyle(fontSize: 12, color: Colors.grey),
             textAlign: TextAlign.center,
           ),
         ),
@@ -495,16 +500,16 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   // ===========================================================================
   // MÉTODOS PRIVADOS - ELEMENTOS DE NAVEGACIÓN
   // ===========================================================================
-  
+
   /// --------------------------------------------------------------------------
   /// # _buildGroupHeader()
-  /// 
+  ///
   /// Construye el encabezado de grupo en el sidebar.
-  /// 
+  ///
   /// Parameters:
   /// - `context`: Contexto de build
   /// - `title`: Título del grupo
-  /// 
+  ///
   /// Returns:
   /// - `Widget` con el header del grupo
   /// --------------------------------------------------------------------------
@@ -514,19 +519,19 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
       child: Text(
         title.toUpperCase(),
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
-              color: Theme.of(context).colorScheme.primary,
-              fontWeight: FontWeight.bold,
-              letterSpacing: 1.2,
-            ),
+          color: Theme.of(context).colorScheme.primary,
+          fontWeight: FontWeight.bold,
+          letterSpacing: 1.2,
+        ),
       ),
     );
   }
 
   /// --------------------------------------------------------------------------
   /// # _buildMenuItem()
-  /// 
+  ///
   /// Construye un item individual del menú de navegación.
-  /// 
+  ///
   /// Parameters:
   /// - `context`: Contexto de build
   /// - `icon`: Icono del item
@@ -534,7 +539,7 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   /// - `route`: Ruta de destino
   /// - `isSelected`: Indica si es la ruta actual
   /// - `isGroupItem`: Indica si es item de grupo (estilo compacto)
-  /// 
+  ///
   /// Returns:
   /// - `Widget` con el item de menú configurado
   /// --------------------------------------------------------------------------
@@ -550,7 +555,9 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
 
     return Container(
       decoration: BoxDecoration(
-        color: isSelected ? theme.colorScheme.primary.withAlpha(20) : Colors.transparent,
+        color: isSelected
+            ? theme.colorScheme.primary.withAlpha(20)
+            : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
       ),
       margin: EdgeInsets.symmetric(
@@ -591,12 +598,12 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   // ===========================================================================
   // MÉTODOS PRIVADOS - LÓGICA DE NAVEGACIÓN Y ACCIONES
   // ===========================================================================
-  
+
   /// --------------------------------------------------------------------------
   /// # _navigateToRoute()
-  /// 
+  ///
   /// Maneja la navegación a una ruta, cerrando el drawer en mobile si es necesario.
-  /// 
+  ///
   /// Parameters:
   /// - `context`: Contexto de build
   /// - `route`: Ruta de destino
@@ -612,9 +619,9 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
 
   /// --------------------------------------------------------------------------
   /// # _handleMenuAction()
-  /// 
+  ///
   /// Maneja las acciones del menú de usuario.
-  /// 
+  ///
   /// Parameters:
   /// - `action`: Acción seleccionada
   /// --------------------------------------------------------------------------
@@ -629,10 +636,10 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   // ===========================================================================
   // MÉTODOS PRIVADOS - DIÁLOGO DE LOGOUT
   // ===========================================================================
-  
+
   /// --------------------------------------------------------------------------
   /// # _showLogoutDialog()
-  /// 
+  ///
   /// Muestra el diálogo de confirmación de logout.
   /// --------------------------------------------------------------------------
   void _showLogoutDialog() {
@@ -659,30 +666,28 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
 
   /// --------------------------------------------------------------------------
   /// # _buildCancelButton()
-  /// 
+  ///
   /// Construye el botón de cancelar del diálogo de logout.
-  /// 
+  ///
   /// Parameters:
   /// - `colors`: Extensiones de colores del tema
-  /// 
+  ///
   /// Returns:
   /// - `TextButton` configurado para cancelar
   /// --------------------------------------------------------------------------
   Widget _buildCancelButton(AppColors colors) {
     return TextButton(
       onPressed: () => Navigator.of(context).pop(),
-      style: TextButton.styleFrom(
-        foregroundColor: colors.cancelTextButton,
-      ),
+      style: TextButton.styleFrom(foregroundColor: colors.cancelTextButton),
       child: const Text(_Texts.cancel),
     );
   }
 
   /// --------------------------------------------------------------------------
   /// # _buildLogoutButton()
-  /// 
+  ///
   /// Construye el botón de confirmación de logout.
-  /// 
+  ///
   /// Returns:
   /// - `ElevatedButton` configurado para logout
   /// --------------------------------------------------------------------------
@@ -704,16 +709,16 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   // ===========================================================================
   // MÉTODOS PRIVADOS - UTILIDADES
   // ===========================================================================
-  
+
   /// --------------------------------------------------------------------------
   /// # _calculateIsDark()
-  /// 
+  ///
   /// Calcula si el tema actual es oscuro.
-  /// 
+  ///
   /// Parameters:
   /// - `themeMode`: Modo de tema actual
   /// - `context`: Contexto de build
-  /// 
+  ///
   /// Returns:
   /// - `bool` indicando si el tema es oscuro
   /// --------------------------------------------------------------------------
@@ -747,6 +752,7 @@ class _Texts {
   static const menuLots = 'Lotes';
   static const menuPaddocks = 'Corrales';
   static const menuBreeds = 'Razas';
+  static const menuAnimals = 'Animales';
 
   // Usuario y Logout
   static const logout = 'Cerrar Sesión';

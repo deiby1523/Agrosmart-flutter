@@ -6,9 +6,26 @@ part of 'breed_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$breedRepositoryHash() => r'd7d02d2dc62b688b5a4d6169dd93483deaa00b79';
+String _$breedRepositoryHash() => r'd0283cd8272a32178f4edebded45dbf59851db4c';
 
-/// See also [breedRepository].
+/// =============================================================================
+/// # BREED PROVIDER
+///
+/// Este archivo define los providers responsables de gestionar las razas (`Breed`)
+/// dentro de la aplicación siguiendo los principios de **Clean Architecture**.
+///
+/// - `breedRepositoryProvider`: expone la implementación del repositorio.
+/// - `Breeds`: maneja el estado asíncrono de la lista de razas, incluyendo
+///   operaciones CRUD (crear, actualizar, eliminar).
+/// =============================================================================
+/// -----------------------------------------------------------------------------
+/// ## Provider: `breedRepositoryProvider`
+///
+/// Inyecta una instancia de `BreedRepositoryImpl`, permitiendo acceder a las
+/// operaciones del repositorio de razas desde cualquier punto de la app.
+/// -----------------------------------------------------------------------------
+///
+/// Copied from [breedRepository].
 @ProviderFor(breedRepository)
 final breedRepositoryProvider =
     AutoDisposeProvider<BreedRepositoryImpl>.internal(
@@ -26,7 +43,21 @@ final breedRepositoryProvider =
 typedef BreedRepositoryRef = AutoDisposeProviderRef<BreedRepositoryImpl>;
 String _$breedsHash() => r'4f73f7deeaa5535134454c30efbd60bf77e6ed38';
 
-/// See also [Breeds].
+/// -----------------------------------------------------------------------------
+/// ## Provider de Estado: `Breeds`
+///
+/// Gestiona el estado de la colección de razas (`List<Breed>`) mediante
+/// un `AsyncNotifier`. Permite ejecutar operaciones CRUD y actualiza
+/// automáticamente la lista después de cada operación.
+///
+/// ### Métodos:
+/// - `build()`: Carga inicial de razas.
+/// - `createBreed()`: Crea una nueva raza.
+/// - `updateBreed()`: Actualiza una raza existente.
+/// - `deleteBreed()`: Elimina una raza por su ID.
+/// -----------------------------------------------------------------------------
+///
+/// Copied from [Breeds].
 @ProviderFor(Breeds)
 final breedsProvider =
     AutoDisposeAsyncNotifierProvider<Breeds, List<Breed>>.internal(

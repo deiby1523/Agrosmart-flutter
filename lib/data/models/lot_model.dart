@@ -18,11 +18,7 @@ part 'lot_model.g.dart';
 
 @JsonSerializable()
 class LotModel extends Lot {
-  const LotModel({
-    super.id,
-    required super.name,
-    super.description,
-  });
+  const LotModel({super.id, required super.name, super.description});
 
   // --- JSON Serialization (Auto-generated) ---
   factory LotModel.fromJson(Map<String, dynamic> json) =>
@@ -34,11 +30,13 @@ class LotModel extends Lot {
   /// Convierte una entidad del dominio a modelo de datos
   /// Usado para enviar datos a la API (POST, PUT)
   factory LotModel.fromEntity(Lot lot) {
-    return LotModel(
-      id: lot.id,
-      name: lot.name,
-      description: lot.description,
-    );
+    return LotModel(id: lot.id, name: lot.name, description: lot.description);
+  }
+
+  // --- Model → Entity Conversion ---
+  /// Convierte un modelo de datos (DTO) en una entidad del dominio (Lot)
+  Lot toEntity() {
+    return Lot(id: id, name: name, description: description);
   }
 }
 
@@ -54,10 +52,7 @@ class LotUpdateRequest {
   final String? name;
   final String? description;
 
-  const LotUpdateRequest({
-    this.name,
-    this.description,
-  });
+  const LotUpdateRequest({this.name, this.description});
 
   // --- JSON Serialization (Auto-generated) ---
   factory LotUpdateRequest.fromJson(Map<String, dynamic> json) =>

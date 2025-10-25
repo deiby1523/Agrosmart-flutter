@@ -46,6 +46,19 @@ class PaddockModel extends Paddock {
       grassType: paddock.grassType,
     );
   }
+
+  // --- Model → Entity Conversion ---
+  /// Convierte un modelo de datos (DTO) en una entidad del dominio (Paddock)
+  Paddock toEntity() {
+    return Paddock(
+      id: id,
+      name: name,
+      location: location,
+      surface: surface,
+      description: description,
+      grassType: grassType,
+    );
+  }
 }
 
 // =============================================================================
@@ -59,9 +72,9 @@ class PaddockModel extends Paddock {
 class PaddockUpdateRequest {
   final String? name;
   final String? location;
-  final double? surface;      // Superficie en hectáreas/metros cuadrados
+  final double? surface; // Superficie en hectáreas/metros cuadrados
   final String? description;
-  final String? grassType;    // Tipo de pasto (kikuyo, brachiaria, etc.)
+  final String? grassType; // Tipo de pasto (kikuyo, brachiaria, etc.)
 
   const PaddockUpdateRequest({
     this.name,

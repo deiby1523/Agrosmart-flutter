@@ -24,8 +24,8 @@ Map<String, dynamic> _$JwtClaimsModelToJson(JwtClaimsModel instance) =>
       'id': instance.id,
       'role': instance.role,
       'type': instance.type,
-      'farms': instance.farms,
       'sub': instance.sub,
+      'farms': instance.farms,
       'iat': instance.iat,
       'exp': instance.exp,
     };

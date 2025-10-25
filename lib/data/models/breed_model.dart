@@ -18,11 +18,7 @@ part 'breed_model.g.dart';
 
 @JsonSerializable()
 class BreedModel extends Breed {
-  const BreedModel({
-    super.id,
-    required super.name,
-    super.description,
-  });
+  const BreedModel({super.id, required super.name, super.description});
 
   // --- JSON Serialization (Auto-generated) ---
   factory BreedModel.fromJson(Map<String, dynamic> json) =>
@@ -40,6 +36,12 @@ class BreedModel extends Breed {
       description: breed.description,
     );
   }
+
+  // --- Model → Entity Conversion ---
+  /// Convierte un modelo de datos (DTO) en una entidad de dominio (Breed)
+  Breed toEntity() {
+    return Breed(id: id, name: name, description: description);
+  }
 }
 
 // =============================================================================
@@ -54,10 +56,7 @@ class BreedUpdateRequest {
   final String? name;
   final String? description;
 
-  const BreedUpdateRequest({
-    this.name,
-    this.description,
-  });
+  const BreedUpdateRequest({this.name, this.description});
 
   // --- JSON Serialization (Auto-generated) ---
   factory BreedUpdateRequest.fromJson(Map<String, dynamic> json) =>

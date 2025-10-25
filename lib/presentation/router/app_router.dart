@@ -18,6 +18,8 @@
 // - authProvider: determina si el usuario está autenticado.
 // =============================================================================
 
+import 'package:agrosmart_flutter/presentation/pages/animals/animals_form_page.dart';
+import 'package:agrosmart_flutter/presentation/pages/animals/animals_index_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -116,6 +118,34 @@ final routerProvider = Provider<GoRouter>((ref) {
           transitionDuration: Duration.zero,
         ),
       ),
+      GoRoute(
+        path: '/animals',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const AnimalsListPage(),
+          transitionsBuilder: (_, __, ___, child) => child,
+          transitionDuration: Duration.zero,
+        ),
+      ),
+      GoRoute(
+        path: '/animals/create',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const AnimalsFormPage(),
+          transitionsBuilder: (_, __, ___, child) => child,
+          transitionDuration: Duration.zero,
+        ),
+      ),
+      // GoRoute(
+      //   path: '/animals/test',
+      //   pageBuilder: (context, state) => CustomTransitionPage(
+      //     key: state.pageKey,
+      //     child: AnimalsTestPage(),
+      //     transitionsBuilder: (_, __, ___, child) => child,
+      //     transitionDuration: Duration.zero,
+      //   ),
+      // ),
+      
       GoRoute(
         path: '/lots',
         pageBuilder: (context, state) => CustomTransitionPage(
