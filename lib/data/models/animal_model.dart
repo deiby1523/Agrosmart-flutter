@@ -187,34 +187,6 @@ class AnimalModel {
           : null,
     );
   }
-
-  @override
-  String toString() {
-    return '''
-===== ANIMAL MODEL =====
-ID: $id
-Code: $code
-Name: $name
-Birthday: $birthday
-Purchase Date: $purchaseDate
-Sex: $sex
-Register Type: $registerType
-Health: $health
-Birth Weight: $birthWeight
-Status: $status
-Purchase Price: $purchasePrice
-Color: $color
-Brand: $brand
-Raza ID: $razaId
-Lot ID: $lotId
-Paddock ID: $paddockId
-Farm ID: $farmId
-Father ID: $fatherId
-Mother ID: $motherId
-Created At: $createdAt
-=========================
-''';
-  }
 }
 
 // =============================================================================

@@ -63,7 +63,7 @@ class Animal {
   final String? brand;
 
   /// Raza a la que pertenece el animal.
-  final Breed breed;
+  Breed breed;
 
   /// Lote o grupo al que pertenece.
   final Lot lot;
@@ -87,7 +87,7 @@ class Animal {
   // Constructor
   // ---------------------------------------------------------------------------
 
-  const Animal({
+  Animal({
     this.id,
     required this.code,
     required this.name,
