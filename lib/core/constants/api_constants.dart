@@ -11,6 +11,8 @@ class ApiConstants {
   static const String register = '/auth/register'; // Registro
   static const String refresh = '/auth/refresh'; // Refresh token
 
+  // static const String farms = '/farm/{farmId}/farms';
+
   // --- Farm Resources ---
   static const String breeds = '/farm/{farmId}/breeds'; // CRUD Razas
   static const String lots = '/farm/{farmId}/lots'; // CRUD Lotes

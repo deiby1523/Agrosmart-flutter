@@ -100,9 +100,17 @@ class Animals extends _$Animals {
         status: status,
         color: color,
         breed: breed,
+        brand: brand,
         lot: lot,
         paddockCurrent: paddockCurrent,
+        farm: farm,
+        father: father,
+        mother: mother,
+        purchaseDate: purchaseDate,
+        purchasePrice: purchasePrice
       );
+
+      
       await ref.read(animalRepositoryProvider).createAnimal(animal);
       // Recargar la página actual después de crear
       return await _loadAnimals(page: _currentPage, size: _pageSize);

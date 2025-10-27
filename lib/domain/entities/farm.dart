@@ -35,6 +35,13 @@ class Farm {
     this.ownerId,
   });
 
+  const Farm.basic({
+    required this.id,
+    required this.name,
+  })  : description = 'description',
+        location = 'location',
+        ownerId = null;
+
   // --- COPY WITH ---
   /// Retorna una nueva instancia de [Farm] con los valores modificados.
   /// Los campos no proporcionados conservarán sus valores originales.

@@ -11,6 +11,11 @@ import 'package:agrosmart_flutter/data/models/breed_model.dart';
 import 'package:agrosmart_flutter/data/models/farm_model.dart';
 import 'package:agrosmart_flutter/data/models/lot_model.dart';
 import 'package:agrosmart_flutter/data/models/paddock_model.dart';
+import 'package:agrosmart_flutter/domain/entities/breed.dart';
+import 'package:agrosmart_flutter/domain/entities/farm.dart';
+import 'package:agrosmart_flutter/domain/entities/lot.dart';
+import 'package:agrosmart_flutter/domain/entities/paddock.dart';
+import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import '../../domain/entities/animal.dart';
 
@@ -37,13 +42,19 @@ class AnimalModel {
   final double? purchasePrice;
   final String color;
   final String? brand;
-  final BreedModel breed;
-  final LotModel lot;
-  final PaddockModel paddockCurrent;
+  // final BreedModel breed;
+  final int razaId;
+  // final LotModel lot;
+  final int lotId;
+  // final PaddockModel paddockCurrent;
+  final int paddockId;
   final DateTime? createdAt;
-  final AnimalModel? father;
-  final AnimalModel? mother;
-  final FarmModel? farm;
+  // final AnimalModel? father;
+  final int? fatherId;
+  // final AnimalModel? mother;
+  final int? motherId;
+  // final FarmModel? farm;
+  final int? farmId;
 
   const AnimalModel({
     this.id,
@@ -56,16 +67,16 @@ class AnimalModel {
     required this.birthWeight,
     required this.status,
     required this.color,
-    required this.lot,
-    required this.breed,
-    required this.paddockCurrent,
+    required this.lotId,
+    required this.razaId,
+    required this.paddockId,
     this.createdAt,
     this.purchaseDate,
     this.purchasePrice,
     this.brand,
-    this.farm,
-    this.father,
-    this.mother,
+    this.farmId,
+    this.fatherId,
+    this.motherId,
   });
 
   // --- JSON Serialization (Auto-generated) ---
@@ -85,22 +96,20 @@ class AnimalModel {
       birthday: animal.birthday,
       sex: animal.sex,
       registerType: animal.registerType,
+      purchaseDate: animal.purchaseDate,
+      purchasePrice: animal.purchasePrice,
       health: animal.health,
       birthWeight: animal.birthWeight,
       status: animal.status,
       color: animal.color,
-      breed: BreedModel.fromEntity(animal.breed),
-      lot: LotModel.fromEntity(animal.lot),
-      paddockCurrent: PaddockModel.fromEntity(animal.paddockCurrent),
-      createdAt: animal.createdAt ,
+      razaId: animal.breed.id!,
+      lotId: animal.lot.id!,
+      paddockId: animal.paddockCurrent.id!,
+      createdAt: animal.createdAt,
       brand: animal.brand,
-      farm: animal.farm != null ? FarmModel.fromEntity(animal.farm!) : null,
-      father: animal.father != null
-          ? AnimalModel.fromEntity(animal.father!)
-          : null,
-      mother: animal.mother != null
-          ? AnimalModel.fromEntity(animal.mother!)
-          : null,
+      farmId: animal.farm!.id,
+      fatherId: animal.father?.id,
+      motherId: animal.mother?.id,
     );
   }
 
@@ -120,14 +129,91 @@ class AnimalModel {
       purchasePrice: purchasePrice,
       color: color,
       brand: brand,
-      breed: breed.toEntity(),
-      lot: lot.toEntity(),
-      paddockCurrent: paddockCurrent.toEntity(),
+      breed: Breed(id: razaId, name: '', description: ''),
+      lot: Lot(id: lotId, name: '', description: ''),
+      paddockCurrent: Paddock(
+        id: paddockId,
+        name: '',
+        location: '',
+        surface: 0.0,
+      ),
       createdAt: createdAt,
-      father: father?.toEntity(),
-      mother: mother?.toEntity(),
-      farm: farm?.toEntity(),
+      father: fatherId != null
+          ? Animal(
+              id: fatherId!,
+              code: '',
+              name: '',
+              birthday: DateTime.now(),
+              sex: '',
+              registerType: '',
+              health: '',
+              birthWeight: 0,
+              status: '',
+              color: '',
+              breed: Breed(id: razaId, name: '', description: ''),
+              lot: Lot(id: lotId, name: '', description: ''),
+              paddockCurrent: Paddock(
+                id: paddockId,
+                name: '',
+                location: '',
+                surface: 0.0,
+              ),
+            )
+          : null,
+      mother: motherId != null
+          ? Animal(
+              id: motherId!,
+              code: '',
+              name: '',
+              birthday: DateTime.now(),
+              sex: '',
+              registerType: '',
+              health: '',
+              birthWeight: 0,
+              status: '',
+              color: '',
+              breed: Breed(id: razaId, name: '', description: ''),
+              lot: Lot(id: lotId, name: '', description: ''),
+              paddockCurrent: Paddock(
+                id: paddockId,
+                name: '',
+                location: '',
+                surface: 0.0,
+              ),
+            )
+          : null,
+      farm: farmId != null
+          ? Farm(id: farmId!, name: '', description: '', location: '')
+          : null,
     );
+  }
+
+  @override
+  String toString() {
+    return '''
+===== ANIMAL MODEL =====
+ID: $id
+Code: $code
+Name: $name
+Birthday: $birthday
+Purchase Date: $purchaseDate
+Sex: $sex
+Register Type: $registerType
+Health: $health
+Birth Weight: $birthWeight
+Status: $status
+Purchase Price: $purchasePrice
+Color: $color
+Brand: $brand
+Raza ID: $razaId
+Lot ID: $lotId
+Paddock ID: $paddockId
+Farm ID: $farmId
+Father ID: $fatherId
+Mother ID: $motherId
+Created At: $createdAt
+=========================
+''';
   }
 }
 
@@ -138,6 +224,7 @@ class AnimalModel {
 // Los campos son opcionales (solo se envían los modificados)
 // Endpoint: PATCH /farm/{farmId}/animals/{id}
 
+// TODO: Modificar esto para que funcione con Request
 @JsonSerializable()
 class AnimalUpdateRequest {
   final String? code;

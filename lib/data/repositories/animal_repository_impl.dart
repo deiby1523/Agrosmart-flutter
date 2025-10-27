@@ -34,6 +34,8 @@ class AnimalRepositoryImpl implements AnimalRepository {
         queryParameters: {'page': page, 'size': size},
       );
 
+      // log(response.toString());
+
       // Parsear la respuesta paginada
       final paginatedResponse = PaginatedResponseModel<AnimalModel>.fromJson(
         response.data,
@@ -61,12 +63,17 @@ class AnimalRepositoryImpl implements AnimalRepository {
   // --- POST: Create Animal ---
   @override
   Future<Animal> createAnimal(Animal animal) async {
+    // log(animal.toString());
+
     try {
       final animalModel = AnimalModel.fromEntity(animal);
       final response = await _apiClient.dio.post(
         ApiConstants.animals,
         data: animalModel.toJson(),
       );
+      log(animalModel.toJson().toString());
+      // log("Se hizo POST");
+      // log(response.data.toString());
       return AnimalModel.fromJson(response.data).toEntity();
     } catch (e) {
       throw _handleError(e);
@@ -114,7 +121,7 @@ class AnimalRepositoryImpl implements AnimalRepository {
           return 'Error de conexión';
       }
     }
-    log(error.toString());
+    log('$error, Error en animalRepository');
     return 'Error desconocido';
   }
 }

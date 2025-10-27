@@ -2,11 +2,17 @@
 
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:agrosmart_flutter/core/utils/validators.dart';
+import 'package:agrosmart_flutter/data/services/active_farm_service.dart';
 import 'package:agrosmart_flutter/domain/entities/animal.dart';
 import 'package:agrosmart_flutter/domain/entities/breed.dart';
 import 'package:agrosmart_flutter/domain/entities/farm.dart';
 import 'package:agrosmart_flutter/domain/entities/lot.dart';
 import 'package:agrosmart_flutter/domain/entities/paddock.dart';
+import 'package:agrosmart_flutter/presentation/providers/breed_provider.dart';
+import 'package:agrosmart_flutter/presentation/providers/lot_provider.dart';
+import 'package:agrosmart_flutter/presentation/providers/paddock_provider.dart';
+import 'package:agrosmart_flutter/presentation/widgets/custom_date_field.dart';
+import 'package:agrosmart_flutter/presentation/widgets/custom_select_field.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_text_field.dart';
 import 'package:agrosmart_flutter/presentation/widgets/dashboard_layout.dart';
 import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart';
@@ -14,10 +20,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 // Importamos los providers necesarios
 import '../../providers/animal_provider.dart';
-import '../../providers/breed_provider.dart';
 
 class AnimalsFormPage extends ConsumerStatefulWidget {
   final Animal? animal;
@@ -30,6 +36,8 @@ class AnimalsFormPage extends ConsumerStatefulWidget {
 
 class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
   final _formKey = GlobalKey<FormState>();
+  static const String _activeFarmKey = 'active_farm';
+
   final _scrollController = ScrollController();
 
   // Controladores para campos de texto
@@ -42,8 +50,8 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
   final _brandController = TextEditingController();
 
   // Fechas
-  DateTime? _birthday;
-  DateTime? _purchaseDate;
+  final _birthdayContoller = TextEditingController();
+  final _purchaseDateController = TextEditingController();
 
   // Dropdown values
   String? _selectedSex;
@@ -77,8 +85,9 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
       final animal = widget.animal!;
       _codeController.text = animal.code;
       _nameController.text = animal.name;
-      _birthday = animal.birthday;
-      _purchaseDate = animal.purchaseDate;
+      //_birthday = animal.birthday;
+      _birthdayContoller.text = animal.birthday.toString();
+      _purchaseDateController.text = animal.purchaseDate.toString();
       _selectedSex = animal.sex;
       _selectedRegisterType = animal.registerType;
       _healthController.text = animal.health;
@@ -94,15 +103,17 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
       _selectedMother = animal.mother;
       _selectedFarm = animal.farm;
     }
+    _getFarm();
   }
 
   @override
   void dispose() {
     _codeController.dispose();
     _nameController.dispose();
+    _birthdayContoller.dispose();
+    _purchasePriceController.dispose();
     _birthWeightController.dispose();
     _healthController.dispose();
-    _purchasePriceController.dispose();
     _colorController.dispose();
     _brandController.dispose();
     _scrollController.dispose();
@@ -162,76 +173,170 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
 
                                 _buildTwoColumnLayout(
                                   children: [
-                                    _buildDateField(
-                                      label: 'Fecha de Nacimiento *',
-                                      currentDate: _birthday,
-                                      onDateSelected: (date) {
-                                        setState(() {
-                                          _birthday = date;
-                                        });
-                                      },
+                                    // _buildDateField(
+                                    //   label: 'Fecha de Nacimiento *',
+                                    //   currentDate: _birthday,
+                                    //   onDateSelected: (date) {
+                                    //     setState(() {
+                                    //       _birthday = date;
+                                    //     });
+                                    //   },
+                                    // ),
+                                    CustomDateField(
+                                      controller: _birthdayContoller,
+                                      hintText:
+                                          "Seleccione la fecha de nacimiento",
+                                      labelText: "Fecha de nacimiento *",
+                                      onSelected: null,
+                                      prefixIcon: Icons.calendar_today,
+                                      suffixIcon: Icons.edit_calendar_rounded,
+                                      validator: (value) => Validators.required(
+                                        value,
+                                        'Fecha de nacimiento',
+                                      ),
                                     ),
-                                    _buildDropdownButtonFormField<String>(
+                                    CustomSelectField<String>(
+                                      labelText: 'Sexo',
+                                      hintText: 'Seleccione el sexo del animal',
+                                      prefixIcon: Icons.male_rounded,
                                       value: _selectedSex,
-                                      items: ['Macho', 'Hembra'].map((sex) {
-                                        return DropdownMenuItem<String>(
-                                          value: sex,
-                                          child: Text(sex),
-                                        );
-                                      }).toList(),
+                                      items: const [
+                                        DropdownMenuItem(
+                                          value: 'MALE',
+                                          child: Text('Macho'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'FEMALE',
+                                          child: Text('Hembra'),
+                                        ),
+                                      ],
                                       onChanged: (value) {
                                         setState(() {
                                           _selectedSex = value;
                                         });
                                       },
-                                      labelText: 'Sexo *',
-                                      prefixIcon: Icons.female,
-                                      validator: (value) =>
-                                          value == null ? 'Seleccione el sexo' : null,
                                     ),
+                                    // _buildDropdownButtonFormField<String>(
+                                    //   value: _selectedSex,
+                                    //   items: ['Macho', 'Hembra'].map((sex) {
+                                    //     return DropdownMenuItem<String>(
+                                    //       value: sex,
+                                    //       child: Text(sex),
+                                    //     );
+                                    //   }).toList(),
+                                    //   onChanged: (value) {
+                                    //     setState(() {
+                                    //       _selectedSex = value;
+                                    //     });
+                                    //   },
+                                    //   labelText: 'Sexo *',
+                                    //   prefixIcon: Icons.female,
+                                    //   validator: (value) => value == null
+                                    //       ? 'Seleccione el sexo'
+                                    //       : null,
+                                    // ),
                                   ],
                                 ),
                                 const SizedBox(height: 16),
 
                                 _buildTwoColumnLayout(
                                   children: [
-                                    _buildDropdownButtonFormField<String>(
+                                    CustomSelectField<String>(
+                                      labelText: 'Tipo de registro',
+                                      hintText:
+                                          'Seleccione el tipo de registro',
+                                      prefixIcon: Icons.agriculture,
                                       value: _selectedRegisterType,
-                                      items: ['Nacimiento', 'Compra', 'Traslado'].map((type) {
-                                        return DropdownMenuItem<String>(
-                                          value: type,
-                                          child: Text(type),
-                                        );
-                                      }).toList(),
+                                      items: const [
+                                        DropdownMenuItem(
+                                          value: 'BIRTH',
+                                          child: Text('Nacimiento'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'PURCHASE',
+                                          child: Text('Compra'),
+                                        ),
+                                      ],
                                       onChanged: (value) {
                                         setState(() {
                                           _selectedRegisterType = value;
                                         });
                                       },
-                                      labelText: 'Tipo de Registro *',
-                                      prefixIcon: Icons.assignment,
-                                      validator: (value) => value == null
-                                          ? 'Seleccione el tipo de registro'
-                                          : null,
                                     ),
-                                    _buildDropdownButtonFormField<String>(
+                                    CustomSelectField<String>(
+                                      labelText: 'Estado',
+                                      hintText: 'Seleccione un estado',
+                                      prefixIcon: Icons.agriculture,
                                       value: _selectedStatus,
-                                      items: ['Activo', 'Inactivo', 'Vendido', 'Muerto'].map((status) {
-                                        return DropdownMenuItem<String>(
-                                          value: status,
-                                          child: Text(status),
-                                        );
-                                      }).toList(),
+                                      items: const [
+                                        DropdownMenuItem(
+                                          value: 'ACTIVE',
+                                          child: Text('Activo'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'SOLD',
+                                          child: Text('Vendido'),
+                                        ),
+                                        DropdownMenuItem(
+                                          value: 'DEAD',
+                                          child: Text('Muerto'),
+                                        ),
+                                      ],
                                       onChanged: (value) {
                                         setState(() {
                                           _selectedStatus = value;
                                         });
                                       },
-                                      labelText: 'Estado *',
-                                      prefixIcon: Icons.circle,
-                                      validator: (value) =>
-                                          value == null ? 'Seleccione el estado' : null,
                                     ),
+                                    // _buildDropdownButtonFormField<String>(
+                                    //   value: _selectedRegisterType,
+                                    //   items:
+                                    //       [
+                                    //         'Nacimiento',
+                                    //         'Compra',
+                                    //         'Traslado',
+                                    //       ].map((type) {
+                                    //         return DropdownMenuItem<String>(
+                                    //           value: type,
+                                    //           child: Text(type),
+                                    //         );
+                                    //       }).toList(),
+                                    //   onChanged: (value) {
+                                    //     setState(() {
+                                    //       _selectedRegisterType = value;
+                                    //     });
+                                    //   },
+                                    //   labelText: 'Tipo de Registro *',
+                                    //   prefixIcon: Icons.assignment,
+                                    //   validator: (value) => value == null
+                                    //       ? 'Seleccione el tipo de registro'
+                                    //       : null,
+                                    // ),
+                                    // _buildDropdownButtonFormField<String>(
+                                    //   value: _selectedStatus,
+                                    //   items:
+                                    //       [
+                                    //         'Activo',
+                                    //         'Inactivo',
+                                    //         'Vendido',
+                                    //         'Muerto',
+                                    //       ].map((status) {
+                                    //         return DropdownMenuItem<String>(
+                                    //           value: status,
+                                    //           child: Text(status),
+                                    //         );
+                                    //       }).toList(),
+                                    //   onChanged: (value) {
+                                    //     setState(() {
+                                    //       _selectedStatus = value;
+                                    //     });
+                                    //   },
+                                    //   labelText: 'Estado *',
+                                    //   prefixIcon: Icons.circle,
+                                    //   validator: (value) => value == null
+                                    //       ? 'Seleccione el estado'
+                                    //       : null,
+                                    // ),
                                   ],
                                 ),
                                 const SizedBox(height: 16),
@@ -243,8 +348,10 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
                                       labelText: 'Estado de Salud *',
                                       hintText: 'Estado de salud actual',
                                       prefixIcon: Icons.health_and_safety,
-                                      validator: (value) =>
-                                          Validators.required(value, 'Estado de salud'),
+                                      validator: (value) => Validators.required(
+                                        value,
+                                        'Estado de salud',
+                                      ),
                                     ),
                                     CustomTextField(
                                       controller: _birthWeightController,
@@ -252,8 +359,10 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
                                       hintText: '0.00',
                                       prefixIcon: Icons.scale,
                                       keyboardType: TextInputType.number,
-                                      validator: (value) =>
-                                          Validators.required(value, 'Peso al nacer'),
+                                      validator: (value) => Validators.required(
+                                        value,
+                                        'Peso al nacer',
+                                      ),
                                     ),
                                   ],
                                 ),
@@ -289,15 +398,12 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
 
                                 _buildTwoColumnLayout(
                                   children: [
-                                    _buildDateField(
-                                      label: 'Fecha de Compra',
-                                      currentDate: _purchaseDate,
-                                      onDateSelected: (date) {
-                                        setState(() {
-                                          _purchaseDate = date;
-                                        });
-                                      },
-                                      isRequired: false,
+                                    CustomDateField(
+                                      controller: _purchaseDateController,
+                                      hintText: "Seleccione la fecha de compra",
+                                      labelText: "Fecha de compra",
+                                      prefixIcon: Icons.event_available,
+                                      suffixIcon: Icons.edit_calendar_rounded,
                                     ),
                                     CustomTextField(
                                       controller: _purchasePriceController,
@@ -320,41 +426,29 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
                               children: [
                                 _buildTwoColumnLayout(
                                   children: [
-                                    _buildDropdownButtonFormField<Breed>(
-                                      value: _selectedBreed,
-                                      items: _breeds.map((breed) {
-                                        return DropdownMenuItem<Breed>(
-                                          value: breed,
-                                          child: Text(breed.name),
-                                        );
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedBreed = value;
-                                        });
-                                      },
+                                    CustomSelectField<Breed>(
                                       labelText: 'Raza *',
-                                      prefixIcon: Icons.agriculture,
-                                      validator: (value) =>
-                                          value == null ? 'Seleccione la raza' : null,
-                                    ),
-                                    _buildDropdownButtonFormField<Lot>(
-                                      value: _selectedLot,
-                                      items: _lots.map((lot) {
-                                        return DropdownMenuItem<Lot>(
-                                          value: lot,
-                                          child: Text(lot.name),
-                                        );
-                                      }).toList(),
+                                      hintText: 'Seleccione la raza',
+                                      prefixIcon: Icons.pets,
+                                      value: _selectedBreed,
+                                      items: _buildBreedList(context, ref),
                                       onChanged: (value) {
                                         setState(() {
-                                          _selectedLot = value;
+                                          _selectedBreed = value; //error acá;
                                         });
                                       },
+                                    ),
+                                    CustomSelectField<Lot>(
                                       labelText: 'Lote *',
-                                      prefixIcon: Icons.group_work,
-                                      validator: (value) =>
-                                          value == null ? 'Seleccione el lote' : null,
+                                      hintText: 'Seleccione el lote',
+                                      prefixIcon: Icons.pets,
+                                      value: _selectedLot,
+                                      items: _buildLotList(context, ref),
+                                      onChanged: (value) {
+                                        setState(() {
+                                          _selectedLot = value; //error acá;
+                                        });
+                                      },
                                     ),
                                   ],
                                 ),
@@ -362,40 +456,30 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
 
                                 _buildTwoColumnLayout(
                                   children: [
-                                    _buildDropdownButtonFormField<Paddock>(
+                                    CustomSelectField<Paddock>(
+                                      labelText: 'Corral *',
+                                      hintText: 'Seleccione el corral',
+                                      prefixIcon: Icons.pets,
                                       value: _selectedPaddock,
-                                      items: _paddocks.map((paddock) {
-                                        return DropdownMenuItem<Paddock>(
-                                          value: paddock,
-                                          child: Text(paddock.name),
-                                        );
-                                      }).toList(),
+                                      items: _buildPaddockList(context, ref),
                                       onChanged: (value) {
                                         setState(() {
-                                          _selectedPaddock = value;
+                                          _selectedPaddock = value; //error acá;
                                         });
                                       },
-                                      labelText: 'Potrero Actual *',
-                                      prefixIcon: Icons.landscape,
-                                      validator: (value) =>
-                                          value == null ? 'Seleccione el potrero' : null,
                                     ),
-                                    _buildDropdownButtonFormField<Farm>(
-                                      value: _selectedFarm,
-                                      items: _farms.map((farm) {
-                                        return DropdownMenuItem<Farm>(
-                                          value: farm,
-                                          child: Text(farm.name),
-                                        );
-                                      }).toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedFarm = value;
-                                        });
-                                      },
-                                      labelText: 'Granja',
-                                      prefixIcon: Icons.business,
-                                    ),
+                                    // CustomSelectField<Farm>(
+                                    //   labelText: 'Granja *',
+                                    //   hintText: 'Seleccione la granja',
+                                    //   prefixIcon: Icons.pets,
+                                    //   value: _selectedFarm,
+                                    //   items: _buildFarmList(context, ref),
+                                    //   onChanged: (value) {
+                                    //     setState(() {
+                                    //       _selectedFarm = value; //error acá;
+                                    //     });
+                                    //   },
+                                    // ),
                                   ],
                                 ),
                                 const SizedBox(height: 16),
@@ -404,12 +488,17 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
                                   children: [
                                     _buildDropdownButtonFormField<Animal>(
                                       value: _selectedFather,
-                                      items: _animals.where((a) => a.sex == 'Macho').map((animal) {
-                                        return DropdownMenuItem<Animal>(
-                                          value: animal,
-                                          child: Text('${animal.name} (${animal.code})'),
-                                        );
-                                      }).toList(),
+                                      items: _animals
+                                          .where((a) => a.sex == 'Macho')
+                                          .map((animal) {
+                                            return DropdownMenuItem<Animal>(
+                                              value: animal,
+                                              child: Text(
+                                                '${animal.name} (${animal.code})',
+                                              ),
+                                            );
+                                          })
+                                          .toList(),
                                       onChanged: (value) {
                                         setState(() {
                                           _selectedFather = value;
@@ -420,12 +509,17 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
                                     ),
                                     _buildDropdownButtonFormField<Animal>(
                                       value: _selectedMother,
-                                      items: _animals.where((a) => a.sex == 'Hembra').map((animal) {
-                                        return DropdownMenuItem<Animal>(
-                                          value: animal,
-                                          child: Text('${animal.name} (${animal.code})'),
-                                        );
-                                      }).toList(),
+                                      items: _animals
+                                          .where((a) => a.sex == 'Hembra')
+                                          .map((animal) {
+                                            return DropdownMenuItem<Animal>(
+                                              value: animal,
+                                              child: Text(
+                                                '${animal.name} (${animal.code})',
+                                              ),
+                                            );
+                                          })
+                                          .toList(),
                                       onChanged: (value) {
                                         setState(() {
                                           _selectedMother = value;
@@ -472,9 +566,9 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
         Text(
           isEditing ? 'Editar Animal' : 'Nuevo Animal',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
+            fontWeight: FontWeight.bold,
+            color: Theme.of(context).colorScheme.onSurface,
+          ),
         ),
       ],
     );
@@ -504,9 +598,9 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
                 Text(
                   title,
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w600,
-                        color: Theme.of(context).colorScheme.onSurface,
-                      ),
+                    fontWeight: FontWeight.w600,
+                    color: Theme.of(context).colorScheme.onSurface,
+                  ),
                 ),
               ],
             ),
@@ -524,9 +618,7 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
         if (constraints.maxWidth > 600) {
           return Row(
             children: [
-              Expanded(
-                child: children[0],
-              ),
+              Expanded(child: children[0]),
               const SizedBox(width: 16),
               Expanded(
                 child: children.length > 1 ? children[1] : const SizedBox(),
@@ -537,64 +629,6 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
           return Column(children: children);
         }
       },
-    );
-  }
-
-  Widget _buildDateField({
-    required String label,
-    required DateTime? currentDate,
-    required Function(DateTime) onDateSelected,
-    bool isRequired = true,
-  }) {
-    return InkWell(
-      onTap: () async {
-        final selectedDate = await showDatePicker(
-          context: context,
-          initialDate: currentDate ?? DateTime.now(),
-          firstDate: DateTime(1900),
-          lastDate: DateTime.now(),
-        );
-        if (selectedDate != null) {
-          onDateSelected(selectedDate);
-        }
-      },
-      child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: label + (isRequired ? ' *' : ''),
-          prefixIcon: const Icon(Icons.calendar_today),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.outline,
-            ),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(8.0),
-            borderSide: BorderSide(
-              color: Theme.of(context).colorScheme.outline,
-            ),
-          ),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              currentDate != null
-                  ? DateFormat('dd/MM/yyyy').format(currentDate)
-                  : 'Seleccione una fecha',
-              style: TextStyle(
-                color: currentDate != null
-                    ? Theme.of(context).colorScheme.onSurface
-                    : Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-              ),
-            ),
-            Icon(
-              Icons.arrow_drop_down,
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-            ),
-          ],
-        ),
-      ),
     );
   }
 
@@ -613,14 +647,10 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
       decoration: InputDecoration(
         labelText: labelText,
         prefixIcon: Icon(prefixIcon),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
       ),
       validator: validator,
-      style: TextStyle(
-        color: Theme.of(context).colorScheme.onSurface,
-      ),
+      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
       dropdownColor: Theme.of(context).colorScheme.surface,
       icon: Icon(
         Icons.arrow_drop_down,
@@ -647,10 +677,14 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
             child: OutlinedButton(
               onPressed: _isLoading ? null : () => context.go('/animals'),
               style: OutlinedButton.styleFrom(
-                foregroundColor: colors.cancelTextButton ?? Theme.of(context).colorScheme.error,
+                foregroundColor:
+                    colors.cancelTextButton ??
+                    Theme.of(context).colorScheme.error,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 side: BorderSide(
-                  color: colors.cancelTextButton ?? Theme.of(context).colorScheme.error,
+                  color:
+                      colors.cancelTextButton ??
+                      Theme.of(context).colorScheme.error,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),
@@ -689,11 +723,189 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
     );
   }
 
+  List<DropdownMenuItem<Breed>> _buildBreedList(
+    BuildContext context,
+    WidgetRef ref,
+  ) {
+    final breedsState = ref.watch(breedsProvider);
+    breedsState.when(
+      loading: () => null,
+      error: (error, stack) => null,
+      data: (breeds) => _breeds = breeds,
+    );
+
+    List<DropdownMenuItem<Breed>> breedOptions = List.empty(growable: true);
+
+    if (_breeds.isEmpty) {
+      breedOptions.add(
+        DropdownMenuItem<Breed>(
+          enabled: false,
+          value: null,
+          child: Text(
+            "No existen Razas",
+          ), // Asegúrate de que Breed tenga una propiedad 'name'
+        ),
+      );
+    } else {
+      _breeds.map((breed) {
+        breedOptions.add(
+          DropdownMenuItem<Breed>(
+            value: breed,
+            child: Text(
+              breed.name,
+            ), // Asegúrate de que Breed tenga una propiedad 'name'
+          ),
+        );
+      }).toList();
+    }
+
+    return breedOptions;
+  }
+
+  List<DropdownMenuItem<Lot>> _buildLotList(
+    BuildContext context,
+    WidgetRef ref,
+  ) {
+    final lotsState = ref.watch(lotsProvider);
+    lotsState.when(
+      loading: () => null,
+      error: (error, stack) => null,
+      data: (lots) => _lots = lots,
+    );
+
+    List<DropdownMenuItem<Lot>> lotOptions = List.empty(growable: true);
+
+    if (_lots.isEmpty) {
+      lotOptions.add(
+        DropdownMenuItem<Lot>(
+          enabled: false,
+          value: null,
+          child: Text(
+            "No existen Lotes",
+          ), // Asegúrate de que Lot tenga una propiedad 'name'
+        ),
+      );
+    } else {
+      _lots.map((lot) {
+        lotOptions.add(
+          DropdownMenuItem<Lot>(
+            value: lot,
+            child: Text(
+              lot.name,
+            ), // Asegúrate de que Lot tenga una propiedad 'name'
+          ),
+        );
+      }).toList();
+    }
+
+    return lotOptions;
+  }
+
+  List<DropdownMenuItem<Paddock>> _buildPaddockList(
+    BuildContext context,
+    WidgetRef ref,
+  ) {
+    final paddocksState = ref.watch(paddocksProvider);
+    paddocksState.when(
+      loading: () => null,
+      error: (error, stack) => null,
+      data: (paddocks) => _paddocks = paddocks,
+    );
+
+    List<DropdownMenuItem<Paddock>> paddockOptions = List.empty(growable: true);
+
+    if (_paddocks.isEmpty) {
+      paddockOptions.add(
+        DropdownMenuItem<Paddock>(
+          enabled: false,
+          value: null,
+          child: Text(
+            "No existen Corrales",
+          ), // Asegúrate de que Paddock tenga una propiedad 'name'
+        ),
+      );
+    } else {
+      _paddocks.map((paddock) {
+        paddockOptions.add(
+          DropdownMenuItem<Paddock>(
+            value: paddock,
+            child: Text(
+              paddock.name,
+            ), // Asegúrate de que Paddock tenga una propiedad 'name'
+          ),
+        );
+      }).toList();
+    }
+
+    return paddockOptions;
+  }
+
+  List<DropdownMenuItem<Farm>> _buildFarmList(
+    BuildContext context,
+    WidgetRef ref,
+  ) {
+    // final farmsState = ref.watch(farmProvider);
+    // farmsState.when(
+    //   loading: () => null,
+    //   error: (error, stack) => null,
+    //   data: (farms) => _farms = List.empty(growable: true),
+    // );
+
+    _farms = List.empty(growable: true);
+
+    List<DropdownMenuItem<Farm>> farmOptions = List.empty(growable: true);
+
+    if (_farms.isEmpty) {
+      farmOptions.add(
+        DropdownMenuItem<Farm>(
+          enabled: false,
+          value: null,
+          child: Text(
+            "No existen Granjas",
+          ), // Asegúrate de que Farm tenga una propiedad 'name'
+        ),
+      );
+    } else {
+      _farms.map((farm) {
+        farmOptions.add(
+          DropdownMenuItem<Farm>(
+            value: farm,
+            child: Text(
+              farm.name,
+            ), // Asegúrate de que Farm tenga una propiedad 'name'
+          ),
+        );
+      }).toList();
+    }
+
+    return farmOptions;
+  }
+
+  Future<void> _getFarm() async {
+    final prefs = await SharedPreferences.getInstance();
+    _selectedFarm = Farm.basic(
+      id: prefs.getInt(_activeFarmKey) ?? 0,
+      name: 'farm',
+    );
+  }
+
+  DateTime parseDate(String input) {
+    try {
+      final parts = input.split('/');
+      final day = int.parse(parts[0]);
+      final month = int.parse(parts[1]);
+      final year = int.parse(parts[2]);
+      return DateTime(year, month, day);
+    } catch (e) {
+      throw FormatException('Formato de fecha inválido: $input');
+    }
+  }
+
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 
     // Validaciones adicionales (tu código existente)
-    if (_birthday == null) {
+    if (_birthdayContoller == null) {
       context.showErrorSnack('La fecha de nacimiento es requerida');
       return;
     }
@@ -737,6 +949,9 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
       }
     }
 
+    final birthday = parseDate(_birthdayContoller.text.trim());
+    final purchaseDate = parseDate(_purchaseDateController.text.trim());
+
     setState(() => _isLoading = true);
 
     try {
@@ -748,8 +963,8 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
               widget.animal!.id!,
               _codeController.text.trim(),
               _nameController.text.trim(),
-              _birthday!,
-              _purchaseDate,
+              birthday,
+              purchaseDate,
               _selectedSex!,
               _selectedRegisterType!,
               _healthController.text.trim(),
@@ -768,14 +983,15 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
               _selectedFarm,
             );
       } else {
+        
         // Modo creación
         await ref
             .read(animalsProvider.notifier)
             .createAnimal(
               _codeController.text.trim(),
               _nameController.text.trim(),
-              _birthday!,
-              _purchaseDate,
+              birthday,
+              purchaseDate,
               _selectedSex!,
               _selectedRegisterType!,
               _healthController.text.trim(),
@@ -784,7 +1000,7 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
               purchasePrice,
               _colorController.text.trim(),
               _brandController.text.trim().isEmpty
-                  ? null
+                  ? 'Form submit'
                   : _brandController.text.trim(),
               _selectedBreed!,
               _selectedLot!,
@@ -796,7 +1012,7 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
       }
 
       if (mounted) {
-        Navigator.of(context).pop();
+        context.go('/animals');
         context.showSuccessSnack(
           widget.animal != null
               ? 'Animal actualizado correctamente'

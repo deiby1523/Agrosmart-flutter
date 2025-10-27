@@ -17,11 +17,9 @@ AnimalModel _$AnimalModelFromJson(Map<String, dynamic> json) => AnimalModel(
   birthWeight: (json['birthWeight'] as num).toDouble(),
   status: json['status'] as String,
   color: json['color'] as String,
-  lot: LotModel.fromJson(json['lot'] as Map<String, dynamic>),
-  breed: BreedModel.fromJson(json['breed'] as Map<String, dynamic>),
-  paddockCurrent: PaddockModel.fromJson(
-    json['paddockCurrent'] as Map<String, dynamic>,
-  ),
+  lotId: (json['lotId'] as num).toInt(),
+  razaId: (json['razaId'] as num).toInt(),
+  paddockId: (json['paddockId'] as num).toInt(),
   createdAt: json['createdAt'] == null
       ? null
       : DateTime.parse(json['createdAt'] as String),
@@ -30,15 +28,9 @@ AnimalModel _$AnimalModelFromJson(Map<String, dynamic> json) => AnimalModel(
       : DateTime.parse(json['purchaseDate'] as String),
   purchasePrice: (json['purchasePrice'] as num?)?.toDouble(),
   brand: json['brand'] as String?,
-  farm: json['farm'] == null
-      ? null
-      : FarmModel.fromJson(json['farm'] as Map<String, dynamic>),
-  father: json['father'] == null
-      ? null
-      : AnimalModel.fromJson(json['father'] as Map<String, dynamic>),
-  mother: json['mother'] == null
-      ? null
-      : AnimalModel.fromJson(json['mother'] as Map<String, dynamic>),
+  farmId: (json['farmId'] as num?)?.toInt(),
+  fatherId: (json['fatherId'] as num?)?.toInt(),
+  motherId: (json['motherId'] as num?)?.toInt(),
 );
 
 Map<String, dynamic> _$AnimalModelToJson(AnimalModel instance) =>
@@ -56,13 +48,13 @@ Map<String, dynamic> _$AnimalModelToJson(AnimalModel instance) =>
       'purchasePrice': instance.purchasePrice,
       'color': instance.color,
       'brand': instance.brand,
-      'breed': instance.breed.toJson(),
-      'lot': instance.lot.toJson(),
-      'paddockCurrent': instance.paddockCurrent.toJson(),
+      'razaId': instance.razaId,
+      'lotId': instance.lotId,
+      'paddockId': instance.paddockId,
       'createdAt': instance.createdAt?.toIso8601String(),
-      'father': instance.father?.toJson(),
-      'mother': instance.mother?.toJson(),
-      'farm': instance.farm?.toJson(),
+      'fatherId': instance.fatherId,
+      'motherId': instance.motherId,
+      'farmId': instance.farmId,
     };
 
 AnimalUpdateRequest _$AnimalUpdateRequestFromJson(Map<String, dynamic> json) =>

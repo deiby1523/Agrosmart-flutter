@@ -118,6 +118,7 @@ class _BreedsContent extends ConsumerWidget {
     );
   }
 
+
   /// Construye el estado de error con opción de reintento.
   Widget _buildErrorWidget(BuildContext context, WidgetRef ref, Object error) {
     final textTheme = Theme.of(context).textTheme;

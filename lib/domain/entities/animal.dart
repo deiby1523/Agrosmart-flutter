@@ -206,8 +206,45 @@ class Animal {
   // --- REPRESENTACIÓN DE TEXTO ---
   /// Retorna una representación legible de la entidad [Animal].
   @override
-  String toString() {
-    return 'Animal(id: $id, code: $code, name: $name, sex: $sex, status: $status, breed: $breed, lot: $lot, paddockCurrent: $paddockCurrent)';
-  }
+String toString() {
+  return '''
+===== ANIMAL ENTITY =====
+ID: $id
+Code: $code
+Name: $name
+Birthday: $birthday
+Purchase Date: $purchaseDate
+Sex: $sex
+Register Type: $registerType
+Health: $health
+Birth Weight: $birthWeight
+Status: $status
+Purchase Price: $purchasePrice
+Color: $color
+Brand: $brand
+
+-- Breed --
+ID: ${breed.id}, Name: ${breed.name}
+
+-- Lot --
+ID: ${lot.id}, Name: ${lot.name}
+
+-- Paddock --
+ID: ${paddockCurrent.id}, Name: ${paddockCurrent.name}
+
+-- Farm --
+ID: ${farm?.id}, Name: ${farm?.name}
+
+-- Father --
+ID: ${father?.id}, Name: ${father?.name}
+
+-- Mother --
+ID: ${mother?.id}, Name: ${mother?.name}
+
+Created At: $createdAt
+=========================
+''';
+}
+
 
 }
