@@ -1,8 +1,11 @@
 import 'dart:developer';
 
 import 'package:agrosmart_flutter/data/models/paginated_response_model.dart';
+import 'package:agrosmart_flutter/data/repositories/breed_repository_impl.dart';
 import 'package:agrosmart_flutter/domain/entities/paginated_response.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../core/network/api_client.dart';
 import '../../core/constants/api_constants.dart';
 import '../models/animal_model.dart';
@@ -18,6 +21,13 @@ import '../../domain/repositories/animal_repository.dart';
 // - PATCH: Actualizar animal (parcial)
 // - DELETE: Eliminar animal
 // Endpoints: /farm/{farmId}/animals (farmId inyectado por interceptor)
+
+
+@riverpod
+BreedRepositoryImpl breedRepository(Ref ref) {
+  return BreedRepositoryImpl();
+}
+
 
 class AnimalRepositoryImpl implements AnimalRepository {
   final ApiClient _apiClient = ApiClient();
@@ -41,6 +51,7 @@ class AnimalRepositoryImpl implements AnimalRepository {
         response.data,
         (json) => AnimalModel.fromJson(json),
       );
+
 
       // Convertir a entities
       return paginatedResponse.toEntity();

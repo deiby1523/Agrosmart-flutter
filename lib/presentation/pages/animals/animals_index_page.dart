@@ -27,6 +27,8 @@ import 'package:agrosmart_flutter/core/utils/responsive.dart';
 import 'package:agrosmart_flutter/domain/entities/animal.dart';
 import 'package:agrosmart_flutter/domain/entities/paginated_response.dart';
 import 'package:agrosmart_flutter/presentation/pages/animals/animals_form_page.dart';
+import 'package:agrosmart_flutter/presentation/widgets/animals/animal_cards.dart';
+import 'package:agrosmart_flutter/presentation/widgets/animals/animal_table.dart';
 import 'package:agrosmart_flutter/presentation/widgets/dashboard_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -123,24 +125,26 @@ class _AnimalsContent extends ConsumerWidget {
         // Lista de animales
         Expanded(
           child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Responsive(
-                mobile: Text("Vista móvil - ${animals.length} animales"),
-                tablet: Text("Vista tablet - ${animals.length} animales"),
-                desktop: Text("Vista desktop - ${animals.length} animales"),
+                mobile: AnimalCards(animals: animals),
+                tablet: AnimalCards(animals: animals,),
+                desktop: AnimalTable(animals: animals),
               ),
             ],
           ),
         ),
 
         // Controles de paginación - ahora ref está disponible
-        _buildPaginationControls(ref, paginationInfo),
+        _buildPaginationControls(context,ref, paginationInfo),
       ],
     );
   }
 
   // Método para controles de paginación
   Widget _buildPaginationControls(
+    BuildContext context,
     WidgetRef ref,
     PaginationInfo paginationInfo,
   ) {
@@ -162,7 +166,7 @@ class _AnimalsContent extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
-              color: Colors.grey.shade200,
+              color: Theme.of(context).cardTheme.color,
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(

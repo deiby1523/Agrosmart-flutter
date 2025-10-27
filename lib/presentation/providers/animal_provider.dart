@@ -18,7 +18,7 @@ AnimalRepositoryImpl animalRepository(Ref ref) {
 @riverpod
 class Animals extends _$Animals {
   // Variables para controlar la paginación
-  int _currentPage = 1;
+  int _currentPage = 0;
   int _pageSize = 10;
 
   /// ---------------------------------------------------------------------------

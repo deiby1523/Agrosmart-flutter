@@ -444,18 +444,18 @@ Widget _buildSidebarContent(BuildContext context) {
             _buildGroupHeader(context, _Texts.groupAnimals),
             _buildMenuItem(
               context,
-              icon: Icons.help_center,
-              title: _Texts.menuAnimals,
-              route: '/animals',
-              isSelected: (currentRoute == '/animals' || currentRoute == '/animals/create'),
-              isGroupItem: true,
-            ),
-            _buildMenuItem(
-              context,
               icon: Icons.pets,
               title: _Texts.menuBreeds,
               route: '/breeds',
               isSelected: currentRoute == '/breeds',
+              isGroupItem: true,
+            ),
+            _buildMenuItem(
+              context,
+              icon: Icons.help_center,
+              title: _Texts.menuAnimals,
+              route: '/animals',
+              isSelected: (currentRoute == '/animals' || currentRoute == '/animals/create'),
               isGroupItem: true,
             ),
 
