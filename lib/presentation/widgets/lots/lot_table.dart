@@ -178,6 +178,8 @@ class LotTable extends ConsumerWidget {
   /// - Si el usuario confirma, se elimina mediante `lotsProvider`.
   /// - Se muestran snackbars de éxito o error según corresponda.
   void _confirmDelete(BuildContext context, WidgetRef ref, Lot lot) {
+        final colors = Theme.of(context).extension<AppColors>()!;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -209,7 +211,6 @@ class LotTable extends ConsumerWidget {
             '¿Estás seguro que quieres eliminar el lote "${lot.name}"?\n\nEsta acción no se puede deshacer.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey.shade700,
               height: 1.4,
             ),
           ),
@@ -223,7 +224,7 @@ class LotTable extends ConsumerWidget {
             child: Text(
               'Cancelar',
               style: TextStyle(
-                color: Colors.grey.shade600,
+                color: colors.cancelTextButton,
                 fontWeight: FontWeight.w500,
               ),
             ),

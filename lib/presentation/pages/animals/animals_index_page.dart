@@ -29,7 +29,11 @@ import 'package:agrosmart_flutter/data/repositories/lot_repository_impl.dart';
 import 'package:agrosmart_flutter/data/repositories/paddock_repository_impl.dart';
 import 'package:agrosmart_flutter/data/repositories/animal_repository_impl.dart';
 import 'package:agrosmart_flutter/domain/entities/animal.dart';
+import 'package:agrosmart_flutter/domain/entities/breed.dart';
+import 'package:agrosmart_flutter/domain/entities/lot.dart';
+import 'package:agrosmart_flutter/domain/entities/paddock.dart';
 import 'package:agrosmart_flutter/domain/entities/paginated_response.dart';
+import 'package:agrosmart_flutter/presentation/providers/animal_relations_provider.dart';
 import 'package:agrosmart_flutter/presentation/widgets/animals/animal_cards.dart';
 import 'package:agrosmart_flutter/presentation/widgets/animals/animal_table.dart';
 import 'package:agrosmart_flutter/presentation/widgets/dashboard_layout.dart';
@@ -88,153 +92,49 @@ class _AnimalsContent extends ConsumerWidget {
       ),
 
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(6.0),
         child: animalsState.when(
           loading: () => const Center(child: CircularProgressIndicator()),
           error: (error, stack) => _buildErrorWidget(context, ref, error),
           data: (paginatedResponse) => paginatedResponse.items.isEmpty
               ? _buildEmptyState(context)
-              : FutureBuilder<List<Animal>>(
-                  // populate each animal's relations before rendering
-                  future: _populateAnimalsWithRelations(
-                    paginatedResponse.items,
-                  ),
-                  builder: (context, snapshot) {
-                    if (snapshot.connectionState != ConnectionState.done) {
-                      return const Center(child: CircularProgressIndicator());
-                    }
-
-                    if (snapshot.hasError) {
-                      return _buildErrorWidget(context, ref, snapshot.error!);
-                    }
-
-                    final animalsWithRelations =
-                        snapshot.data ?? paginatedResponse.items;
-
-                    return _buildAnimalsList(
-                      context,
-                      ref,
-                      paginatedResponse,
-                      animalsWithRelations,
-                    );
-                  },
-                ),
+              : _buildAnimalsWithRelations(context, ref, paginatedResponse),
         ),
       ),
     );
   }
 
-  // Helper to load related entities (breed, lot, paddock, father, mother)
-  Future<List<Animal>> _populateAnimalsWithRelations(
-    List<Animal> animals,
-  ) async {
-    final breedRepository = BreedRepositoryImpl();
-    final lotRepository = LotRepositoryImpl();
-    final paddockRepository = PaddockRepositoryImpl();
-    final animalRepository = AnimalRepositoryImpl();
+  Widget _buildAnimalsWithRelations(
+    BuildContext context,
+    WidgetRef ref,
+    PaginatedResponse<Animal> paginatedResponse,
+  ) {
+    final animalsWithRelations = ref.watch(
+      animalsWithRelationsProvider(paginatedResponse.items),
+    );
 
-    // Populate one animal's direct relations (breed, lot, paddock) and fetch parents
-    Future<Animal> populate(Animal animal) async {
-      // Fetch breed
-      final breedId = animal.breed.id;
-      if (breedId != null) {
-        try {
-          final breed = await breedRepository.getBreedById(breedId);
-          animal.breed = breed;
-        } catch (_) {}
-      }
+    return animalsWithRelations.when(
+      loading: () => _buildLoadingState(context),
+      error: (error, stack) => _buildErrorWidget(context, ref, error),
+      data: (animals) =>
+          _buildAnimalsList(context, ref, paginatedResponse, animals),
+    );
+  }
 
-      // Fetch lot
-      final lotId = animal.lot.id;
-      if (lotId != null) {
-        try {
-          final lot = await lotRepository.getLotById(lotId);
-          // lot is final in Animal, so we have to replace via copyWith
-          animal = animal.copyWith(lot: lot);
-        } catch (_) {}
-      }
-
-      // Fetch paddock
-      final paddockId = animal.paddockCurrent.id;
-      if (paddockId != null) {
-        try {
-          final paddock = await paddockRepository.getPaddockById(paddockId);
-          animal = animal.copyWith(paddockCurrent: paddock);
-        } catch (_) {}
-      }
-
-      // Fetch father (one level) and populate its basic relations
-      final fatherId = animal.father?.id;
-      if (fatherId != null) {
-        try {
-          Animal father = await animalRepository.getAnimalById(fatherId);
-          // populate father's breed/lot/paddock but do not recurse further
-          final fBreedId = father.breed.id;
-          if (fBreedId != null) {
-            try {
-              father.breed = await breedRepository.getBreedById(fBreedId);
-            } catch (_) {}
-          }
-          final fLotId = father.lot.id;
-          if (fLotId != null) {
-            try {
-              father = father.copyWith(
-                lot: await lotRepository.getLotById(fLotId),
-              );
-            } catch (_) {}
-          }
-          final fPaddockId = father.paddockCurrent.id;
-          if (fPaddockId != null) {
-            try {
-              father = father.copyWith(
-                paddockCurrent: await paddockRepository.getPaddockById(
-                  fPaddockId,
-                ),
-              );
-            } catch (_) {}
-          }
-          animal = animal.copyWith(father: father);
-        } catch (_) {}
-      }
-
-      // Fetch mother (one level) and populate its basic relations
-      final motherId = animal.mother?.id;
-      if (motherId != null) {
-        try {
-          Animal mother = await animalRepository.getAnimalById(motherId);
-          final mBreedId = mother.breed.id;
-          if (mBreedId != null) {
-            try {
-              mother.breed = await breedRepository.getBreedById(mBreedId);
-            } catch (_) {}
-          }
-          final mLotId = mother.lot.id;
-          if (mLotId != null) {
-            try {
-              mother = mother.copyWith(
-                lot: await lotRepository.getLotById(mLotId),
-              );
-            } catch (_) {}
-          }
-          final mPaddockId = mother.paddockCurrent.id;
-          if (mPaddockId != null) {
-            try {
-              mother = mother.copyWith(
-                paddockCurrent: await paddockRepository.getPaddockById(
-                  mPaddockId,
-                ),
-              );
-            } catch (_) {}
-          }
-          animal = animal.copyWith(mother: mother);
-        } catch (_) {}
-      }
-
-      return animal;
-    }
-
-    final futures = animals.map(populate).toList();
-    return await Future.wait(futures);
+  Widget _buildLoadingState(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const CircularProgressIndicator(),
+          const SizedBox(height: 16),
+          Text(
+            'Cargando relaciones...',
+            style: Theme.of(context).textTheme.bodyLarge,
+          ),
+        ],
+      ),
+    );
   }
 
   // Build animals list synchronously using already-populated animals
@@ -246,30 +146,34 @@ class _AnimalsContent extends ConsumerWidget {
   ) {
     final paginationInfo = paginatedResponse.paginationInfo;
 
-    return Column(
-      children: [
-        // Información de paginación
-        _buildPaginationInfo(paginationInfo),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            // Información de paginación
+            _buildPaginationInfo(paginationInfo),
 
-        const SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-        // Lista de animales
-        Expanded(
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Responsive(
-                mobile: AnimalCards(animals: animals),
-                tablet: AnimalCards(animals: animals),
-                desktop: AnimalTable(animals: animals),
-              ),
-            ],
-          ),
+            // Lista de animales
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Responsive(
+                  mobile: AnimalCards(animals: animals),
+                  tablet: AnimalCards(animals: animals),
+                  desktop: AnimalTable(animals: animals),
+                ),
+              ],
+            ),
+            SizedBox(height: 20),
+
+            // Controles de paginación - ahora ref está disponible
+            _buildPaginationControls(context, ref, paginationInfo),
+          ],
         ),
-
-        // Controles de paginación - ahora ref está disponible
-        _buildPaginationControls(context, ref, paginationInfo),
-      ],
+      ),
     );
   }
 

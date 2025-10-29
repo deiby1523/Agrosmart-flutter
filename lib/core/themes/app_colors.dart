@@ -37,13 +37,15 @@ class AppColorSchemes {
 
   static const Color lightIcon = Color.fromARGB(255, 147, 147, 147);
 
+  static const Color lightSidebar = Color.fromARGB(255, 147, 147, 147);
+
   // =========================
   // Dark colors
   // =========================
-  static const Color darkPrimary = Color.fromARGB(255, 129, 199, 132);
+  static const Color darkPrimary = Color.fromARGB(255, 104, 190, 51);
   static const Color darkOnPrimary = Color.fromARGB(255, 0, 0, 0);
 
-  static const Color darkSecondary = Color(0xFF6D4C41); // Marrón oscuro
+  static const Color darkSecondary = Color.fromARGB(255, 8, 210, 150);
   static const Color darkOnSecondary = Colors.white;
 
   static const Color darkTertiary = Color(0xFF4FC3F7); // Azul más vivo
@@ -55,10 +57,10 @@ class AppColorSchemes {
   static const Color darkBackground = Color(0xFF121212);
   static const Color darkOnBackground = Colors.white;
 
-  static const Color darkSurface = Color(0xFF1E1E1E);
+  static const Color darkSurface = Color.fromARGB(255, 24, 35, 20);
   static const Color darkOnSurface = Colors.white;
 
-  static const Color darkCard = Color(0xFF1E1E1E);
+  static const Color darkCard = Color.fromARGB(255, 32, 46, 26);
 
   static const Color darkText = Color.fromARGB(255, 255, 255, 255);
   static const Color darkTextDisabled = Color.fromARGB(221, 124, 124, 124);
@@ -69,9 +71,11 @@ class AppColorSchemes {
   static const Color darkDangerButton = Color.fromARGB(255, 131, 0, 0);
   static const Color darkDangerIcon = Color.fromRGBO(255, 151, 151, 1);
 
-  static const Color darkGrayButton = Color.fromARGB(221, 124, 124, 124);
+  static const Color darkGrayButton = Color.fromARGB(255, 194, 194, 194);
 
   static const Color darkIcon = Color.fromARGB(255, 194, 194, 194);
+
+  static const Color darkSidebar = Color.fromARGB(255, 147, 147, 147);
 
   // =========================
   // Schemes

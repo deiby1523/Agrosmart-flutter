@@ -89,7 +89,7 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
 
     return Scaffold(
       key: _scaffoldKey,
-      appBar: _buildAppBar(context, isLargeScreen),
+      // appBar: _buildAppBar(context, isLargeScreen),
       drawer: isLargeScreen ? null : _buildDrawer(context),
       body: _buildBody(context, isLargeScreen),
     );
@@ -112,16 +112,69 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   /// - `Widget` con la estructura body completa
   /// --------------------------------------------------------------------------
   Widget _buildBody(BuildContext context, bool isLargeScreen) {
+    final session = ref.watch(authProvider).value;
+    final user = session?.user;
+    final themeMode = ref.watch(themeNotifierProvider);
+    final isDark = _calculateIsDark(themeMode, context);
+
+    final theme = Theme.of(context);
     return Row(
       children: [
         // Sidebar fijo en pantallas grandes
         if (isLargeScreen) _buildSidebar(context),
 
         // Área principal de contenido
+        // Expanded(
+        //   child: Container(
+        //     color: Theme.of(context).colorScheme.surface,
+        //     child: widget.child,
+        //   ),
+        // ),
         Expanded(
-          child: Container(
-            color: Theme.of(context).colorScheme.surface,
-            child: widget.child,
+          child: Column(
+            children: [
+              // Top Bar
+              Container(
+                height: 70,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                  child: Row(
+                    children: [
+                      if (!isLargeScreen)
+                        IconButton(
+                          icon: Icon(
+                            Icons.menu,
+                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+                          ),
+                          onPressed: () =>
+                              _scaffoldKey.currentState?.openDrawer(),
+                        ),
+                      const Spacer(),
+                      Padding(
+                        padding: const EdgeInsets.only(right: _userInfoSpacing),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            _buildThemeToggleButton(isDark, context),
+                            _buildThemeMenuButton(context),
+                            const SizedBox(width: _userInfoSpacing),
+                            _buildUserInfoSection(user!, context),
+                            _buildLogoutMenuButton(context),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              // Content Area
+              Expanded(
+                child: Padding(
+                  padding: isLargeScreen ? const EdgeInsets.symmetric(horizontal: 30) : const EdgeInsets.symmetric(horizontal: 10),
+                  child: widget.child,
+                ),
+              ),
+            ],
           ),
         ),
       ],
@@ -153,7 +206,7 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
     return AppBar(
       elevation: 2,
       leading: _buildAppBarLeading(isLargeScreen),
-      actions: _buildAppBarActions(user, isDark),
+      actions: _buildAppBarActions(user, isDark, context),
     );
   }
 
@@ -189,7 +242,11 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   /// Returns:
   /// - `List<Widget>` con todas las acciones de la AppBar
   /// --------------------------------------------------------------------------
-  List<Widget> _buildAppBarActions(User? user, bool isDark) {
+  List<Widget> _buildAppBarActions(
+    User? user,
+    bool isDark,
+    BuildContext context,
+  ) {
     if (user == null) return [];
 
     return [
@@ -198,11 +255,11 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
         child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            _buildThemeToggleButton(isDark),
-            _buildThemeMenuButton(),
+            _buildThemeToggleButton(isDark, context),
+            _buildThemeMenuButton(context),
             const SizedBox(width: _userInfoSpacing),
             _buildUserInfoSection(user, context),
-            _buildLogoutMenuButton(),
+            _buildLogoutMenuButton(context),
           ],
         ),
       ),
@@ -220,13 +277,18 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   /// Returns:
   /// - `IconButton` configurado para cambio de tema
   /// --------------------------------------------------------------------------
-  Widget _buildThemeToggleButton(bool isDark) {
+  Widget _buildThemeToggleButton(bool isDark, BuildContext context) {
+    final theme = Theme.of(context);
+
     return IconButton(
       onPressed: () {
         final newTheme = isDark ? ThemeMode.light : ThemeMode.dark;
         ref.read(themeNotifierProvider.notifier).setTheme(newTheme);
       },
-      icon: Icon(isDark ? Icons.light_mode : Icons.dark_mode),
+      icon: Icon(
+        isDark ? Icons.light_mode : Icons.dark_mode,
+        color: theme.colorScheme.onSurface.withOpacity(0.7),
+      ),
       tooltip: isDark ? 'Cambiar a modo claro' : 'Cambiar a modo oscuro',
     );
   }
@@ -239,10 +301,15 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   /// Returns:
   /// - `PopupMenuButton` con opciones de tema
   /// --------------------------------------------------------------------------
-  Widget _buildThemeMenuButton() {
+  Widget _buildThemeMenuButton(BuildContext context) {
+    final theme = Theme.of(context);
+
     return PopupMenuButton<ThemeMode>(
       position: PopupMenuPosition.under,
-      icon: const Icon(Icons.more_vert_rounded),
+      icon: Icon(
+        Icons.more_vert_rounded,
+        color: theme.colorScheme.onSurface.withOpacity(0.7),
+      ),
       onSelected: (mode) {
         ref.read(themeNotifierProvider.notifier).setTheme(mode);
       },
@@ -285,6 +352,8 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   /// - `Row` con información del usuario
   /// --------------------------------------------------------------------------
   Widget _buildUserInfoSection(User user, BuildContext context) {
+    final theme = Theme.of(context);
+
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -298,7 +367,10 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
         const SizedBox(width: _userInfoSpacing),
 
         // Icono y nombre de usuario
-        const Icon(Icons.account_circle),
+        Icon(
+          Icons.account_circle,
+          color: theme.colorScheme.onSurface.withOpacity(0.7),
+        ),
         const SizedBox(width: _userInfoSpacing),
         Text(
           user.email.split('@')[0], // Solo la parte antes de @
@@ -317,9 +389,14 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   /// Returns:
   /// - `PopupMenuButton` con opción de cerrar sesión
   /// --------------------------------------------------------------------------
-  Widget _buildLogoutMenuButton() {
+  Widget _buildLogoutMenuButton(BuildContext context) {
+    final theme = Theme.of(context);
+
     return PopupMenuButton<String>(
-      icon: const Icon(Icons.keyboard_arrow_down_rounded),
+      icon: Icon(
+        Icons.keyboard_arrow_down_rounded,
+        color: theme.colorScheme.onSurface.withOpacity(0.7),
+      ),
       onSelected: _handleMenuAction,
       itemBuilder: (context) => _buildLogoutMenuItems(),
     );
@@ -366,7 +443,17 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   Widget _buildSidebar(BuildContext context) {
     return Container(
       width: _sidebarWidth,
-      decoration: const BoxDecoration(color: Colors.transparent),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color.fromARGB(255, 0, 17, 0),
+            Color.fromARGB(255, 0, 31, 0),
+            Color.fromARGB(255, 0, 46, 10),
+          ],
+        ),
+      ),
       child: _buildSidebarContent(context),
     );
   }
@@ -383,92 +470,126 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   /// - `Widget` con el drawer de mobile
   /// --------------------------------------------------------------------------
   Widget _buildDrawer(BuildContext context) {
-    return Drawer(child: _buildSidebarContent(context));
+    return Drawer(
+      child: Container(
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+            colors: [
+              Color.fromARGB(255, 0, 17, 0),
+              Color.fromARGB(255, 0, 31, 0),
+              Color.fromARGB(255, 0, 46, 10),
+            ],
+          ),
+        ),
+        child: _buildSidebarContent(context),
+      ),
+    );
   }
 
   /// --------------------------------------------------------------------------
-/// # _buildSidebarContent()
-///
-/// Construye el contenido común del sidebar/drawer.
-///
-/// Parameters:
-/// - `context`: Contexto de build
-///
-/// Returns:
-/// - `Widget` con el contenido de navegación
-/// --------------------------------------------------------------------------
-Widget _buildSidebarContent(BuildContext context) {
-  // SOLUCIÓN CORREGIDA: Usar las propiedades correctas de GoRouter
+  /// # _buildSidebarContent()
+  ///
+  /// Construye el contenido común del sidebar/drawer.
+  ///
+  /// Parameters:
+  /// - `context`: Contexto de build
+  ///
+  /// Returns:
+  /// - `Widget` con el contenido de navegación
+  /// --------------------------------------------------------------------------
+  Widget _buildSidebarContent(BuildContext context) {
+    final currentRoute = GoRouterState.of(context).uri.path;
+    final theme = Theme.of(context);
 
-  final currentRoute = GoRouterState.of(context).uri.path;
-  // final currentRoute = goRouter.location.path; // Usar .location.path
-
-  return Column(
-    children: [
-      // Menú de navegación expandible
-      Expanded(
-        child: ListView(
-          padding: const EdgeInsets.symmetric(vertical: 8),
-          children: [
-            // Inicio
-            _buildMenuItem(
-              context,
-              icon: Icons.home,
-              title: _Texts.menuHome,
-              route: '/dashboard',
-              isSelected: currentRoute == '/dashboard',
-            ),
-
-            const SizedBox(height: _userInfoSpacing),
-
-            // Grupo Finca
-            _buildGroupHeader(context, _Texts.groupFarm),
-            _buildMenuItem(
-              context,
-              icon: Icons.grid_view_rounded,
-              title: _Texts.menuLots,
-              route: '/lots',
-              isSelected: currentRoute == '/lots',
-              isGroupItem: true,
-            ),
-            _buildMenuItem(
-              context,
-              icon: Icons.fence,
-              title: _Texts.menuPaddocks,
-              route: '/paddocks',
-              isSelected: currentRoute == '/paddocks',
-              isGroupItem: true,
-            ),
-
-            // Grupo Animales
-            _buildGroupHeader(context, _Texts.groupAnimals),
-            _buildMenuItem(
-              context,
-              icon: Icons.pets,
-              title: _Texts.menuBreeds,
-              route: '/breeds',
-              isSelected: currentRoute == '/breeds',
-              isGroupItem: true,
-            ),
-            _buildMenuItem(
-              context,
-              icon: Icons.help_center,
-              title: _Texts.menuAnimals,
-              route: '/animals',
-              isSelected: (currentRoute == '/animals' || currentRoute == '/animals/create'),
-              isGroupItem: true,
-            ),
-
-            // Espacio para futuros grupos (Insumos, Reportes, etc.)
-          ],
+    return Column(
+      children: [
+        // Encabezado con logo y nombre del software
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              // Logotipo
+              Image.asset('assets/logos/logo.png', width: 40, height: 40),
+              const SizedBox(width: 12),
+              // Nombre del software
+              const Text(
+                'AgroSmart',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color.fromARGB(255, 104, 190, 51),
+                  letterSpacing: 1.2,
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
 
-      // Footer del sidebar
-      _buildSidebarFooter(context),
-    ],
-  );
-}
+        // const Divider(thickness: 1),
+
+        // Menú de navegación
+        Expanded(
+          child: ListView(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            children: [
+              _buildMenuItem(
+                context,
+                icon: Icons.home,
+                title: _Texts.menuHome,
+                route: '/dashboard',
+                isSelected: currentRoute == '/dashboard',
+              ),
+
+              const SizedBox(height: _userInfoSpacing),
+
+              _buildGroupHeader(context, _Texts.groupFarm),
+              _buildMenuItem(
+                context,
+                icon: Icons.grid_view_rounded,
+                title: _Texts.menuLots,
+                route: '/lots',
+                isSelected: currentRoute == '/lots',
+                isGroupItem: true,
+              ),
+              _buildMenuItem(
+                context,
+                icon: Icons.fence,
+                title: _Texts.menuPaddocks,
+                route: '/paddocks',
+                isSelected: currentRoute == '/paddocks',
+                isGroupItem: true,
+              ),
+
+              _buildGroupHeader(context, _Texts.groupAnimals),
+              _buildMenuItem(
+                context,
+                icon: Icons.pets,
+                title: _Texts.menuBreeds,
+                route: '/breeds',
+                isSelected: currentRoute == '/breeds',
+                isGroupItem: true,
+              ),
+              _buildMenuItem(
+                context,
+                icon: Icons.help_center,
+                title: _Texts.menuAnimals,
+                route: '/animals',
+                isSelected:
+                    (currentRoute == '/animals' ||
+                    currentRoute == '/animals/create'),
+                isGroupItem: true,
+              ),
+            ],
+          ),
+        ),
+
+        _buildSidebarFooter(context),
+      ],
+    );
+  }
 
   /// --------------------------------------------------------------------------
   /// # _buildSidebarFooter()
@@ -484,7 +605,7 @@ Widget _buildSidebarContent(BuildContext context) {
   Widget _buildSidebarFooter(BuildContext context) {
     return const Column(
       children: [
-        Divider(),
+        // Divider(),
         Padding(
           padding: EdgeInsets.all(16),
           child: Text(
@@ -556,7 +677,7 @@ Widget _buildSidebarContent(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
         color: isSelected
-            ? theme.colorScheme.primary.withAlpha(20)
+            ? theme.colorScheme.primary.withAlpha(50)
             : Colors.transparent,
         borderRadius: BorderRadius.circular(8),
       ),
@@ -569,7 +690,7 @@ Widget _buildSidebarContent(BuildContext context) {
           icon,
           color: isSelected
               ? theme.colorScheme.primary
-              : theme.colorScheme.onSurface.withOpacity(0.7),
+              : theme.colorScheme.onSecondary.withAlpha(130),
           size: isGroupItem ? 20 : 24,
         ),
         title: Text(
@@ -577,7 +698,7 @@ Widget _buildSidebarContent(BuildContext context) {
           style: TextStyle(
             color: isSelected
                 ? theme.colorScheme.primary
-                : theme.colorScheme.onSurface,
+                : theme.colorScheme.onSecondary.withAlpha(130),
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
             fontSize: isGroupItem ? 14 : 16,
           ),

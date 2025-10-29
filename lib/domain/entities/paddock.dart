@@ -11,7 +11,7 @@
 
 class Paddock {
   /// Identificador único del corral (opcional, asignado por el sistema)
-  final int? id;
+  int? id;
 
   /// Nombre del corral o potrero
   final String name;
@@ -29,7 +29,7 @@ class Paddock {
   final String? grassType;
 
   /// Constructor constante de la entidad [Paddock]
-  const Paddock({
+  Paddock({
     this.id,
     required this.name,
     required this.location,

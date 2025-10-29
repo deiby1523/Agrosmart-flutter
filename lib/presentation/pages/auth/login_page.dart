@@ -5,31 +5,31 @@
 // Contiene el widget [LoginForm], que maneja el flujo de inicio de sesión.
 // Ruta típica: /login
 
+import 'dart:developer';
+
+import 'package:agrosmart_flutter/presentation/widgets/auth/background_blobs.dart';
 import 'package:agrosmart_flutter/presentation/widgets/auth/login_form.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class LoginPage extends ConsumerStatefulWidget {
+class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
 
+
   @override
-  ConsumerState<LoginPage> createState() => _LoginPageState();
+  State<LoginPage> createState() => _LoginPageState();
 }
 
-// -----------------------------------------------------------------------------
-// STATE: _LoginPageState
-// -----------------------------------------------------------------------------
-class _LoginPageState extends ConsumerState<LoginPage> {
+class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
+    log('🚨 LOGIN PAGE se está reconstruyendo');
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            child: const LoginForm(), // Formulario principal de autenticación
-          ),
-        ),
+      body: Stack(
+        children: const [
+          BackgroundBlobs(key: ValueKey('background_blobs')),
+          LoginForm(key: ValueKey('login_form')),
+        ],
       ),
     );
   }

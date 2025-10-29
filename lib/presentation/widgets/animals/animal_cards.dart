@@ -20,12 +20,13 @@
 
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:agrosmart_flutter/domain/entities/animal.dart';
-import 'package:agrosmart_flutter/presentation/pages/animals/animals_form_page.dart';
+import 'package:agrosmart_flutter/presentation/pages/animals/animal_create_page.dart';
 import 'package:agrosmart_flutter/presentation/providers/animal_provider.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_actions.dart';
 import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 /// ---------------------------------------------------------------------------
 /// # AnimalCards
@@ -141,8 +142,7 @@ class AnimalCards extends ConsumerWidget {
 
                   // Acciones de la tarjeta
                   CustomActions(
-                    // onEdit: () => _editAnimal(context, animal),
-                    onEdit: () => {},
+                    onEdit: () => _editAnimal(context, animal),
                     onDelete: () => _confirmDelete(context, ref, animal),
                   ),
                 ],
@@ -157,14 +157,10 @@ class AnimalCards extends ConsumerWidget {
   // ---------------------------------------------------------------------------
   // _editAnimal
   // ---------------------------------------------------------------------------
-  /// Abre el diálogo modal `AnimalFormDialog` para editar el animal seleccionado.
-  /// TODO: Cambiar a vista independiente
-    // void _editAnimal(BuildContext context, Animal animal) {
-    //   showDialog(
-    //     context: context,
-    //     builder: (context) => AnimalFormDialog(animal: animal),
-    //   );
-    // }
+
+void _editAnimal(BuildContext context, Animal animal) {
+    context.go('/animals/edit', extra: animal);
+  }
 
   // ---------------------------------------------------------------------------
   // _confirmDelete
@@ -173,6 +169,8 @@ class AnimalCards extends ConsumerWidget {
   /// - Si el usuario confirma, se elimina mediante `animalsProvider`.
   /// - Se muestran snackbars de éxito o error según corresponda.
   void _confirmDelete(BuildContext context, WidgetRef ref, Animal animal) {
+        final colors = Theme.of(context).extension<AppColors>()!;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -204,7 +202,6 @@ class AnimalCards extends ConsumerWidget {
             '¿Estás seguro que quieres eliminar el animal "${animal.name}"?\n\nEsta acción no se puede deshacer.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey.shade700,
               height: 1.4,
             ),
           ),
@@ -218,7 +215,7 @@ class AnimalCards extends ConsumerWidget {
             child: Text(
               'Cancelar',
               style: TextStyle(
-                color: Colors.grey.shade600,
+                color: colors.cancelTextButton,
                 fontWeight: FontWeight.w500,
               ),
             ),

@@ -10,19 +10,21 @@
 // métricas, estadísticas, accesos directos y resúmenes visuales del sistema.
 // =============================================================================
 
+import 'package:blobs/blobs.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../widgets/dashboard_layout.dart';
 
 /// ---------------------------------------------------------------------------
 /// # DashboardPage
-/// 
-/// Página raíz del panel de administración.  
-/// 
+///
+/// Página raíz del panel de administración.
+///
 /// Utiliza `DashboardLayout` para ofrecer una estructura base reutilizable
 /// que incluye navegación lateral, encabezado y el contenido dinámico
 /// definido por la propiedad [child].
-/// 
+///
 /// En su estado inicial, muestra la `HomePage`.
 /// ---------------------------------------------------------------------------
 class DashboardPage extends ConsumerWidget {
@@ -30,17 +32,15 @@ class DashboardPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const DashboardLayout(
-      child: HomePage(),
-    );
+    return const DashboardLayout(child: HomePage());
   }
 }
 
 /// ---------------------------------------------------------------------------
 /// # HomePage
-/// 
-/// Vista inicial del panel de control.  
-/// 
+///
+/// Vista inicial del panel de control.
+///
 /// Presenta un mensaje de bienvenida y un ícono ilustrativo. En versiones
 /// futuras puede incluir widgets dinámicos, como:
 /// - Resumen de estadísticas (número de animales, lotes, etc.)
@@ -64,10 +64,7 @@ class HomePage extends StatelessWidget {
             color: Colors.grey.shade400,
           ),
           const SizedBox(height: 16),
-          Text(
-            'Panel Principal',
-            style: textTheme.displayMedium,
-          ),
+          Text('Panel Principal', style: textTheme.displayMedium),
           const SizedBox(height: 8),
           Text(
             'Bienvenido a AgroSmart',

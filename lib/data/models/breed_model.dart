@@ -18,7 +18,7 @@ part 'breed_model.g.dart';
 
 @JsonSerializable()
 class BreedModel extends Breed {
-  const BreedModel({super.id, required super.name, super.description});
+  BreedModel({super.id, required super.name, super.description});
 
   // --- JSON Serialization (Auto-generated) ---
   factory BreedModel.fromJson(Map<String, dynamic> json) =>

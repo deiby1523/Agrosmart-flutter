@@ -21,12 +21,13 @@
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:agrosmart_flutter/core/utils/responsive.dart';
 import 'package:agrosmart_flutter/domain/entities/animal.dart';
-import 'package:agrosmart_flutter/presentation/pages/animals/animals_form_page.dart';
+import 'package:agrosmart_flutter/presentation/pages/animals/animal_create_page.dart';
 import 'package:agrosmart_flutter/presentation/providers/animal_provider.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_actions.dart';
 import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 /// ---------------------------------------------------------------------------
 /// # AnimalTable
@@ -111,17 +112,17 @@ class AnimalTable extends ConsumerWidget {
                   ),
                 ),
               ),
-                DataColumn(
-                  label: Text(
-                    'ESTADO',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                      letterSpacing: 0.5,
-                    ),
+              DataColumn(
+                label: Text(
+                  'ESTADO',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                    letterSpacing: 0.5,
                   ),
                 ),
-                      if (MediaQuery.sizeOf(context).width > 1000)
+              ),
+              if (MediaQuery.sizeOf(context).width > 1000)
                 DataColumn(
                   label: Text(
                     'LOTE',
@@ -194,12 +195,12 @@ class AnimalTable extends ConsumerWidget {
             style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
           ),
         ),
-          DataCell(
-            Text(
-              animal.status,
-              style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
-            ),
+        DataCell(
+          Text(
+            animal.status,
+            style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
           ),
+        ),
         if (MediaQuery.sizeOf(context).width > 1000)
           DataCell(
             Text(
@@ -209,8 +210,7 @@ class AnimalTable extends ConsumerWidget {
           ),
         DataCell(
           CustomActions(
-            // onEdit: () => _editAnimal(context, animal),
-            onEdit: () => {},
+            onEdit: () => _editAnimal(context, animal),
             onDelete: () => _confirmDelete(context, ref, animal),
           ),
         ),
@@ -221,14 +221,9 @@ class AnimalTable extends ConsumerWidget {
   // ---------------------------------------------------------------------------
   // _editAnimal
   // ---------------------------------------------------------------------------
-  /// Abre el diálogo modal `AnimalFormDialog` para editar el animal seleccionado.
-  /// TODO: Modificar para enviar a la vista edicion en vez del modal.
-  // void _editAnimal(BuildContext context, Animal animal) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) => AnimalFormDialog(animal: animal),
-  //   );
-  // }
+  void _editAnimal(BuildContext context, Animal animal) {
+    context.go('/animals/edit', extra: animal);
+  }
 
   // ---------------------------------------------------------------------------
   // _confirmDelete

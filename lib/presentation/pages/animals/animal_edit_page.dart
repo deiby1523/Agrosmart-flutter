@@ -2,7 +2,6 @@
 
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:agrosmart_flutter/core/utils/validators.dart';
-import 'package:agrosmart_flutter/data/services/active_farm_service.dart';
 import 'package:agrosmart_flutter/domain/entities/animal.dart';
 import 'package:agrosmart_flutter/domain/entities/breed.dart';
 import 'package:agrosmart_flutter/domain/entities/farm.dart';
@@ -19,22 +18,21 @@ import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 // Importamos los providers necesarios
 import '../../providers/animal_provider.dart';
 
-class AnimalsFormPage extends ConsumerStatefulWidget {
+class AnimalEditPage extends ConsumerStatefulWidget {
   final Animal? animal;
 
-  const AnimalsFormPage({super.key, this.animal});
+  const AnimalEditPage({super.key, this.animal});
 
   @override
-  ConsumerState<AnimalsFormPage> createState() => AnimalsFormPageState();
+  ConsumerState<AnimalEditPage> createState() => AnimalEditPageState();
 }
 
-class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
+class AnimalEditPageState extends ConsumerState<AnimalEditPage> {
   final _formKey = GlobalKey<FormState>();
   static const String _activeFarmKey = 'active_farm';
 
@@ -44,7 +42,6 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
   final _codeController = TextEditingController();
   final _nameController = TextEditingController();
   final _birthWeightController = TextEditingController();
-  final _healthController = TextEditingController();
   final _purchasePriceController = TextEditingController();
   final _colorController = TextEditingController();
   final _brandController = TextEditingController();
@@ -57,6 +54,7 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
   String? _selectedSex;
   String? _selectedRegisterType;
   String? _selectedStatus;
+  String? _selectedHealthStatus;
   Breed? _selectedBreed;
   Lot? _selectedLot;
   Paddock? _selectedPaddock;
@@ -85,12 +83,11 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
       final animal = widget.animal!;
       _codeController.text = animal.code;
       _nameController.text = animal.name;
-      //_birthday = animal.birthday;
-      _birthdayContoller.text = animal.birthday.toString();
-      _purchaseDateController.text = animal.purchaseDate.toString();
+      _birthdayContoller.text = parseDate(animal.birthday.toString());
+      _purchaseDateController.text = (animal.purchaseDate != null ? parseDate(animal.purchaseDate.toString()) : "") ;
       _selectedSex = animal.sex;
       _selectedRegisterType = animal.registerType;
-      _healthController.text = animal.health;
+      _selectedHealthStatus = animal.health;
       _birthWeightController.text = animal.birthWeight.toString();
       _selectedStatus = animal.status;
       _purchasePriceController.text = animal.purchasePrice?.toString() ?? '';
@@ -113,7 +110,6 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
     _birthdayContoller.dispose();
     _purchasePriceController.dispose();
     _birthWeightController.dispose();
-    _healthController.dispose();
     _colorController.dispose();
     _brandController.dispose();
     _scrollController.dispose();
@@ -123,7 +119,6 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).extension<AppColors>()!;
-    final isEditing = widget.animal != null;
 
     return DashboardLayout(
       child: _isLoading
@@ -135,7 +130,7 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
                 child: Column(
                   children: [
                     // Header
-                    _buildHeader(context, isEditing),
+                    _buildHeader(context),
                     const SizedBox(height: 24),
 
                     // Form Content
@@ -173,15 +168,6 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
 
                                 _buildTwoColumnLayout(
                                   children: [
-                                    // _buildDateField(
-                                    //   label: 'Fecha de Nacimiento *',
-                                    //   currentDate: _birthday,
-                                    //   onDateSelected: (date) {
-                                    //     setState(() {
-                                    //       _birthday = date;
-                                    //     });
-                                    //   },
-                                    // ),
                                     CustomDateField(
                                       controller: _birthdayContoller,
                                       hintText:
@@ -216,53 +202,73 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
                                         });
                                       },
                                     ),
-                                    // _buildDropdownButtonFormField<String>(
-                                    //   value: _selectedSex,
-                                    //   items: ['Macho', 'Hembra'].map((sex) {
-                                    //     return DropdownMenuItem<String>(
-                                    //       value: sex,
-                                    //       child: Text(sex),
-                                    //     );
-                                    //   }).toList(),
-                                    //   onChanged: (value) {
-                                    //     setState(() {
-                                    //       _selectedSex = value;
-                                    //     });
-                                    //   },
-                                    //   labelText: 'Sexo *',
-                                    //   prefixIcon: Icons.female,
-                                    //   validator: (value) => value == null
-                                    //       ? 'Seleccione el sexo'
-                                    //       : null,
-                                    // ),
                                   ],
                                 ),
                                 const SizedBox(height: 16),
 
                                 _buildTwoColumnLayout(
                                   children: [
+                                    // CustomSelectField<String>(
+                                    //   labelText: 'Tipo de registro',
+                                    //   hintText:
+                                    //       'Seleccione el tipo de registro',
+                                    //   prefixIcon: Icons.agriculture,
+                                    //   value: _selectedRegisterType,
+                                    //   items: const [
+                                    //     DropdownMenuItem(
+                                    //       value: 'BIRTH',
+                                    //       child: Text('Nacimiento'),
+                                    //     ),
+                                    //     DropdownMenuItem(
+                                    //       value: 'PURCHASE',
+                                    //       child: Text('Compra'),
+                                    //     ),
+                                    //   ],
+                                    //   onChanged: (value) {
+                                    //     setState(() {
+                                    //       _selectedRegisterType = value;
+                                    //     });
+                                    //   },
+                                    // ),
                                     CustomSelectField<String>(
-                                      labelText: 'Tipo de registro',
-                                      hintText:
-                                          'Seleccione el tipo de registro',
+                                      labelText: 'Estado de Salud',
+                                      hintText: 'Seleccione un estado',
                                       prefixIcon: Icons.agriculture,
-                                      value: _selectedRegisterType,
+                                      value: _selectedHealthStatus,
                                       items: const [
                                         DropdownMenuItem(
-                                          value: 'BIRTH',
-                                          child: Text('Nacimiento'),
+                                          value: 'HEALTHY',
+                                          child: Text('Saludable'),
                                         ),
                                         DropdownMenuItem(
-                                          value: 'PURCHASE',
-                                          child: Text('Compra'),
+                                          value: 'SICK',
+                                          child: Text('Enfermo'),
                                         ),
                                       ],
                                       onChanged: (value) {
                                         setState(() {
-                                          _selectedRegisterType = value;
+                                          _selectedHealthStatus = value;
                                         });
                                       },
                                     ),
+                                    CustomTextField(
+                                      controller: _birthWeightController,
+                                      labelText: 'Peso al Nacer *',
+                                      hintText:
+                                          'Ingrese el peso del animal (kg)',
+                                      prefixIcon: Icons.scale,
+                                      keyboardType: TextInputType.number,
+                                      validator: (value) => Validators.required(
+                                        value,
+                                        'Peso al nacer',
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                const SizedBox(height: 16),
+
+                                _buildTwoColumnLayout(
+                                  children: [
                                     CustomSelectField<String>(
                                       labelText: 'Estado',
                                       hintText: 'Seleccione un estado',
@@ -287,82 +293,6 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
                                           _selectedStatus = value;
                                         });
                                       },
-                                    ),
-                                    // _buildDropdownButtonFormField<String>(
-                                    //   value: _selectedRegisterType,
-                                    //   items:
-                                    //       [
-                                    //         'Nacimiento',
-                                    //         'Compra',
-                                    //         'Traslado',
-                                    //       ].map((type) {
-                                    //         return DropdownMenuItem<String>(
-                                    //           value: type,
-                                    //           child: Text(type),
-                                    //         );
-                                    //       }).toList(),
-                                    //   onChanged: (value) {
-                                    //     setState(() {
-                                    //       _selectedRegisterType = value;
-                                    //     });
-                                    //   },
-                                    //   labelText: 'Tipo de Registro *',
-                                    //   prefixIcon: Icons.assignment,
-                                    //   validator: (value) => value == null
-                                    //       ? 'Seleccione el tipo de registro'
-                                    //       : null,
-                                    // ),
-                                    // _buildDropdownButtonFormField<String>(
-                                    //   value: _selectedStatus,
-                                    //   items:
-                                    //       [
-                                    //         'Activo',
-                                    //         'Inactivo',
-                                    //         'Vendido',
-                                    //         'Muerto',
-                                    //       ].map((status) {
-                                    //         return DropdownMenuItem<String>(
-                                    //           value: status,
-                                    //           child: Text(status),
-                                    //         );
-                                    //       }).toList(),
-                                    //   onChanged: (value) {
-                                    //     setState(() {
-                                    //       _selectedStatus = value;
-                                    //     });
-                                    //   },
-                                    //   labelText: 'Estado *',
-                                    //   prefixIcon: Icons.circle,
-                                    //   validator: (value) => value == null
-                                    //       ? 'Seleccione el estado'
-                                    //       : null,
-                                    // ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-
-                                _buildTwoColumnLayout(
-                                  children: [
-                                    CustomTextField(
-                                      controller: _healthController,
-                                      labelText: 'Estado de Salud *',
-                                      hintText: 'Estado de salud actual',
-                                      prefixIcon: Icons.health_and_safety,
-                                      validator: (value) => Validators.required(
-                                        value,
-                                        'Estado de salud',
-                                      ),
-                                    ),
-                                    CustomTextField(
-                                      controller: _birthWeightController,
-                                      labelText: 'Peso al Nacer (kg) *',
-                                      hintText: '0.00',
-                                      prefixIcon: Icons.scale,
-                                      keyboardType: TextInputType.number,
-                                      validator: (value) => Validators.required(
-                                        value,
-                                        'Peso al nacer',
-                                      ),
                                     ),
                                   ],
                                 ),
@@ -426,117 +356,70 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
                               children: [
                                 _buildTwoColumnLayout(
                                   children: [
-                                    CustomSelectField<Breed>(
-                                      labelText: 'Raza *',
-                                      hintText: 'Seleccione la raza',
-                                      prefixIcon: Icons.pets,
-                                      value: _selectedBreed,
-                                      items: _buildBreedList(context, ref),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedBreed = value; //error acá;
-                                        });
-                                      },
-                                    ),
-                                    CustomSelectField<Lot>(
-                                      labelText: 'Lote *',
-                                      hintText: 'Seleccione el lote',
-                                      prefixIcon: Icons.pets,
-                                      value: _selectedLot,
-                                      items: _buildLotList(context, ref),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedLot = value; //error acá;
-                                        });
-                                      },
-                                    ),
+                                    _buildBreedSelect(context, ref),
+                                    _buildLotSelect(context, ref),
                                   ],
                                 ),
                                 const SizedBox(height: 16),
 
                                 _buildTwoColumnLayout(
-                                  children: [
-                                    CustomSelectField<Paddock>(
-                                      labelText: 'Corral *',
-                                      hintText: 'Seleccione el corral',
-                                      prefixIcon: Icons.pets,
-                                      value: _selectedPaddock,
-                                      items: _buildPaddockList(context, ref),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedPaddock = value; //error acá;
-                                        });
-                                      },
-                                    ),
-                                    // CustomSelectField<Farm>(
-                                    //   labelText: 'Granja *',
-                                    //   hintText: 'Seleccione la granja',
-                                    //   prefixIcon: Icons.pets,
-                                    //   value: _selectedFarm,
-                                    //   items: _buildFarmList(context, ref),
-                                    //   onChanged: (value) {
-                                    //     setState(() {
-                                    //       _selectedFarm = value; //error acá;
-                                    //     });
-                                    //   },
-                                    // ),
-                                  ],
+                                  children: [_buildPaddockSelect(context, ref)],
                                 ),
                                 const SizedBox(height: 16),
 
-                                _buildTwoColumnLayout(
-                                  children: [
-                                    _buildDropdownButtonFormField<Animal>(
-                                      value: _selectedFather,
-                                      items: _animals
-                                          .where((a) => a.sex == 'Macho')
-                                          .map((animal) {
-                                            return DropdownMenuItem<Animal>(
-                                              value: animal,
-                                              child: Text(
-                                                '${animal.name} (${animal.code})',
-                                              ),
-                                            );
-                                          })
-                                          .toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedFather = value;
-                                        });
-                                      },
-                                      labelText: 'Padre',
-                                      prefixIcon: Icons.male,
-                                    ),
-                                    _buildDropdownButtonFormField<Animal>(
-                                      value: _selectedMother,
-                                      items: _animals
-                                          .where((a) => a.sex == 'Hembra')
-                                          .map((animal) {
-                                            return DropdownMenuItem<Animal>(
-                                              value: animal,
-                                              child: Text(
-                                                '${animal.name} (${animal.code})',
-                                              ),
-                                            );
-                                          })
-                                          .toList(),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedMother = value;
-                                        });
-                                      },
-                                      labelText: 'Madre',
-                                      prefixIcon: Icons.female,
-                                    ),
-                                  ],
-                                ),
+                                // _buildTwoColumnLayout(
+                                //   children: [
+                                //     _buildDropdownButtonFormField<Animal>(
+                                //       value: _selectedFather,
+                                //       items: _animals
+                                //           .where((a) => a.sex == 'Macho')
+                                //           .map((animal) {
+                                //             return DropdownMenuItem<Animal>(
+                                //               value: animal,
+                                //               child: Text(
+                                //                 '${animal.name} (${animal.code})',
+                                //               ),
+                                //             );
+                                //           })
+                                //           .toList(),
+                                //       onChanged: (value) {
+                                //         setState(() {
+                                //           _selectedFather = value;
+                                //         });
+                                //       },
+                                //       labelText: 'Padre',
+                                //       prefixIcon: Icons.male,
+                                //     ),
+                                //     _buildDropdownButtonFormField<Animal>(
+                                //       value: _selectedMother,
+                                //       items: _animals
+                                //           .where((a) => a.sex == 'Hembra')
+                                //           .map((animal) {
+                                //             return DropdownMenuItem<Animal>(
+                                //               value: animal,
+                                //               child: Text(
+                                //                 '${animal.name} (${animal.code})',
+                                //               ),
+                                //             );
+                                //           })
+                                //           .toList(),
+                                //       onChanged: (value) {
+                                //         setState(() {
+                                //           _selectedMother = value;
+                                //         });
+                                //       },
+                                //       labelText: 'Madre',
+                                //       prefixIcon: Icons.female,
+                                //     ),
+                                //   ],
+                                // ),
                               ],
                             ),
 
                             const SizedBox(height: 32),
 
                             // Botones de acción
-                            _buildActionButtons(colors, isEditing),
+                            _buildActionButtons(colors),
                           ],
                         ),
                       ),
@@ -548,7 +431,7 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
     );
   }
 
-  Widget _buildHeader(BuildContext context, bool isEditing) {
+  Widget _buildHeader(BuildContext context) {
     return Row(
       children: [
         IconButton(
@@ -564,7 +447,7 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
         ),
         const SizedBox(width: 12),
         Text(
-          isEditing ? 'Editar Animal' : 'Nuevo Animal',
+          'Nuevo Animal',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: Theme.of(context).colorScheme.onSurface,
@@ -632,35 +515,7 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
     );
   }
 
-  Widget _buildDropdownButtonFormField<T>({
-    required T? value,
-    required List<DropdownMenuItem<T>> items,
-    required Function(T?) onChanged,
-    required String labelText,
-    required IconData prefixIcon,
-    String? Function(T?)? validator,
-  }) {
-    return DropdownButtonFormField<T>(
-      value: value,
-      items: items,
-      onChanged: onChanged,
-      decoration: InputDecoration(
-        labelText: labelText,
-        prefixIcon: Icon(prefixIcon),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8.0)),
-      ),
-      validator: validator,
-      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-      dropdownColor: Theme.of(context).colorScheme.surface,
-      icon: Icon(
-        Icons.arrow_drop_down,
-        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
-      ),
-      isExpanded: true,
-    );
-  }
-
-  Widget _buildActionButtons(AppColors colors, bool isEditing) {
+  Widget _buildActionButtons(AppColors colors) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 16),
       decoration: BoxDecoration(
@@ -715,7 +570,7 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
                         color: Colors.white,
                       ),
                     )
-                  : Text(isEditing ? 'Actualizar' : 'Crear Animal'),
+                  : Text('Guardar'),
             ),
           ),
         ],
@@ -723,163 +578,149 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
     );
   }
 
-  List<DropdownMenuItem<Breed>> _buildBreedList(
-    BuildContext context,
-    WidgetRef ref,
-  ) {
+  Widget _buildBreedSelect(BuildContext context, WidgetRef ref) {
     final breedsState = ref.watch(breedsProvider);
-    breedsState.when(
-      loading: () => null,
-      error: (error, stack) => null,
-      data: (breeds) => _breeds = breeds,
-    );
 
-    List<DropdownMenuItem<Breed>> breedOptions = List.empty(growable: true);
+    return breedsState.when(
+      loading: () => const CircularProgressIndicator(),
+      error: (error, stack) => Text('Error al cargar razas'),
+      data: (breeds) {
+        final breedOptions = breeds
+            .map(
+              (breed) => DropdownMenuItem<int>(
+                value: breed.id,
+                child: Text(breed.name),
+              ),
+            )
+            .toList();
 
-    if (_breeds.isEmpty) {
-      breedOptions.add(
-        DropdownMenuItem<Breed>(
-          enabled: false,
-          value: null,
-          child: Text(
-            "No existen Razas",
-          ), // Asegúrate de que Breed tenga una propiedad 'name'
-        ),
-      );
-    } else {
-      _breeds.map((breed) {
-        breedOptions.add(
-          DropdownMenuItem<Breed>(
-            value: breed,
-            child: Text(
-              breed.name,
-            ), // Asegúrate de que Breed tenga una propiedad 'name'
-          ),
+        // Validar si el valor actual existe entre las opciones
+        final selectedId = breeds.any((b) => b.id == _selectedBreed?.id)
+            ? _selectedBreed?.id
+            : null;
+
+        return CustomSelectField<int>(
+          labelText: 'Raza *',
+          hintText: 'Seleccione la raza',
+          prefixIcon: Icons.pets,
+          value: selectedId,
+          items: breedOptions,
+          onChanged: (value) {
+            _selectedBreed?.id = value;
+          },
         );
-      }).toList();
-    }
-
-    return breedOptions;
+      },
+    );
   }
 
-  List<DropdownMenuItem<Lot>> _buildLotList(
-    BuildContext context,
-    WidgetRef ref,
-  ) {
+  Widget _buildLotSelect(BuildContext context, WidgetRef ref) {
     final lotsState = ref.watch(lotsProvider);
-    lotsState.when(
-      loading: () => null,
-      error: (error, stack) => null,
-      data: (lots) => _lots = lots,
-    );
 
-    List<DropdownMenuItem<Lot>> lotOptions = List.empty(growable: true);
+    return lotsState.when(
+      loading: () => const CircularProgressIndicator(),
+      error: (error, stack) => Text('Error al cargar lotes'),
+      data: (lots) {
+        final lotOptions = lots
+            .map(
+              (lot) =>
+                  DropdownMenuItem<int>(value: lot.id, child: Text(lot.name)),
+            )
+            .toList();
 
-    if (_lots.isEmpty) {
-      lotOptions.add(
-        DropdownMenuItem<Lot>(
-          enabled: false,
-          value: null,
-          child: Text(
-            "No existen Lotes",
-          ), // Asegúrate de que Lot tenga una propiedad 'name'
-        ),
-      );
-    } else {
-      _lots.map((lot) {
-        lotOptions.add(
-          DropdownMenuItem<Lot>(
-            value: lot,
-            child: Text(
-              lot.name,
-            ), // Asegúrate de que Lot tenga una propiedad 'name'
-          ),
+        // Validar si el valor actual existe entre las opciones
+        final selectedId = lots.any((b) => b.id == _selectedLot?.id)
+            ? _selectedLot?.id
+            : null;
+
+        return CustomSelectField<int>(
+          labelText: 'Lote *',
+          hintText: 'Seleccione el lote',
+          prefixIcon: Icons.pets,
+          value: selectedId,
+          items: lotOptions,
+          onChanged: (value) {
+            _selectedLot?.id = value;
+          },
         );
-      }).toList();
-    }
-
-    return lotOptions;
+      },
+    );
   }
 
-  List<DropdownMenuItem<Paddock>> _buildPaddockList(
-    BuildContext context,
-    WidgetRef ref,
-  ) {
+  Widget _buildPaddockSelect(BuildContext context, WidgetRef ref) {
     final paddocksState = ref.watch(paddocksProvider);
-    paddocksState.when(
-      loading: () => null,
-      error: (error, stack) => null,
-      data: (paddocks) => _paddocks = paddocks,
+
+    return paddocksState.when(
+      loading: () => const CircularProgressIndicator(),
+      error: (error, stack) => Text('Error al cargar corrales'),
+      data: (paddocks) {
+        final paddockOptions = paddocks
+            .map(
+              (paddock) => DropdownMenuItem<int>(
+                value: paddock.id,
+                child: Text(paddock.name),
+              ),
+            )
+            .toList();
+
+        // Validar si el valor actual existe entre las opciones
+        final selectedId = paddocks.any((b) => b.id == _selectedPaddock?.id)
+            ? _selectedPaddock?.id
+            : null;
+
+        return CustomSelectField<int>(
+          labelText: 'Corral *',
+          hintText: 'Seleccione el corral',
+          prefixIcon: Icons.pets,
+          value: selectedId,
+          items: paddockOptions,
+          onChanged: (value) {
+            _selectedPaddock?.id = value;
+          },
+        );
+      },
     );
-
-    List<DropdownMenuItem<Paddock>> paddockOptions = List.empty(growable: true);
-
-    if (_paddocks.isEmpty) {
-      paddockOptions.add(
-        DropdownMenuItem<Paddock>(
-          enabled: false,
-          value: null,
-          child: Text(
-            "No existen Corrales",
-          ), // Asegúrate de que Paddock tenga una propiedad 'name'
-        ),
-      );
-    } else {
-      _paddocks.map((paddock) {
-        paddockOptions.add(
-          DropdownMenuItem<Paddock>(
-            value: paddock,
-            child: Text(
-              paddock.name,
-            ), // Asegúrate de que Paddock tenga una propiedad 'name'
-          ),
-        );
-      }).toList();
-    }
-
-    return paddockOptions;
   }
 
-  List<DropdownMenuItem<Farm>> _buildFarmList(
-    BuildContext context,
-    WidgetRef ref,
-  ) {
-    // final farmsState = ref.watch(farmProvider);
-    // farmsState.when(
-    //   loading: () => null,
-    //   error: (error, stack) => null,
-    //   data: (farms) => _farms = List.empty(growable: true),
-    // );
+  // List<DropdownMenuItem<Farm>> _buildFarmList(
+  //   BuildContext context,
+  //   WidgetRef ref,
+  // ) {
+  //   final farmsState = ref.watch(farmProvider);
+  //   farmsState.when(
+  //     loading: () => null,
+  //     error: (error, stack) => null,
+  //     data: (farms) => _farms = List.empty(growable: true),
+  //   );
 
-    _farms = List.empty(growable: true);
+  //   _farms = List.empty(growable: true);
 
-    List<DropdownMenuItem<Farm>> farmOptions = List.empty(growable: true);
+  //   List<DropdownMenuItem<Farm>> farmOptions = List.empty(growable: true);
 
-    if (_farms.isEmpty) {
-      farmOptions.add(
-        DropdownMenuItem<Farm>(
-          enabled: false,
-          value: null,
-          child: Text(
-            "No existen Granjas",
-          ), // Asegúrate de que Farm tenga una propiedad 'name'
-        ),
-      );
-    } else {
-      _farms.map((farm) {
-        farmOptions.add(
-          DropdownMenuItem<Farm>(
-            value: farm,
-            child: Text(
-              farm.name,
-            ), // Asegúrate de que Farm tenga una propiedad 'name'
-          ),
-        );
-      }).toList();
-    }
+  //   if (_farms.isEmpty) {
+  //     farmOptions.add(
+  //       DropdownMenuItem<Farm>(
+  //         enabled: false,
+  //         value: null,
+  //         child: Text(
+  //           "No existen Granjas",
+  //         ), // Asegúrate de que Farm tenga una propiedad 'name'
+  //       ),
+  //     );
+  //   } else {
+  //     _farms.map((farm) {
+  //       farmOptions.add(
+  //         DropdownMenuItem<Farm>(
+  //           value: farm,
+  //           child: Text(
+  //             farm.name,
+  //           ), // Asegúrate de que Farm tenga una propiedad 'name'
+  //         ),
+  //       );
+  //     }).toList();
+  //   }
 
-    return farmOptions;
-  }
+  //   return farmOptions;
+  // }
 
   Future<void> _getFarm() async {
     final prefs = await SharedPreferences.getInstance();
@@ -889,12 +730,47 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
     );
   }
 
-  DateTime parseDate(String input) {
+  String parseDate(String input) {
+    try {
+      DateTime date;
+
+      // Si viene en formato ISO o con guiones
+      if (input.contains('-')) {
+        date = DateTime.parse(input);
+      }
+      // Si viene en formato dd/MM/yyyy
+      else if (input.contains('/')) {
+        final parts = input.split('/');
+        if (parts.length != 3) throw const FormatException();
+        final day = int.parse(parts[0]);
+        final month = int.parse(parts[1]);
+        final year = int.parse(parts[2]);
+        date = DateTime(year, month, day);
+      } else {
+        throw const FormatException();
+      }
+
+      // Retornar en formato dd/MM/yyyy
+      final dayStr = date.day.toString().padLeft(2, '0');
+      final monthStr = date.month.toString().padLeft(2, '0');
+      final yearStr = date.year.toString();
+      return "$dayStr/$monthStr/$yearStr";
+    } catch (e) {
+      throw FormatException('Formato de fecha inválido: $input');
+    }
+  }
+
+  DateTime parseDateFromString(String input) {
     try {
       final parts = input.split('/');
+      if (parts.length != 3) {
+        throw const FormatException('Formato inválido, se esperaba dd/MM/yyyy');
+      }
+
       final day = int.parse(parts[0]);
       final month = int.parse(parts[1]);
       final year = int.parse(parts[2]);
+
       return DateTime(year, month, day);
     } catch (e) {
       throw FormatException('Formato de fecha inválido: $input');
@@ -913,14 +789,20 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
       context.showErrorSnack('El sexo es requerido');
       return;
     }
+
+    if (_selectedHealthStatus == null) {
+      context.showErrorSnack('El Estado de salud es requerido');
+      return;
+    }
+
     if (_selectedRegisterType == null) {
       context.showErrorSnack('El tipo de registro es requerido');
       return;
     }
-    if (_selectedStatus == null) {
-      context.showErrorSnack('El estado es requerido');
-      return;
-    }
+    // if (_selectedStatus == null) {
+    //   context.showErrorSnack('El estado es requerido');
+    //   return;
+    // }
     if (_selectedBreed == null) {
       context.showErrorSnack('La raza es requerida');
       return;
@@ -949,8 +831,13 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
       }
     }
 
-    final birthday = parseDate(_birthdayContoller.text.trim());
-    final purchaseDate = parseDate(_purchaseDateController.text.trim());
+    DateTime? birthday = parseDateFromString(_birthdayContoller.text.trim());
+
+    DateTime? purchaseDate;
+
+    if (_purchasePriceController.text.isNotEmpty) {
+      purchaseDate = parseDateFromString(_purchaseDateController.text.trim());
+    }
 
     setState(() => _isLoading = true);
 
@@ -967,7 +854,7 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
               purchaseDate,
               _selectedSex!,
               _selectedRegisterType!,
-              _healthController.text.trim(),
+              _selectedHealthStatus!,
               birthWeight,
               _selectedStatus!,
               purchasePrice,
@@ -982,42 +869,11 @@ class AnimalsFormPageState extends ConsumerState<AnimalsFormPage> {
               _selectedMother,
               _selectedFarm,
             );
-      } else {
-        
-        // Modo creación
-        await ref
-            .read(animalsProvider.notifier)
-            .createAnimal(
-              _codeController.text.trim(),
-              _nameController.text.trim(),
-              birthday,
-              purchaseDate,
-              _selectedSex!,
-              _selectedRegisterType!,
-              _healthController.text.trim(),
-              birthWeight,
-              _selectedStatus!,
-              purchasePrice,
-              _colorController.text.trim(),
-              _brandController.text.trim().isEmpty
-                  ? 'Form submit'
-                  : _brandController.text.trim(),
-              _selectedBreed!,
-              _selectedLot!,
-              _selectedPaddock!,
-              _selectedFather,
-              _selectedMother,
-              _selectedFarm,
-            );
       }
 
       if (mounted) {
         context.go('/animals');
-        context.showSuccessSnack(
-          widget.animal != null
-              ? 'Animal actualizado correctamente'
-              : 'Animal creado correctamente',
-        );
+        context.showSuccessSnack('Animal actualizado correctamente');
       }
     } catch (error) {
       if (mounted) {

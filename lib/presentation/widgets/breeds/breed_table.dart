@@ -184,6 +184,7 @@ class BreedTable extends ConsumerWidget {
   /// - Si el usuario confirma, se elimina mediante `breedsProvider`.
   /// - Se muestran snackbars de éxito o error según corresponda.
   void _confirmDelete(BuildContext context, WidgetRef ref, Breed breed) {
+        final colors = Theme.of(context).extension<AppColors>()!;
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -215,7 +216,6 @@ class BreedTable extends ConsumerWidget {
             '¿Estás seguro que quieres eliminar la raza "${breed.name}"?\n\nEsta acción no se puede deshacer.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey.shade700,
               height: 1.4,
             ),
           ),
@@ -229,7 +229,7 @@ class BreedTable extends ConsumerWidget {
             child: Text(
               'Cancelar',
               style: TextStyle(
-                color: Colors.grey.shade600,
+                color: colors.cancelTextButton,
                 fontWeight: FontWeight.w500,
               ),
             ),

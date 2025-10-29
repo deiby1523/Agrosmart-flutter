@@ -18,7 +18,7 @@ part 'paddock_model.g.dart';
 
 @JsonSerializable()
 class PaddockModel extends Paddock {
-  const PaddockModel({
+  PaddockModel({
     super.id,
     required super.name,
     required super.location,

@@ -1,4 +1,5 @@
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
+import 'package:agrosmart_flutter/core/themes/custom_themes/scrollbar_theme.dart';
 import 'package:agrosmart_flutter/core/themes/custom_themes/snackbar_theme.dart';
 import 'package:flutter/material.dart';
 import 'custom_themes/appbar_theme.dart';
@@ -32,6 +33,7 @@ class AppTheme {
     dividerTheme: DDividerTheme.lightDividerTheme,
     listTileTheme: DListTileTheme.lightListTileTheme,
     snackBarTheme: DSnackbarTheme.lightSnackBarTheme,
+    scrollbarTheme: DScrollbarTheme.lightScrollbarTheme,
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: AppColorSchemes.lightScheme.primary,
       selectionColor: Color.fromARGB(90, 155, 210, 36),
@@ -70,6 +72,7 @@ class AppTheme {
     dividerTheme: DDividerTheme.darkDividerTheme,
     listTileTheme: DListTileTheme.darkListTileTheme,
     snackBarTheme: DSnackbarTheme.darkSnackBarTheme,
+    scrollbarTheme: DScrollbarTheme.darkScrollbarTheme,
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: AppColorSchemes.lightScheme.primary,
       selectionColor: Color.fromARGB(90, 155, 210, 36),

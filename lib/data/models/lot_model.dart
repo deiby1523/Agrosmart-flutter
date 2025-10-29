@@ -18,7 +18,7 @@ part 'lot_model.g.dart';
 
 @JsonSerializable()
 class LotModel extends Lot {
-  const LotModel({super.id, required super.name, super.description});
+  LotModel({super.id, required super.name, super.description});
 
   // --- JSON Serialization (Auto-generated) ---
   factory LotModel.fromJson(Map<String, dynamic> json) =>

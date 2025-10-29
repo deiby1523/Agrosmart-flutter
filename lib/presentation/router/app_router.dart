@@ -18,7 +18,9 @@
 // - authProvider: determina si el usuario está autenticado.
 // =============================================================================
 
-import 'package:agrosmart_flutter/presentation/pages/animals/animals_form_page.dart';
+import 'package:agrosmart_flutter/domain/entities/animal.dart';
+import 'package:agrosmart_flutter/presentation/pages/animals/animal_create_page.dart';
+import 'package:agrosmart_flutter/presentation/pages/animals/animal_edit_page.dart';
 import 'package:agrosmart_flutter/presentation/pages/animals/animals_index_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -43,17 +45,16 @@ import '../providers/auth_provider.dart';
 /// redirecciones automáticas y proteger rutas privadas.
 /// ---------------------------------------------------------------------------
 final routerProvider = Provider<GoRouter>((ref) {
-  // Escucha el estado actual de autenticación (session o null)
-  final authState = ref.watch(authProvider);
-
+  // Obtener el notifier para escuchar cambios sin reconstruir todo
+  final authNotifier = ref.read(authProvider.notifier);
+  
   return GoRouter(
-    // Ruta inicial por defecto al abrir la aplicación
     initialLocation: '/dashboard',
-
-    // -------------------------------------------------------------------------
-    // REDIRECCIONES SEGÚN AUTENTICACIÓN
-    // -------------------------------------------------------------------------
+    
+    // Solo la redirección escucha cambios, no toda la construcción de rutas
     redirect: (context, state) {
+      final authState = ref.read(authProvider); // Usar read, no watch
+      
       final isAuthenticated = authState.maybeWhen(
         data: (session) => session != null,
         orElse: () => false,
@@ -62,40 +63,46 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isAuthRoute =
           state.uri.path == '/login' || state.uri.path == '/register';
 
-      // Caso 1: Usuario no autenticado → redirigir al login
       if (!isAuthenticated && !isAuthRoute) {
         return '/login';
       }
 
-      // Caso 2: Usuario autenticado → impedir acceso a rutas de login/register
       if (isAuthenticated && isAuthRoute) {
         return '/dashboard';
       }
 
-      // Caso 3: No se requiere redirección
       return null;
     },
 
-    // -------------------------------------------------------------------------
-    // DEFINICIÓN DE RUTAS PRINCIPALES
-    // -------------------------------------------------------------------------
+    // Refresh listenable para reactivar redirecciones sin reconstruir rutas
+    // refreshListenable: GoRouterRefreshStream(
+    //   authNotifier.stream, // Si tu authNotifier tiene un stream
+    // ),
+
     routes: [
-      // -------------------------------
-      // Rutas de autenticación
-      // -------------------------------
+      // Rutas SIN watch - se construyen una sola vez
       GoRoute(
         path: '/login',
-        builder: (context, state) => const LoginPage(),
+        pageBuilder: (context, state) => NoTransitionPage(
+          key: state.pageKey,
+          child: const LoginPage(),
+        ),
       ),
       GoRoute(
         path: '/register',
-        pageBuilder: (context, state) => CustomTransitionPage(
+        pageBuilder: (context, state) => NoTransitionPage(
           key: state.pageKey,
           child: const RegisterPage(),
-          transitionsBuilder: (_, __, ___, child) => child,
-          transitionDuration: Duration.zero, // sin animación
         ),
       ),
+      //   path: '/register',
+      //   pageBuilder: (context, state) => CustomTransitionPage(
+      //     key: state.pageKey,
+      //     child: const RegisterPage(),
+      //     transitionsBuilder: (_, __, ___, child) => child,
+      //     transitionDuration: Duration.zero, // sin animación
+      //   ),
+      // ),
 
       // -------------------------------
       // Rutas internas (dashboard y módulos)
@@ -131,11 +138,24 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: '/animals/create',
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
-          child: const AnimalsFormPage(),
+          child: const AnimalCreatePage(),
           transitionsBuilder: (_, __, ___, child) => child,
           transitionDuration: Duration.zero,
         ),
       ),
+      GoRoute(
+        path: '/animals/edit',
+        pageBuilder: (context, state) {
+          final animal = state.extra as Animal;
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: AnimalEditPage(animal: animal),
+            transitionsBuilder: (_, __, ___, child) => child,
+            transitionDuration: Duration.zero,
+          );
+        },
+      ),
+
       // GoRoute(
       //   path: '/animals/test',
       //   pageBuilder: (context, state) => CustomTransitionPage(
@@ -145,7 +165,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       //     transitionDuration: Duration.zero,
       //   ),
       // ),
-      
       GoRoute(
         path: '/lots',
         pageBuilder: (context, state) => CustomTransitionPage(
@@ -168,10 +187,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       // -------------------------------
       // Redirección raíz → dashboard
       // -------------------------------
-      GoRoute(
-        path: '/',
-        redirect: (context, state) => '/dashboard',
-      ),
+      GoRoute(path: '/', redirect: (context, state) => '/dashboard'),
     ],
 
     // -------------------------------------------------------------------------

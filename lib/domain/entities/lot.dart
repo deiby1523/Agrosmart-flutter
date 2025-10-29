@@ -11,7 +11,7 @@
 
 class Lot {
   /// Identificador único del lote (opcional, asignado por el sistema)
-  final int? id;
+  int? id;
 
   /// Nombre del lote
   final String name;
@@ -20,7 +20,7 @@ class Lot {
   final String? description;
 
   /// Constructor constante de la entidad [Lot]
-  const Lot({
+  Lot({
     this.id,
     required this.name,
     this.description,

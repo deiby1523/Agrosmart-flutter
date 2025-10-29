@@ -1,6 +1,7 @@
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:agrosmart_flutter/presentation/providers/auth_provider.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_text_field.dart';
+import 'package:blobs/blobs.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -71,6 +72,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
   Widget build(BuildContext context) {
     final authState = ref.watch(authProvider);
     final colors = Theme.of(context).extension<AppColors>()!;
+    BlobController blobCtrl = BlobController();
 
     return Card(
       elevation: 12,
@@ -87,6 +89,17 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
+                Blob.animatedRandom(
+                  size: 200, // Size of the blob
+                  edgesCount: 5, // Number of edges (complexity)
+                  minGrowth: 4, // Minimum size of the blob's growth
+                  duration: Duration(seconds: 10), // Animation duration
+                  styles: BlobStyles(
+                    color: Colors.red,
+                    fillType: BlobFillType.stroke, // Or BlobFillType.fill
+                    strokeWidth: 3,
+                  ),
+                ),
                 // -------------------------------
                 // Título y subtítulo
                 // -------------------------------
@@ -95,13 +108,13 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                   style: TextStyle(
                     fontSize: 28,
                     fontWeight: FontWeight.bold,
-                    color: Colors.grey[800],
+                    color: colors.icon,
                   ),
                 ),
                 const SizedBox(height: 8),
                 Text(
                   "Crea tu cuenta",
-                  style: TextStyle(fontSize: 15, color: Colors.grey[600]),
+                  style: TextStyle(fontSize: 15, color: colors.icon),
                 ),
                 const SizedBox(height: 24),
 
@@ -156,8 +169,10 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                   hintText: 'Confirma tu contraseña',
                   labelText: 'Confirmar contraseña',
                   prefixIcon: Icons.lock,
-                  validator: (value) =>
-                      Validators.confirmPassword(value, _passwordController.text),
+                  validator: (value) => Validators.confirmPassword(
+                    value,
+                    _passwordController.text,
+                  ),
                   obscureText: _obscurePassword,
                   onTogglePassword: () =>
                       setState(() => _obscurePassword = !_obscurePassword),
@@ -223,7 +238,9 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                       ),
                       Builder(
                         builder: (context) {
-                          final colors = Theme.of(context).extension<AppColors>()!;
+                          final colors = Theme.of(
+                            context,
+                          ).extension<AppColors>()!;
                           WidgetsBinding.instance.addPostFrameCallback((_) {
                             context.showErrorSnack(
                               'Error: $error',
@@ -248,7 +265,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                   children: [
                     Text(
                       "¿Ya tienes una cuenta?",
-                      style: TextStyle(color: Colors.grey[700]),
+                      style: TextStyle(color: colors.icon),
                     ),
                     TextButton(
                       onPressed: () => context.go('/login'),
@@ -282,7 +299,9 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
         ownerId: null,
       );
 
-      await ref.read(authProvider.notifier).register(
+      await ref
+          .read(authProvider.notifier)
+          .register(
             _emailController.text.trim(),
             _passwordController.text,
             _dniController.text.trim(),

@@ -42,8 +42,10 @@ dependencies:
 
   # icons
   cupertino_icons: ^1.0.8
+  blobs: 2.0.0
 
 dev_dependencies:
+
   flutter_test:
     sdk: flutter
 

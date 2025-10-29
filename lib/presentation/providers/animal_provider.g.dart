@@ -24,7 +24,7 @@ final animalRepositoryProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AnimalRepositoryRef = AutoDisposeProviderRef<AnimalRepositoryImpl>;
-String _$animalsHash() => r'c8d167bbabd82193fe263332277c91927882f3f4';
+String _$animalsHash() => r'1f71e9cd41774ccc604aafe2cf83d3168670b715';
 
 /// See also [Animals].
 @ProviderFor(Animals)

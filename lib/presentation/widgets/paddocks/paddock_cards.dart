@@ -143,6 +143,8 @@ class PaddockCards extends ConsumerWidget {
   /// - Si el usuario confirma, se elimina mediante `paddocksProvider`.
   /// - Se muestran snackbars de éxito o error según corresponda.
   void _confirmDelete(BuildContext context, WidgetRef ref, Paddock paddock) {
+        final colors = Theme.of(context).extension<AppColors>()!;
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -174,7 +176,6 @@ class PaddockCards extends ConsumerWidget {
             '¿Estás seguro que quieres eliminar el corral "${paddock.name}"?\n\nEsta acción no se puede deshacer.',
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey.shade700,
               height: 1.4,
             ),
           ),
@@ -188,7 +189,7 @@ class PaddockCards extends ConsumerWidget {
             child: Text(
               'Cancelar',
               style: TextStyle(
-                color: Colors.grey.shade600,
+                color: colors.cancelTextButton,
                 fontWeight: FontWeight.w500,
               ),
             ),

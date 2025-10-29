@@ -11,7 +11,7 @@
 
 class Breed {
   /// Identificador único de la raza (asignado por el sistema)
-  final int? id;
+  int? id;
 
   /// Nombre de la raza
   final String name;
@@ -20,7 +20,7 @@ class Breed {
   final String? description;
 
   /// Constructor constante de la entidad [Breed]
-  const Breed({
+  Breed({
     this.id,
     required this.name,
     this.description,
@@ -47,9 +47,7 @@ class Breed {
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
     return other is Breed &&
-        other.id == id &&
-        other.name == name &&
-        other.description == description;
+        other.id == id;
   }
 
   @override
