@@ -584,6 +584,16 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
                     currentRoute == '/animals/create'),
                 isGroupItem: true,
               ),
+              _buildMenuItem(
+                context,
+                icon: Icons.help_center,
+                title: _Texts.menuMilkings,
+                route: '/milkings',
+                isSelected:
+                    (currentRoute == '/milkings' ||
+                    currentRoute == '/animals/milkings'),
+                isGroupItem: true,
+              ),
             ],
           ),
         ),
@@ -876,6 +886,7 @@ class _Texts {
   static const menuPaddocks = 'Corrales';
   static const menuBreeds = 'Razas';
   static const menuAnimals = 'Animales';
+  static const menuMilkings = 'Ordeños';
 
   // Usuario y Logout
   static const logout = 'Cerrar Sesión';

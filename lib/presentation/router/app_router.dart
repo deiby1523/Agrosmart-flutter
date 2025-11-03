@@ -19,9 +19,13 @@
 // =============================================================================
 
 import 'package:agrosmart_flutter/domain/entities/animal.dart';
+import 'package:agrosmart_flutter/domain/entities/milking.dart';
 import 'package:agrosmart_flutter/presentation/pages/animals/animal_create_page.dart';
 import 'package:agrosmart_flutter/presentation/pages/animals/animal_edit_page.dart';
 import 'package:agrosmart_flutter/presentation/pages/animals/animals_index_page.dart';
+import 'package:agrosmart_flutter/presentation/pages/milkings/milking_create_page.dart';
+import 'package:agrosmart_flutter/presentation/pages/milkings/milking_edit_page.dart';
+import 'package:agrosmart_flutter/presentation/pages/milkings/milking_index_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -160,16 +164,36 @@ final routerProvider = Provider<GoRouter>((ref) {
           );
         },
       ),
-
-      // GoRoute(
-      //   path: '/animals/test',
-      //   pageBuilder: (context, state) => CustomTransitionPage(
-      //     key: state.pageKey,
-      //     child: AnimalsTestPage(),
-      //     transitionsBuilder: (_, __, ___, child) => child,
-      //     transitionDuration: Duration.zero,
-      //   ),
-      // ),
+      GoRoute(
+        path: '/milkings',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const MilkingsListPage(),
+          transitionsBuilder: (_, __, ___, child) => child,
+          transitionDuration: Duration.zero,
+        ),
+      ),
+      GoRoute(
+        path: '/milkings/create',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const MilkingCreatePage(),
+          transitionsBuilder: (_, __, ___, child) => child,
+          transitionDuration: Duration.zero,
+        ),
+      ),
+      GoRoute(
+        path: '/milkings/edit',
+        pageBuilder: (context, state) {
+          final milking = state.extra as Milking;
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: MilkingEditPage(milking: milking),
+            transitionsBuilder: (_, __, ___, child) => child,
+            transitionDuration: Duration.zero,
+          );
+        },
+      ),
       GoRoute(
         path: '/lots',
         pageBuilder: (context, state) => CustomTransitionPage(

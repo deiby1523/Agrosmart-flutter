@@ -8,6 +8,7 @@ import 'package:agrosmart_flutter/domain/entities/breed.dart';
 import 'package:agrosmart_flutter/domain/entities/lot.dart';
 import 'package:agrosmart_flutter/domain/entities/paddock.dart';
 import 'package:flutter/material.dart';
+import 'package:agrosmart_flutter/domain/entities/milking.dart';
 
 class AnimalRelationsService {
   final BreedRepositoryImpl _breedRepository;
@@ -20,10 +21,10 @@ class AnimalRelationsService {
     required LotRepositoryImpl lotRepository,
     required PaddockRepositoryImpl paddockRepository,
     required AnimalRepositoryImpl animalRepository,
-  })  : _breedRepository = breedRepository,
-        _lotRepository = lotRepository,
-        _paddockRepository = paddockRepository,
-        _animalRepository = animalRepository;
+  }) : _breedRepository = breedRepository,
+       _lotRepository = lotRepository,
+       _paddockRepository = paddockRepository,
+       _animalRepository = animalRepository;
 
   // Cache en memoria para la sesión actual
   final Map<int, Breed> _breedCache = {};
@@ -32,7 +33,9 @@ class AnimalRelationsService {
   final Map<int, Animal> _animalCache = {};
 
   /// Optimización: Obtener todas las relaciones en lotes
-  Future<List<Animal>> populateAnimalsWithRelations(List<Animal> animals) async {
+  Future<List<Animal>> populateAnimalsWithRelations(
+    List<Animal> animals,
+  ) async {
     if (animals.isEmpty) return animals;
 
     // Paso 1: Extraer todos los IDs únicos necesarios
@@ -45,6 +48,35 @@ class AnimalRelationsService {
     return _mergeAnimalsWithRelations(animals);
   }
 
+  /// Popula la relación de Lot para una lista de registros de ordeño (Milking).
+  /// Reutiliza la cache de lotes y el loader existente para evitar requests duplicados.
+  Future<List<Milking>> populateMilkingsWithRelations(
+    List<Milking> milkings,
+  ) async {
+    if (milkings.isEmpty) return milkings;
+
+    // Extraer IDs únicos de lot
+    final lotIds = milkings
+        .map((m) => m.lot.id)
+        .where((id) => id != null)
+        .cast<int>()
+        .toSet();
+
+    // Cargar solo los lotes faltantes en cache
+    final newLotIds = lotIds.where((id) => !_lotCache.containsKey(id));
+    if (newLotIds.isNotEmpty) {
+      await _loadLots(newLotIds);
+    }
+
+    // Mapear lotes cargados a cada registro de ordeño
+    return milkings.map((m) {
+      final resolvedLot = (m.lot.id != null)
+          ? (_lotCache[m.lot.id] ?? m.lot)
+          : m.lot;
+      return m.copyWith(lot: resolvedLot);
+    }).toList();
+  }
+
   RelationIds _extractAllRelationIds(List<Animal> animals) {
     final breedIds = <int>{};
     final lotIds = <int>{};
@@ -55,7 +87,8 @@ class AnimalRelationsService {
       // Relaciones básicas
       if (animal.breed.id != null) breedIds.add(animal.breed.id!);
       if (animal.lot.id != null) lotIds.add(animal.lot.id!);
-      if (animal.paddockCurrent.id != null) paddockIds.add(animal.paddockCurrent.id!);
+      if (animal.paddockCurrent.id != null)
+        paddockIds.add(animal.paddockCurrent.id!);
 
       // Relaciones padre/madre
       if (animal.father?.id != null) animalIds.add(animal.father!.id!);
@@ -74,25 +107,33 @@ class AnimalRelationsService {
     final futures = <Future>[];
 
     // Cargar razas (si hay IDs nuevos)
-    final newBreedIds = relations.breedIds.where((id) => !_breedCache.containsKey(id));
+    final newBreedIds = relations.breedIds.where(
+      (id) => !_breedCache.containsKey(id),
+    );
     if (newBreedIds.isNotEmpty) {
       futures.add(_loadBreeds(newBreedIds));
     }
 
     // Cargar lotes (si hay IDs nuevos)
-    final newLotIds = relations.lotIds.where((id) => !_lotCache.containsKey(id));
+    final newLotIds = relations.lotIds.where(
+      (id) => !_lotCache.containsKey(id),
+    );
     if (newLotIds.isNotEmpty) {
       futures.add(_loadLots(newLotIds));
     }
 
     // Cargar potreros (si hay IDs nuevos)
-    final newPaddockIds = relations.paddockIds.where((id) => !_paddockCache.containsKey(id));
+    final newPaddockIds = relations.paddockIds.where(
+      (id) => !_paddockCache.containsKey(id),
+    );
     if (newPaddockIds.isNotEmpty) {
       futures.add(_loadPaddocks(newPaddockIds));
     }
 
     // Cargar animales padre/madre (si hay IDs nuevos)
-    final newAnimalIds = relations.animalIds.where((id) => !_animalCache.containsKey(id));
+    final newAnimalIds = relations.animalIds.where(
+      (id) => !_animalCache.containsKey(id),
+    );
     if (newAnimalIds.isNotEmpty) {
       futures.add(_loadAnimals(newAnimalIds));
     }
@@ -155,7 +196,8 @@ class AnimalRelationsService {
       var updatedAnimal = animal.copyWith(
         breed: _breedCache[animal.breed.id] ?? animal.breed,
         lot: _lotCache[animal.lot.id] ?? animal.lot,
-        paddockCurrent: _paddockCache[animal.paddockCurrent.id] ?? animal.paddockCurrent,
+        paddockCurrent:
+            _paddockCache[animal.paddockCurrent.id] ?? animal.paddockCurrent,
       );
 
       // Aplicar relaciones padre/madre si existen
