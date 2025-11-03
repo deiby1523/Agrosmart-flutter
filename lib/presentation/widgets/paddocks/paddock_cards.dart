@@ -48,7 +48,6 @@ class PaddockCards extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     return Expanded(
       child: ListView.separated(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
         itemCount: paddocks.length,
         separatorBuilder: (_, __) => const SizedBox(height: 8),
         itemBuilder: (context, index) {

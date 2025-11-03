@@ -37,6 +37,17 @@ import '../pages/paddocks/paddocks_index_page.dart';
 // Provider de autenticación
 import '../providers/auth_provider.dart';
 
+// Nuevo: Convertidor de cambios de Riverpod a Listenable para GoRouter.
+// Escucha el provider de autenticación y notifica a GoRouter cuando haya cambios.
+class _GoRouterRefreshNotifier extends ChangeNotifier {
+  _GoRouterRefreshNotifier(Ref ref) {
+    // Escuchar cambios del authProvider y notificar a GoRouter
+    ref.listen(authProvider, (_, __) {
+      notifyListeners();
+    });
+  }
+}
+
 /// ---------------------------------------------------------------------------
 /// # routerProvider
 ///
@@ -45,11 +56,14 @@ import '../providers/auth_provider.dart';
 /// redirecciones automáticas y proteger rutas privadas.
 /// ---------------------------------------------------------------------------
 final routerProvider = Provider<GoRouter>((ref) {
-  // Obtener el notifier para escuchar cambios sin reconstruir todo
-  final authNotifier = ref.read(authProvider.notifier);
+  // Convertir los cambios del provider de auth en un Listenable para GoRouter.
+  final refreshListenable = _GoRouterRefreshNotifier(ref);
   
   return GoRouter(
     initialLocation: '/dashboard',
+    // Usar refreshListenable para que GoRouter reevalúe redirect cuando
+    // cambie el estado del authProvider, sin cambiar el uso de ref.read.
+    refreshListenable: refreshListenable,
     
     // Solo la redirección escucha cambios, no toda la construcción de rutas
     redirect: (context, state) {
@@ -73,11 +87,6 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       return null;
     },
-
-    // Refresh listenable para reactivar redirecciones sin reconstruir rutas
-    // refreshListenable: GoRouterRefreshStream(
-    //   authNotifier.stream, // Si tu authNotifier tiene un stream
-    // ),
 
     routes: [
       // Rutas SIN watch - se construyen una sola vez

@@ -170,7 +170,9 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
               // Content Area
               Expanded(
                 child: Padding(
-                  padding: isLargeScreen ? const EdgeInsets.symmetric(horizontal: 30) : const EdgeInsets.symmetric(horizontal: 10),
+                  padding: isLargeScreen
+                      ? const EdgeInsets.symmetric(horizontal: 30)
+                      : const EdgeInsets.symmetric(horizontal: 10),
                   child: widget.child,
                 ),
               ),
@@ -448,9 +450,9 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color.fromARGB(255, 0, 17, 0),
-            Color.fromARGB(255, 0, 31, 0),
             Color.fromARGB(255, 0, 46, 10),
+            Color.fromARGB(255, 0, 31, 0),
+            Color.fromARGB(255, 0, 36, 0),
           ],
         ),
       ),

@@ -45,109 +45,108 @@ class AnimalTable extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Expanded(
-      child: Container(
-        decoration: BoxDecoration(
-          color: Theme.of(context).cardTheme.color,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: Theme.of(context).shadowColor.withAlpha(30),
-              spreadRadius: 0,
-              blurRadius: 10,
-              offset: const Offset(0, 2),
+    return Container(
+      width: double.infinity,
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardTheme.color,
+        borderRadius: BorderRadius.circular(12),
+        boxShadow: [
+          BoxShadow(
+            color: Theme.of(context).shadowColor.withAlpha(30),
+            spreadRadius: 0,
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(12),
+        child: DataTable(
+          headingRowHeight: 56,
+          dataRowHeight: 64,
+          columnSpacing: 24,
+          horizontalMargin: 24,
+          headingRowColor: WidgetStateProperty.all(
+            Theme.of(context).cardTheme.color,
+          ),
+          columns: [
+            DataColumn(
+              label: Text(
+                'CÓDIGO',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+            DataColumn(
+              label: Text(
+                'NOMBRE',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+            if (MediaQuery.sizeOf(context).width > 1300)
+              DataColumn(
+                label: Text(
+                  'SEXO',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            // if (MediaQuery.sizeOf(context).width > 1700)
+            DataColumn(
+              label: Text(
+                'RAZA',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+            DataColumn(
+              label: Text(
+                'ESTADO',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                  letterSpacing: 0.5,
+                ),
+              ),
+            ),
+            if (MediaQuery.sizeOf(context).width > 1000)
+              DataColumn(
+                label: Text(
+                  'LOTE',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: 12,
+                    letterSpacing: 0.5,
+                  ),
+                ),
+              ),
+            DataColumn(
+              label: Text(
+                'ACCIONES',
+                style: TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 12,
+                  letterSpacing: 0.5,
+                ),
+              ),
             ),
           ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(12),
-          child: DataTable(
-            headingRowHeight: 56,
-            dataRowHeight: 64,
-            columnSpacing: 24,
-            horizontalMargin: 24,
-            headingRowColor: WidgetStateProperty.all(
-              Theme.of(context).cardTheme.color,
-            ),
-            columns: [
-              DataColumn(
-                label: Text(
-                  'CÓDIGO',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
-              DataColumn(
-                label: Text(
-                  'NOMBRE',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
-              if (MediaQuery.sizeOf(context).width > 1300)
-                DataColumn(
-                  label: Text(
-                    'SEXO',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
-              // if (MediaQuery.sizeOf(context).width > 1700)
-              DataColumn(
-                label: Text(
-                  'RAZA',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
-              DataColumn(
-                label: Text(
-                  'ESTADO',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
-              if (MediaQuery.sizeOf(context).width > 1000)
-                DataColumn(
-                  label: Text(
-                    'LOTE',
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                      letterSpacing: 0.5,
-                    ),
-                  ),
-                ),
-              DataColumn(
-                label: Text(
-                  'ACCIONES',
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 12,
-                    letterSpacing: 0.5,
-                  ),
-                ),
-              ),
-            ],
-            rows: animals
-                .map((animal) => _buildDataRow(context, ref, animal))
-                .toList(),
-          ),
+          rows: animals
+              .map((animal) => _buildDataRow(context, ref, animal))
+              .toList(),
         ),
       ),
     );
