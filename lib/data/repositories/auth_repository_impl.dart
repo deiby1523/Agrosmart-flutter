@@ -14,10 +14,10 @@ import '../mappers/auth_mapper.dart';
 /// # AUTH REPOSITORY IMPLEMENTATION
 /// Implementación del repositorio de autenticación según los principios
 /// de *Clean Architecture*.
-/// 
+///
 /// Coordina las fuentes de datos (`AuthRemoteDataSource`, `AuthLocalDataSource`)
 /// y servicios (`JwtService`) para manejar:
-/// 
+///
 /// - **Login:** Autenticación y persistencia local de tokens.
 /// - **Register:** Registro de nuevos usuarios con su primera granja.
 /// - **Refresh:** Renovación automática de tokens.
@@ -38,7 +38,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   /// ---------------------------------------------------------------------------
   /// ## Login: Autenticación de Usuario
-  /// 
+  ///
   /// 1. Envía las credenciales del usuario al servidor.
   /// 2. Decodifica el JWT para obtener las granjas asociadas.
   /// 3. Guarda la primera granja como activa por defecto.
@@ -71,9 +71,9 @@ class AuthRepositoryImpl implements AuthRepository {
 
   /// ---------------------------------------------------------------------------
   /// ## Register: Registro de Nuevo Usuario
-  /// 
+  ///
   /// Crea un nuevo usuario y su primera granja asociada.
-  /// 
+  ///
   /// Flujo:
   /// 1. Convierte la entidad `Farm` en `FarmModel`.
   /// 2. Envía el `RegisterRequest` a la API.
@@ -103,18 +103,21 @@ class AuthRepositoryImpl implements AuthRepository {
 
       final authResponse = await remoteDataSource.register(request);
 
-      final claims = jwtService.decodeToken(authResponse.token);
-      if (claims != null && claims.farms.isNotEmpty) {
-        await jwtService.saveActiveFarm(claims.farms.first);
-      }
+      return login(email, password);
 
-      await localDataSource.saveTokens(
-        email,
-        authResponse.token,
-        authResponse.refreshToken,
-      );
+      // final claims = jwtService.decodeToken(authResponse.token);
+      // if (claims != null && claims.farms.isNotEmpty) {
+      //   await jwtService.saveActiveFarm(claims.farms.first);
+      //   log("Granja activa establecida con ID: ${claims.farms.first.id}");
+      // }
 
-      return authSessionFromResponse(authResponse, email: email);
+      // await localDataSource.saveTokens(
+      //   email,
+      //   authResponse.token,
+      //   authResponse.refreshToken,
+      // );
+
+      // return authSessionFromResponse(authResponse, email: email);
     } catch (e) {
       throw Exception(_handleAuthError(e));
     }
@@ -122,7 +125,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   /// ---------------------------------------------------------------------------
   /// ## Refresh Token: Renovar Access Token
-  /// 
+  ///
   /// 1. Solicita nuevos tokens a la API usando el refresh token actual.
   /// 2. Recupera el email almacenado localmente.
   /// 3. Decodifica el nuevo JWT y actualiza la granja activa.
@@ -157,7 +160,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   /// ---------------------------------------------------------------------------
   /// ## Logout: Cerrar Sesión
-  /// 
+  ///
   /// Elimina los tokens locales y la información de granja activa.
   /// ---------------------------------------------------------------------------
   @override
@@ -168,7 +171,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   /// ---------------------------------------------------------------------------
   /// ## Get Current Session: Recuperar Sesión Activa
-  /// 
+  ///
   /// 1. Obtiene tokens y email desde almacenamiento local.
   /// 2. Valida la existencia de datos de sesión.
   /// 3. Recupera la granja activa.
@@ -187,7 +190,8 @@ class AuthRepositoryImpl implements AuthRepository {
 
       final user = User(
         email: email,
-        dni: '', // TODO: Considerar extraer estos datos del JWT si están presentes.
+        dni:
+            '', // TODO: Considerar extraer estos datos del JWT si están presentes.
         name: '',
         lastName: '',
         farm: Farm(
@@ -208,7 +212,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   /// ---------------------------------------------------------------------------
   /// ## isUserLoggedIn
-  /// 
+  ///
   /// Retorna `true` si existe una sesión válida, `false` en caso contrario.
   /// ---------------------------------------------------------------------------
   @override
@@ -219,7 +223,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
   /// ---------------------------------------------------------------------------
   /// ## _handleAuthError (Privado)
-  /// 
+  ///
   /// Traduce errores HTTP comunes en mensajes legibles para el usuario.
   /// ---------------------------------------------------------------------------
   String _handleAuthError(dynamic error) {

@@ -139,43 +139,39 @@ class _AnimalsContent extends ConsumerWidget {
 
   // Build animals list synchronously using already-populated animals
   Widget _buildAnimalsList(
-    BuildContext context,
-    WidgetRef ref,
-    PaginatedResponse<Animal> paginatedResponse,
-    List<Animal> animals,
-  ) {
-    final paginationInfo = paginatedResponse.paginationInfo;
+  BuildContext context,
+  WidgetRef ref,
+  PaginatedResponse<Animal> paginatedResponse,
+  List<Animal> animals,
+) {
+  final paginationInfo = paginatedResponse.paginationInfo;
 
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: Column(
-          children: [
-            // Información de paginación
-            _buildPaginationInfo(paginationInfo),
+  return SingleChildScrollView(
+    child: Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Column(
+        children: [
+          // Información de paginación
+          _buildPaginationInfo(paginationInfo),
 
-            const SizedBox(height: 16),
+          const SizedBox(height: 16),
 
-            // Lista de animales
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Responsive(
-                  mobile: AnimalCards(animals: animals),
-                  tablet: AnimalCards(animals: animals),
-                  desktop: AnimalTable(animals: animals),
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
+          // Lista de animales - QUITA EL ROW
+          Responsive(
+            mobile: AnimalCards(animals: animals),
+            tablet: AnimalCards(animals: animals),
+            desktop: AnimalTable(animals: animals),
+          ),
+          
+          const SizedBox(height: 20),
 
-            // Controles de paginación - ahora ref está disponible
-            _buildPaginationControls(context, ref, paginationInfo),
-          ],
-        ),
+          // Controles de paginación
+          _buildPaginationControls(context, ref, paginationInfo),
+        ],
       ),
-    );
-  }
+    ),
+  );
+}
 
   // Método para controles de paginación
   Widget _buildPaginationControls(

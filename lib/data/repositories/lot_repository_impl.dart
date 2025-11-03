@@ -114,7 +114,7 @@ class LotRepositoryImpl implements LotRepository {
         case 500:
           return 'Error del servidor';
         default:
-          return 'Error de conexión';
+          return 'Error de conexión ${error.message}' ;
       }
     }
     return 'Error desconocido';

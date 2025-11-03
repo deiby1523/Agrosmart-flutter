@@ -47,112 +47,109 @@ class AnimalCards extends ConsumerWidget {
   const AnimalCards({super.key, required this.animals});
 
   @override
+  @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Expanded(
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-        itemCount: animals.length,
-        separatorBuilder: (_, __) => const SizedBox(height: 8),
-        itemBuilder: (context, index) {
-          final animal = animals[index];
-          final colors = Theme.of(context).extension<AppColors>()!;
-          // final hasDescription = animal.description?.isNotEmpty == true; // Optimización
-          // final grassType = animal.grassType?.isNotEmpty == true
-          //     ? animal.grassType!
-          //     : 'Sin especificar';
+    return ListView.separated(
+      shrinkWrap: true, // Importante para usar dentro de Column
+      physics: const NeverScrollableScrollPhysics(), // Evita conflicto de scroll
+      itemCount: animals.length,
+      separatorBuilder: (_, __) => const SizedBox(height: 8),
+      itemBuilder: (context, index) {
+        final animal = animals[index];
+        final colors = Theme.of(context).extension<AppColors>()!;
 
-          return Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-            ),
-            elevation: 2,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Información del animal
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Nombre del animal
-                        Text(
-                          animal.name,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.w600,
-                            fontSize: 16,
-                          ),
+        return Card(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 2,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Información del animal
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Nombre del animal
+                      Text(
+                        animal.name,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: 16,
                         ),
-                        const SizedBox(height: 6),
+                      ),
+                      const SizedBox(height: 6),
 
-                        // Código del animal
-                        Text(
-                          'Código: ${animal.code}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                          ),
+                      // Código del animal
+                      Text(
+                        'Código: ${animal.code}',
+                        style: const TextStyle(
+                          fontSize: 14,
                         ),
-                        const SizedBox(height: 6),
+                      ),
+                      const SizedBox(height: 6),
 
-                        // Sexo y raza
-                        Text(
-                          '${animal.sex} • ${animal.breed.name}',
-                          style: const TextStyle(
-                            fontSize: 14,
-                          ),
+                      // Sexo y raza
+                      Text(
+                        '${animal.sex} • ${animal.breed.name}',
+                        style: const TextStyle(
+                          fontSize: 14,
                         ),
-                        const SizedBox(height: 6),
+                      ),
+                      const SizedBox(height: 6),
 
-                        // Estado
-                        Row(
-                          children: [
-                            const Text(
-                              'Estado: ',
-                              style: TextStyle(
-                                fontSize: 14,
-                                fontWeight: FontWeight.w500,
-                              ),
+                      // Estado
+                      Row(
+                        children: [
+                          const Text(
+                            'Estado: ',
+                            style: TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w500,
                             ),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 8,
-                                vertical: 4,
-                              ),
-                              decoration: BoxDecoration(
-                                color: _getStatusColor(
-                                  animal.status,
-                                ).withOpacity(0.2),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
+                          ),
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 8,
+                              vertical: 4,
+                            ),
+                            decoration: BoxDecoration(
+                              color: _getStatusColor(
                                 animal.status,
-                                style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600,
-                                  color: _getStatusColor(animal.status),
-                                ),
+                              ).withOpacity(0.2),
+                              borderRadius: BorderRadius.circular(12),
+                            ),
+                            child: Text(
+                              animal.status,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: _getStatusColor(animal.status),
                               ),
                             ),
-                          ],
-                        ),
-                      ],
-                    ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
+                ),
 
-                  // Acciones de la tarjeta
-                  CustomActions(
-                    onEdit: () => _editAnimal(context, animal),
-                    onDelete: () => _confirmDelete(context, ref, animal),
-                  ),
-                ],
-              ),
+                // Acciones de la tarjeta
+                CustomActions(
+                  onEdit: () => _editAnimal(context, animal),
+                  onDelete: () => _confirmDelete(context, ref, animal),
+                ),
+              ],
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
+
 
   // ---------------------------------------------------------------------------
   // _editAnimal
