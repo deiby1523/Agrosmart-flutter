@@ -39,6 +39,7 @@ import '../providers/auth_provider.dart';
 /// ---------------------------------------------------------------------------
 class DashboardLayout extends ConsumerStatefulWidget {
   final Widget child; // Contenido principal que se renderiza en el layout
+  // TODO: Agregar informacion personalizada para poner en el appbar
 
   const DashboardLayout({super.key, required this.child});
 

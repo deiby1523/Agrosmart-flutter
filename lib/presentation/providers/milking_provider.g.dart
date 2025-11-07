@@ -8,27 +8,7 @@ part of 'milking_provider.dart';
 
 String _$milkingRepositoryHash() => r'162300fb72789d70c0d3f128c5ab604303d977b3';
 
-/// =============================================================================
-/// # MILKING PROVIDER
-///
-/// Define los providers encargados de manejar las operaciones y el estado
-/// relacionados con los **Registros de Ordeño (Milkings)** dentro de la aplicación.
-///
-/// Basado en los principios de **Clean Architecture** y gestionado mediante
-/// **Riverpod**. Este módulo coordina las acciones de persistencia, creación,
-/// actualización y eliminación de registros de ordeño.
-///
-/// - `milkingRepositoryProvider`: expone la implementación del repositorio de ordeños.
-/// - `Milkings`: gestiona el estado asíncrono de la colección de ordeños con paginación.
-/// =============================================================================
-/// -----------------------------------------------------------------------------
-/// ## Provider: `milkingRepositoryProvider`
-///
-/// Inyecta una instancia de `MilkingRepositoryImpl` para acceder a las operaciones
-/// de persistencia de registros de ordeño desde cualquier parte de la aplicación.
-/// -----------------------------------------------------------------------------
-///
-/// Copied from [milkingRepository].
+/// See also [milkingRepository].
 @ProviderFor(milkingRepository)
 final milkingRepositoryProvider =
     AutoDisposeProvider<MilkingRepositoryImpl>.internal(
@@ -44,26 +24,9 @@ final milkingRepositoryProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MilkingRepositoryRef = AutoDisposeProviderRef<MilkingRepositoryImpl>;
-String _$milkingsHash() => r'e66c8d924eb8d6682c38ff17a382a64a62ce1e24';
+String _$milkingsHash() => r'fcf76a7647736c0c5f969097bb728dbeaf8f028b';
 
-/// -----------------------------------------------------------------------------
-/// ## Provider de Estado: `Milkings`
-///
-/// Gestiona la lista de registros de ordeño (`PaginatedResponse<Milking>`) usando un `AsyncNotifier`.
-/// Permite ejecutar operaciones CRUD y recarga automáticamente los datos
-/// después de cada cambio exitoso.
-///
-/// ### Métodos:
-/// - `build()`: Carga inicial de los registros de ordeño.
-/// - `createMilking()`: Crea un nuevo registro de ordeño.
-/// - `updateMilking()`: Actualiza un registro existente.
-/// - `deleteMilking()`: Elimina un registro de ordeño.
-/// - `loadNextPage()`: Carga la siguiente página.
-/// - `loadPreviousPage()`: Carga la página anterior.
-/// - `loadPage()`: Carga una página específica.
-/// -----------------------------------------------------------------------------
-///
-/// Copied from [Milkings].
+/// See also [Milkings].
 @ProviderFor(Milkings)
 final milkingsProvider =
     AutoDisposeAsyncNotifierProvider<
