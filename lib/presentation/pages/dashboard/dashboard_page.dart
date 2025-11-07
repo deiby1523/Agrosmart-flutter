@@ -4,6 +4,7 @@
 // DASHBOARD MODERNO Y MINIMALISTA - Diseño de alta calidad
 // =============================================================================
 
+import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:agrosmart_flutter/data/models/dashboard_models.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -64,8 +65,11 @@ class _DashboardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<AppColors>()!;
+
     return Scaffold(
-      backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+      backgroundColor: theme.colorScheme.surface,
       body: CustomScrollView(
         slivers: [
           // Header con gradiente
@@ -120,36 +124,25 @@ class _DashboardContent extends StatelessWidget {
                       _MilkByLotDonutChart(data: metrics.milkTrend.byLot),
                     ],
                   ),
-                  tablet: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  tablet: Column(
                     children: [
-                      Expanded(
-                        flex: 2,
-                        child: _MilkTrendLineChart(
-                          data: metrics.milkTrend.byDate,
-                        ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        flex: 1,
-                        child: _MilkByLotDonutChart(
-                          data: metrics.milkTrend.byLot,
-                        ),
-                      ),
+                      _MilkTrendLineChart(data: metrics.milkTrend.byDate),
+                      const SizedBox(height: 16),
+                      _MilkByLotDonutChart(data: metrics.milkTrend.byLot),
                     ],
                   ),
                   desktop: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        flex: 2,
+                        flex: 3,
                         child: _MilkTrendLineChart(
                           data: metrics.milkTrend.byDate,
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        flex: 1,
+                        flex: 2,
                         child: _MilkByLotDonutChart(
                           data: metrics.milkTrend.byLot,
                         ),
@@ -197,21 +190,16 @@ class _DashboardContent extends StatelessWidget {
                       ),
                     ],
                   ),
-                  tablet: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                  tablet: Column(
                     children: [
-                      Expanded(
-                        child: _EfficiencyCard(
-                          metrics: metrics,
-                          primaryColor: primaryColor,
-                        ),
+                      _EfficiencyCard(
+                        metrics: metrics,
+                        primaryColor: primaryColor,
                       ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: _FeedingSummaryCard(
-                          metrics: metrics,
-                          primaryColor: primaryColor,
-                        ),
+                      const SizedBox(height: 16),
+                      _FeedingSummaryCard(
+                        metrics: metrics,
+                        primaryColor: primaryColor,
                       ),
                     ],
                   ),
@@ -359,10 +347,13 @@ class _DailyProductionCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<AppColors>()!;
+
     return Container(
       padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.card,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -381,7 +372,7 @@ class _DailyProductionCard extends StatelessWidget {
                 Text(
                   'PRODUCCIÓN DEL DÍA',
                   style: TextStyle(
-                    color: Colors.grey[600],
+                    color: colors.icon,
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
                     letterSpacing: 1,
@@ -390,10 +381,10 @@ class _DailyProductionCard extends StatelessWidget {
                 const SizedBox(height: 12),
                 Text(
                   '${metrics.milkProduction.todayLiters} L',
-                  style: const TextStyle(
+                  style: TextStyle(
                     fontSize: 36,
                     fontWeight: FontWeight.bold,
-                    color: Colors.black87,
+                    color: theme.colorScheme.primary,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -405,21 +396,21 @@ class _DailyProductionCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: Colors.green[50],
+                        color: theme.colorScheme.primary.withAlpha(30),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Row(
                         children: [
                           Icon(
                             Icons.trending_up,
-                            color: Colors.green[600],
+                            color: theme.colorScheme.primary,
                             size: 14,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             'Promedio: ${metrics.milkProduction.dailyAverageLiters.toStringAsFixed(1)} L/día',
                             style: TextStyle(
-                              color: Colors.green[600],
+                              color: theme.colorScheme.primary,
                               fontSize: 12,
                               fontWeight: FontWeight.w600,
                             ),
@@ -440,13 +431,17 @@ class _DailyProductionCard extends StatelessWidget {
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
                 colors: [
-                  Theme.of(context).primaryColor,
-                  Theme.of(context).primaryColor.withOpacity(0.7),
+                  theme.colorScheme.primary.withAlpha(30),
+                  theme.colorScheme.primary.withAlpha(80),
                 ],
               ),
               shape: BoxShape.circle,
             ),
-            child: const Icon(Icons.local_drink, color: Colors.white, size: 36),
+            child: Icon(
+              Icons.local_drink,
+              color: theme.colorScheme.primary,
+              size: 36,
+            ),
           ),
         ],
       ),
@@ -533,10 +528,12 @@ class _ProductionMetricsSection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<AppColors>()!;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.card,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -551,15 +548,15 @@ class _ProductionMetricsSection extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.bar_chart, color: primaryColor, size: 20),
+              Icon(Icons.bar_chart, color: theme.colorScheme.primary, size: 20),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 'MÉTRICAS DE PRODUCCIÓN',
                 style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                  letterSpacing: 0.5,
+                  color: colors.icon,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1,
                 ),
               ),
             ],
@@ -615,10 +612,90 @@ class _MetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isDesktop = Responsive.isDesktop(context);
+    return isDesktop ? _buildDesktopCard(context) : _buildMobileCard(context);
+  }
+
+  Widget _buildDesktopCard(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<AppColors>()!;
+    return Container(
+      height: 4,
+      decoration: BoxDecoration(
+        color: colors.card,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 20),
+        child: Row(
+          children: [
+            Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary.withAlpha(30),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, color: theme.colorScheme.primary, size: 25),
+                ),
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.only(left: 35),
+              child: Column(
+                mainAxisSize: MainAxisSize.min, // <-- Esto evita que se estire
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    value,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      color: colors.textDefault.withAlpha(200),
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    title,
+                    style: TextStyle(
+                      color: colors.textDefault.withAlpha(180),
+                      fontSize: 14,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    subtitle,
+                    style: TextStyle(
+                      color: colors.icon.withAlpha(190),
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildMobileCard(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<AppColors>()!;
     return Container(
       height: 5,
       decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 255, 255, 255),
+        color: colors.card,
         borderRadius: BorderRadius.circular(16),
         boxShadow: [
           BoxShadow(
@@ -637,25 +714,25 @@ class _MetricCard extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: primaryColor.withOpacity(0.1),
+                color: theme.colorScheme.primary.withAlpha(30),
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: Icon(icon, color: primaryColor, size: 20),
+              child: Icon(icon, color: theme.colorScheme.primary, size: 20),
             ),
             const SizedBox(height: 12),
             Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.black87,
+                color: colors.textDefault,
               ),
             ),
             const SizedBox(height: 4),
             Text(
               title,
               style: TextStyle(
-                color: Colors.grey[600],
+                color: colors.icon,
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
               ),
@@ -663,7 +740,7 @@ class _MetricCard extends StatelessWidget {
             const SizedBox(height: 2),
             Text(
               subtitle,
-              style: TextStyle(color: Colors.grey[500], fontSize: 12),
+              style: TextStyle(color: colors.icon.withAlpha(190), fontSize: 12),
             ),
           ],
         ),
@@ -680,6 +757,8 @@ class _ProductionMetricItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<AppColors>()!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisAlignment: MainAxisAlignment.center, // Centramos verticalmente
@@ -687,7 +766,7 @@ class _ProductionMetricItem extends StatelessWidget {
         Text(
           label,
           style: TextStyle(
-            color: Colors.grey[600],
+            color: colors.icon,
             fontSize: 13,
             fontWeight: FontWeight.w500,
           ),
@@ -697,10 +776,10 @@ class _ProductionMetricItem extends StatelessWidget {
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
-            color: Colors.black87,
+            color: colors.textDefault.withAlpha(200),
           ),
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
@@ -721,12 +800,13 @@ class _MilkTrendLineChart extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).primaryColor;
+    final theme = Theme.of(context);
+    final colors = theme.extension<AppColors>()!;
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.card,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -739,16 +819,16 @@ class _MilkTrendLineChart extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'TENDENCIA DE PRODUCCIÓN DIARIA',
             style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-              letterSpacing: 0.5,
+              color: colors.icon,
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              letterSpacing: 1,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           SizedBox(
             height: 200,
             child: LineChart(
@@ -818,8 +898,10 @@ class _MilkTrendLineChart extends StatelessWidget {
                                 .reduce((a, b) => a > b ? a : b) /
                             5
                       : 20,
-                  getDrawingHorizontalLine: (value) =>
-                      FlLine(color: Colors.grey[100], strokeWidth: 1),
+                  getDrawingHorizontalLine: (value) => FlLine(
+                    color: colors.textDisabled.withAlpha(80),
+                    strokeWidth: 1,
+                  ),
                 ),
                 borderData: FlBorderData(show: false),
                 lineBarsData: [
@@ -828,14 +910,14 @@ class _MilkTrendLineChart extends StatelessWidget {
                       return FlSpot(e.key.toDouble(), e.value.liters);
                     }).toList(),
                     isCurved: true,
-                    color: primaryColor,
+                    color: theme.colorScheme.primary,
                     barWidth: 3,
                     belowBarData: BarAreaData(
                       show: true,
                       gradient: LinearGradient(
                         colors: [
-                          primaryColor.withOpacity(0.3),
-                          primaryColor.withOpacity(0.1),
+                          theme.colorScheme.primary.withAlpha(40),
+                          theme.colorScheme.primary.withAlpha(20),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -865,26 +947,38 @@ class _MilkTrendLineChart extends StatelessWidget {
   }
 }
 
-class _MilkByLotDonutChart extends StatelessWidget {
+class _MilkByLotDonutChart extends StatefulWidget {
   final List<MilkByLot> data;
 
   const _MilkByLotDonutChart({required this.data});
 
   @override
+  State<_MilkByLotDonutChart> createState() => _MilkByLotDonutChartState();
+}
+
+class _MilkByLotDonutChartState extends State<_MilkByLotDonutChart> {
+  int touchedIndex = -1;
+
+  @override
   Widget build(BuildContext context) {
-    final primaryColor = Theme.of(context).primaryColor;
-    final colors = [
-      primaryColor,
-      primaryColor.withOpacity(0.8),
-      primaryColor.withOpacity(0.6),
-      primaryColor.withOpacity(0.4),
-      primaryColor.withOpacity(0.2),
+    final theme = Theme.of(context);
+    final colors = theme.extension<AppColors>()!;
+    final chartColors = [
+      colors.green5,
+      colors.green4,
+      colors.green3,
+      colors.green1,
+      colors.green2,
+      colors.green7,
+      colors.green6,
     ];
+
+    final isDesktop = MediaQuery.of(context).size.width > 600;
 
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.card,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -894,46 +988,117 @@ class _MilkByLotDonutChart extends StatelessWidget {
           ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'PRODUCCIÓN POR LOTE',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-              letterSpacing: 0.5,
-            ),
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            height: 200,
-            child: PieChart(
-              PieChartData(
-                centerSpaceRadius: 50,
-                sectionsSpace: 2,
-                sections: data.asMap().entries.map((entry) {
-                  final index = entry.key;
-                  final e = entry.value;
-                  final color = colors[index % colors.length];
-                  return PieChartSectionData(
-                    value: e.liters > 0 ? e.liters : 1.0,
-                    title: '${e.liters.toStringAsFixed(0)}L',
-                    radius: 28,
-                    color: color,
-                    titleStyle: const TextStyle(
-                      fontSize: 10,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
+      child: isDesktop
+          ? Column(
+              children: [
+                Row(
+                  children: [
+                    Text(
+                      'PRODUCCIÓN POR LOTE',
+                      style: TextStyle(
+                        color: colors.icon,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        letterSpacing: 1,
+                      ),
                     ),
-                  );
-                }).toList(),
-              ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const SizedBox(height: 20),
+                    Expanded(flex: 2, child: _buildChart(chartColors, colors)),
+                    const SizedBox(width: 10),
+                    Expanded(child: _buildLegend(chartColors)),
+                  ],
+                ),
+              ],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'PRODUCCIÓN POR LOTE',
+                  style: TextStyle(
+                    color: colors.icon,
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    letterSpacing: 1,
+                  ),
+                ),
+                _buildChart(chartColors, colors),
+                const SizedBox(height: 10),
+                _buildLegend(chartColors),
+              ],
             ),
+    );
+  }
+
+  Widget _buildChart(List<Color> chartColors, AppColors colors) {
+    return SizedBox(
+      height: 220,
+      child: PieChart(
+        PieChartData(
+          centerSpaceRadius: 50,
+          sectionsSpace: 2,
+          pieTouchData: PieTouchData(
+            touchCallback: (event, response) {
+              setState(() {
+                if (!event.isInterestedForInteractions ||
+                    response == null ||
+                    response.touchedSection == null) {
+                  touchedIndex = -1;
+                  return;
+                }
+                touchedIndex = response.touchedSection!.touchedSectionIndex;
+              });
+            },
           ),
-        ],
+          sections: widget.data.asMap().entries.map((entry) {
+            final index = entry.key;
+            final e = entry.value;
+            final isTouched = index == touchedIndex;
+            final color = chartColors[index % chartColors.length];
+
+            return PieChartSectionData(
+              value: e.liters > 0 ? e.liters : 1.0,
+              title: '${e.liters.toStringAsFixed(0)}L',
+              radius: isTouched ? 48 : 40,
+              color: color,
+              titleStyle: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: isTouched ? 13 : 10,
+                color: Colors.white,
+              ),
+            );
+          }).toList(),
+        ),
       ),
+    );
+  }
+
+  Widget _buildLegend(List<Color> chartColors) {
+    return Wrap(
+      spacing: 12,
+      runSpacing: 8,
+      children: widget.data.asMap().entries.map((entry) {
+        final index = entry.key;
+        final e = entry.value;
+        final color = chartColors[index % chartColors.length];
+
+        return Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 14,
+              height: 14,
+              decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+            ),
+            const SizedBox(width: 6),
+            Text(style: TextStyle(fontSize: 12), e.lotName),
+          ],
+        );
+      }).toList(),
     );
   }
 }
@@ -950,10 +1115,13 @@ class _EfficiencyCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<AppColors>()!;
     return Container(
+      height: 191,
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.card,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -968,15 +1136,15 @@ class _EfficiencyCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.insights, color: primaryColor, size: 20),
+              Icon(Icons.insights, color: theme.colorScheme.primary, size: 20),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 'INDICADORES DE EFICIENCIA',
                 style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                  letterSpacing: 0.5,
+                  color: colors.icon,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1,
                 ),
               ),
             ],
@@ -1015,13 +1183,15 @@ class _EfficiencyIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<AppColors>()!;
     return Column(
       children: [
         Container(
           width: 60,
           height: 60,
           decoration: BoxDecoration(
-            color: Theme.of(context).primaryColor.withOpacity(0.1),
+            color: theme.colorScheme.primary.withAlpha(30),
             shape: BoxShape.circle,
           ),
           child: Center(
@@ -1030,16 +1200,19 @@ class _EfficiencyIndicator extends StatelessWidget {
               style: TextStyle(
                 fontSize: 12,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).primaryColor,
+                color: theme.colorScheme.primary,
               ),
               textAlign: TextAlign.center,
             ),
           ),
         ),
-        const SizedBox(height: 8),
+        const SizedBox(height: 12),
         Text(
           label,
-          style: TextStyle(color: Colors.grey[600], fontSize: 12),
+          style: TextStyle(
+            color: colors.textDefault.withAlpha(180),
+            fontSize: 12,
+          ),
           textAlign: TextAlign.center,
         ),
       ],
@@ -1058,10 +1231,12 @@ class _FeedingSummaryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<AppColors>()!;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.card,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -1076,15 +1251,19 @@ class _FeedingSummaryCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.restaurant, color: primaryColor, size: 20),
+              Icon(
+                Icons.restaurant,
+                color: theme.colorScheme.primary,
+                size: 20,
+              ),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 'RESUMEN DE ALIMENTACIÓN',
                 style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                  letterSpacing: 0.5,
+                  color: colors.icon,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1,
                 ),
               ),
             ],
@@ -1127,16 +1306,24 @@ class _FeedingInfoItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<AppColors>()!;
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        Text(label, style: TextStyle(color: Colors.grey[600], fontSize: 13)),
+        Text(
+          label,
+          style: TextStyle(
+            color: colors.textDefault.withAlpha(180),
+            fontSize: 13,
+          ),
+        ),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
             fontWeight: FontWeight.w600,
-            color: Colors.black87,
+            color: colors.textDefault.withAlpha(200),
           ),
         ),
       ],
@@ -1152,10 +1339,12 @@ class _LotsComparisonCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<AppColors>()!;
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: colors.card,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
           BoxShadow(
@@ -1170,15 +1359,15 @@ class _LotsComparisonCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Icon(Icons.compare, color: primaryColor, size: 20),
+              Icon(Icons.compare, color: theme.colorScheme.primary, size: 20),
               const SizedBox(width: 8),
-              const Text(
+              Text(
                 'COMPARATIVA POR LOTES',
                 style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.black87,
-                  letterSpacing: 0.5,
+                  color: colors.icon,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w600,
+                  letterSpacing: 1,
                 ),
               ),
             ],
@@ -1200,6 +1389,8 @@ class _LotComparisonItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<AppColors>()!;
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -1208,7 +1399,11 @@ class _LotComparisonItem extends StatelessWidget {
             flex: 2,
             child: Text(
               lot.lotName,
-              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+              style: TextStyle(
+                fontSize: 14,
+                fontWeight: FontWeight.w500,
+                color: colors.textDefault.withAlpha(180),
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ),
@@ -1219,7 +1414,7 @@ class _LotComparisonItem extends StatelessWidget {
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
-                color: Theme.of(context).primaryColor,
+                color: colors.textDefault.withAlpha(200),
               ),
               textAlign: TextAlign.right,
             ),

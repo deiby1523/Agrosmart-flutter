@@ -363,8 +363,8 @@ class AnimalCreatePageState extends ConsumerState<AnimalCreatePage> {
                                 _buildTwoColumnLayout(
                                   children: [
                                     CustomSelectField<Paddock>(
-                                      labelText: 'Corral *',
-                                      hintText: 'Seleccione el corral',
+                                      labelText: 'Potrero *',
+                                      hintText: 'Seleccione el potrero',
                                       prefixIcon: Icons.pets,
                                       value: _selectedPaddock,
                                       items: _buildPaddockList(context, ref),
@@ -686,7 +686,7 @@ class AnimalCreatePageState extends ConsumerState<AnimalCreatePage> {
           enabled: false,
           value: null,
           child: Text(
-            "No existen Corrales",
+            "No existen Potreroes",
           ), // Asegúrate de que Paddock tenga una propiedad 'name'
         ),
       );

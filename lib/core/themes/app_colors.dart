@@ -39,6 +39,18 @@ class AppColorSchemes {
 
   static const Color lightSidebar = Color.fromARGB(255, 147, 147, 147);
 
+  static const Color lightSidebarGradient1 = Color.fromARGB(255, 0, 56, 20);
+  static const Color lightSidebarGradient2 = Color.fromARGB(255, 0, 41, 0);
+  static const Color lightSidebarGradient3 = Color.fromARGB(255, 0, 46, 0);
+
+  static const Color lightGreen1 = Color.fromARGB(255, 3, 28, 6);
+  static const Color lightGreen2 = Color.fromARGB(255, 4, 59, 5);
+  static const Color lightGreen3 = Color.fromARGB(255, 32, 123, 37);
+  static const Color lightGreen4 = Color.fromARGB(255, 99, 200, 56);
+  static const Color lightGreen5 = Color.fromARGB(255, 159, 227, 122);
+  static const Color lightGreen6 = Color.fromARGB(255, 61, 190, 119);
+  static const Color lightGreen7 = Color.fromARGB(255, 23, 200, 165);
+
   // =========================
   // Dark colors
   // =========================
@@ -76,6 +88,18 @@ class AppColorSchemes {
   static const Color darkIcon = Color.fromARGB(255, 194, 194, 194);
 
   static const Color darkSidebar = Color.fromARGB(255, 147, 147, 147);
+
+  static const Color darkSidebarGradient1 = Color.fromARGB(255, 0, 56, 20);
+  static const Color darkSidebarGradient2 = Color.fromARGB(255, 0, 41, 0);
+  static const Color darkSidebarGradient3 = Color.fromARGB(255, 0, 46, 0);
+
+  static const Color darkGreen1 = Color.fromARGB(255, 3, 28, 6);
+  static const Color darkGreen2 = Color.fromARGB(255, 4, 59, 5);
+  static const Color darkGreen3 = Color.fromARGB(255, 32, 123, 37);
+  static const Color darkGreen4 = Color.fromARGB(255, 99, 200, 56);
+  static const Color darkGreen5 = Color.fromARGB(255, 159, 227, 122);
+  static const Color darkGreen6 = Color.fromARGB(255, 61, 190, 119);
+  static const Color darkGreen7 = Color.fromARGB(255, 23, 200, 165);
 
   // =========================
   // Schemes
@@ -121,6 +145,17 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color textDefault;
   final Color textDisabled;
   final Color cancelTextButton;
+  final Color sidebarGradient1;
+  final Color sidebarGradient2;
+  final Color sidebarGradient3;
+  final Color green1;
+  final Color green2;
+  final Color green3;
+  final Color green4;
+  final Color green5;
+  final Color green6;
+  final Color green7;
+  
 
   const AppColors({
     required this.button,
@@ -133,6 +168,16 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.textDefault,
     required this.textDisabled,
     required this.cancelTextButton,
+    required this.sidebarGradient1,
+    required this.sidebarGradient2,
+    required this.sidebarGradient3,
+    required this.green1,
+    required this.green2,
+    required this.green3,
+    required this.green4,
+    required this.green5,
+    required this.green6,
+    required this.green7,
   });
 
   // =========================
@@ -149,6 +194,16 @@ class AppColors extends ThemeExtension<AppColors> {
     textDefault: AppColorSchemes.lightText,
     textDisabled: AppColorSchemes.lightTextDisabled,
     cancelTextButton: AppColorSchemes.lightGrayButton,
+    sidebarGradient1: AppColorSchemes.lightSidebarGradient1,
+    sidebarGradient2: AppColorSchemes.lightSidebarGradient2,
+    sidebarGradient3: AppColorSchemes.lightSidebarGradient3,
+    green1: AppColorSchemes.lightGreen1,
+    green2: AppColorSchemes.lightGreen2,
+    green3: AppColorSchemes.lightGreen3,
+    green4: AppColorSchemes.lightGreen4,
+    green5: AppColorSchemes.lightGreen5,
+    green6: AppColorSchemes.lightGreen6,
+    green7: AppColorSchemes.lightGreen7,
   );
 
   // =========================
@@ -165,6 +220,16 @@ class AppColors extends ThemeExtension<AppColors> {
     textDefault: AppColorSchemes.darkText,
     textDisabled: AppColorSchemes.darkTextDisabled,
     cancelTextButton: AppColorSchemes.darkGrayButton,
+    sidebarGradient1: AppColorSchemes.darkSidebarGradient1,
+    sidebarGradient2: AppColorSchemes.darkSidebarGradient2,
+    sidebarGradient3: AppColorSchemes.darkSidebarGradient3,
+    green1: AppColorSchemes.darkGreen1,
+    green2: AppColorSchemes.darkGreen2,
+    green3: AppColorSchemes.darkGreen3,
+    green4: AppColorSchemes.darkGreen4,
+    green5: AppColorSchemes.darkGreen5,
+    green6: AppColorSchemes.darkGreen6,
+    green7: AppColorSchemes.darkGreen7,
   );
 
   @override
@@ -179,6 +244,16 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? textDefault,
     Color? textDisabled,
     Color? cancelTextButton,
+    Color? sidebarGradient1,
+    Color? sidebarGradient2,
+    Color? sidebarGradient3,
+    Color? green1,
+    Color? green2,
+    Color? green3,
+    Color? green4,
+    Color? green5,
+    Color? green6,
+    Color? green7,
   }) {
     return AppColors(
       button: button ?? this.button,
@@ -191,6 +266,16 @@ class AppColors extends ThemeExtension<AppColors> {
       textDefault: textDefault ?? this.textDefault,
       textDisabled: textDisabled ?? this.textDisabled,
       cancelTextButton: cancelTextButton ?? this.cancelTextButton,
+      sidebarGradient1: sidebarGradient1 ?? this.sidebarGradient1,
+      sidebarGradient2: sidebarGradient2 ?? this.sidebarGradient2,
+      sidebarGradient3: sidebarGradient3 ?? this.sidebarGradient3,
+      green1: green1 ?? this.green1,
+      green2: green2 ?? this.green2,
+      green3: green3 ?? this.green3,
+      green4: green4 ?? this.green4,
+      green5: green5 ?? this.green5,
+      green6: green6 ?? this.green6,
+      green7: green7 ?? this.green7,
     );
   }
 
@@ -212,6 +297,28 @@ class AppColors extends ThemeExtension<AppColors> {
         other.cancelTextButton,
         t,
       )!,
+      sidebarGradient1: Color.lerp(
+        sidebarGradient1,
+        other.sidebarGradient1,
+        t,
+      )!,
+      sidebarGradient2: Color.lerp(
+        sidebarGradient2,
+        other.sidebarGradient2,
+        t,
+      )!,
+      sidebarGradient3: Color.lerp(
+        sidebarGradient3,
+        other.sidebarGradient3,
+        t,
+      )!,
+      green1: Color.lerp(green1, other.green1, t)!,
+      green2: Color.lerp(green2, other.green2, t)!,
+      green3: Color.lerp(green3, other.green3, t)!,
+      green4: Color.lerp(green4, other.green4, t)!,
+      green5: Color.lerp(green5, other.green5, t)!,
+      green6: Color.lerp(green6, other.green6, t)!,
+      green7: Color.lerp(green7, other.green7, t)!,
     );
   }
 }

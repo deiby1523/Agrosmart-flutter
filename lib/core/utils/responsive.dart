@@ -18,7 +18,7 @@ class Responsive extends StatelessWidget {
 
   // Breakpoints para dispositivos
   static const mobileWidth = 600;
-  static const tabletWidth = 1024;
+  static const tabletWidth = 1150;
 
   const Responsive({
     super.key,

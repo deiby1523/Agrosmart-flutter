@@ -21,6 +21,7 @@ import 'package:agrosmart_flutter/domain/entities/user.dart';
 import 'package:agrosmart_flutter/presentation/providers/theme_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:go_router/go_router.dart';
 
 import '../providers/auth_provider.dart';
@@ -444,6 +445,8 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   /// - `Widget` con el sidebar de desktop
   /// --------------------------------------------------------------------------
   Widget _buildSidebar(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
+
     return Container(
       width: _sidebarWidth,
       decoration: BoxDecoration(
@@ -451,9 +454,9 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
           colors: [
-            Color.fromARGB(255, 0, 46, 10),
-            Color.fromARGB(255, 0, 31, 0),
-            Color.fromARGB(255, 0, 36, 0),
+            colors.sidebarGradient1,
+            colors.sidebarGradient2,
+            colors.sidebarGradient3,
           ],
         ),
       ),
@@ -473,16 +476,18 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   /// - `Widget` con el drawer de mobile
   /// --------------------------------------------------------------------------
   Widget _buildDrawer(BuildContext context) {
+    final colors = Theme.of(context).extension<AppColors>()!;
+
     return Drawer(
       child: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [
-              Color.fromARGB(255, 0, 17, 0),
-              Color.fromARGB(255, 0, 31, 0),
-              Color.fromARGB(255, 0, 46, 10),
+              colors.sidebarGradient1,
+              colors.sidebarGradient2,
+              colors.sidebarGradient3,
             ],
           ),
         ),
@@ -518,12 +523,12 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
               Image.asset('assets/logos/logo.png', width: 40, height: 40),
               const SizedBox(width: 12),
               // Nombre del software
-              const Text(
+              Text(
                 'AgroSmart',
                 style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 104, 190, 51),
+                  color: theme.colorScheme.primary,
                   letterSpacing: 1.2,
                 ),
               ),
@@ -544,15 +549,17 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
                 title: _Texts.menuHome,
                 route: '/dashboard',
                 isSelected: currentRoute == '/dashboard',
+                isGroupItem: true,
               ),
 
               const SizedBox(height: _userInfoSpacing),
 
-              _buildGroupHeader(context, _Texts.groupFarm),
+              // Gestión Territorial
+              _buildGroupHeader(context, 'Finca'),
               _buildMenuItem(
                 context,
                 icon: Icons.grid_view_rounded,
-                title: _Texts.menuLots,
+                title: 'Lotes',
                 route: '/lots',
                 isSelected: currentRoute == '/lots',
                 isGroupItem: true,
@@ -560,39 +567,40 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
               _buildMenuItem(
                 context,
                 icon: Icons.fence,
-                title: _Texts.menuPaddocks,
+                title: 'Potreros',
                 route: '/paddocks',
                 isSelected: currentRoute == '/paddocks',
                 isGroupItem: true,
               ),
 
-              _buildGroupHeader(context, _Texts.groupAnimals),
+              // Producción Animal
+              _buildGroupHeader(context, 'Producción'),
               _buildMenuItem(
                 context,
                 icon: Icons.pets,
-                title: _Texts.menuBreeds,
+                title: 'Razas',
                 route: '/breeds',
                 isSelected: currentRoute == '/breeds',
                 isGroupItem: true,
               ),
               _buildMenuItem(
                 context,
-                icon: Icons.help_center,
-                title: _Texts.menuAnimals,
+                svgAsset: 'assets/icons/cow_icon.svg',
+                title: 'Animales',
                 route: '/animals',
                 isSelected:
-                    (currentRoute == '/animals' ||
-                    currentRoute == '/animals/create'),
+                    currentRoute == '/animals' ||
+                    currentRoute == '/animals/create',
                 isGroupItem: true,
               ),
               _buildMenuItem(
                 context,
-                icon: Icons.help_center,
-                title: _Texts.menuMilkings,
+                icon: Icons.local_drink,
+                title: 'Ordeños',
                 route: '/milkings',
                 isSelected:
-                    (currentRoute == '/milkings' ||
-                    currentRoute == '/animals/milkings'),
+                    currentRoute == '/milkings' ||
+                    currentRoute == '/animals/milkings',
                 isGroupItem: true,
               ),
             ],
@@ -679,13 +687,18 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
   /// --------------------------------------------------------------------------
   Widget _buildMenuItem(
     BuildContext context, {
-    required IconData icon,
+    IconData? icon, // Ahora opcional
+    String? svgAsset, // Nuevo: SVG
     required String title,
     required String route,
     bool isSelected = false,
     bool isGroupItem = false,
   }) {
     final theme = Theme.of(context);
+    final double iconSize = isGroupItem ? 20 : 24;
+    final Color iconColor = isSelected
+        ? theme.colorScheme.primary
+        : theme.colorScheme.onSecondary.withAlpha(140);
 
     return Container(
       decoration: BoxDecoration(
@@ -699,19 +712,18 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
         vertical: 2,
       ),
       child: ListTile(
-        leading: Icon(
-          icon,
-          color: isSelected
-              ? theme.colorScheme.primary
-              : theme.colorScheme.onSecondary.withAlpha(130),
-          size: isGroupItem ? 20 : 24,
-        ),
+        leading: svgAsset != null
+            ? SvgPicture.asset(
+                svgAsset,
+                width: iconSize,
+                height: iconSize,
+                color: iconColor,
+              )
+            : Icon(icon, color: iconColor, size: iconSize),
         title: Text(
           title,
           style: TextStyle(
-            color: isSelected
-                ? theme.colorScheme.primary
-                : theme.colorScheme.onSecondary.withAlpha(130),
+            color: iconColor,
             fontWeight: isSelected ? FontWeight.w600 : FontWeight.normal,
             fontSize: isGroupItem ? 14 : 16,
           ),

@@ -651,7 +651,7 @@ class AnimalEditPageState extends ConsumerState<AnimalEditPage> {
 
     return paddocksState.when(
       loading: () => const CircularProgressIndicator(),
-      error: (error, stack) => Text('Error al cargar corrales'),
+      error: (error, stack) => Text('Error al cargar potreroes'),
       data: (paddocks) {
         final paddockOptions = paddocks
             .map(
@@ -668,8 +668,8 @@ class AnimalEditPageState extends ConsumerState<AnimalEditPage> {
             : null;
 
         return CustomSelectField<int>(
-          labelText: 'Corral *',
-          hintText: 'Seleccione el corral',
+          labelText: 'Potrero *',
+          hintText: 'Seleccione el potrero',
           prefixIcon: Icons.pets,
           value: selectedId,
           items: paddockOptions,

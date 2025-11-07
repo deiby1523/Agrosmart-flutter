@@ -65,7 +65,7 @@ class _PaddocksContent extends ConsumerWidget {
       appBar: AppBar(
         actionsPadding: const EdgeInsets.symmetric(horizontal: 30),
         title: Text(
-          'Corrales',
+          'Potreros',
           style: Theme.of(context).textTheme.displayMedium,
         ),
         centerTitle: false,
@@ -76,7 +76,7 @@ class _PaddocksContent extends ConsumerWidget {
           ElevatedButton.icon(
             onPressed: () => _showPaddockForm(context),
             icon: const Icon(Icons.add),
-            label: const Text('Nuevo Corral'),
+            label: const Text('Nuevo Potrero'),
           ),
         ],
       ),
@@ -132,7 +132,9 @@ class _PaddocksContent extends ConsumerWidget {
           const SizedBox(height: 16),
           Text(
             'No hay corrales registrados',
-            style: textTheme.headlineSmall?.copyWith(color: Colors.grey.shade600),
+            style: textTheme.headlineSmall?.copyWith(
+              color: Colors.grey.shade600,
+            ),
           ),
           const SizedBox(height: 8),
           Text(
@@ -164,10 +166,7 @@ class _PaddocksContent extends ConsumerWidget {
         children: [
           Icon(Icons.error_outline, size: 64, color: Colors.red.shade400),
           const SizedBox(height: 16),
-          Text(
-            'Error al cargar los corrales',
-            style: textTheme.headlineSmall,
-          ),
+          Text('Error al cargar los corrales', style: textTheme.headlineSmall),
           const SizedBox(height: 8),
           Text(
             error.toString(),
@@ -191,9 +190,6 @@ class _PaddocksContent extends ConsumerWidget {
   /// Abre el diálogo modal para crear un nuevo corral (`PaddockFormDialog`).
   /// Se utiliza tanto desde el AppBar como desde el estado vacío.
   void _showPaddockForm(BuildContext context) {
-    showDialog(
-      context: context,
-      builder: (_) => const PaddockFormDialog(),
-    );
+    showDialog(context: context, builder: (_) => const PaddockFormDialog());
   }
 }

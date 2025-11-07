@@ -1,5 +1,5 @@
 // =============================================================================
-// PADDOCK FORM DIALOG - Diálogo de creación/edición de Corrales
+// PADDOCK FORM DIALOG - Diálogo de creación/edición de Potreroes
 // =============================================================================
 // Componente UI reutilizable que permite registrar o modificar instancias
 // de la entidad `Paddock` dentro del sistema AgroSmart.
@@ -96,7 +96,7 @@ class _PaddockFormDialogState extends ConsumerState<PaddockFormDialog> {
     final isEditing = widget.paddock != null;
 
     return AlertDialog(
-      title: Text(isEditing ? 'Editar Corral' : 'Nuevo Corral'),
+      title: Text(isEditing ? 'Editar Potrero' : 'Nuevo Potrero'),
       content: SizedBox(
         width: MediaQuery.of(context).size.width * 0.8,
         child: Form(
@@ -104,10 +104,10 @@ class _PaddockFormDialogState extends ConsumerState<PaddockFormDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // Campo: Nombre del corral
+              // Campo: Nombre del potrero
               CustomTextField(
                 controller: _nameController,
-                hintText: "Nombre del corral",
+                hintText: "Nombre del potrero",
                 labelText: "Nombre",
                 prefixIcon: Icons.pets,
                 validator: (value) => Validators.required(value, 'Nombre'),
@@ -118,7 +118,7 @@ class _PaddockFormDialogState extends ConsumerState<PaddockFormDialog> {
               // Campo: Ubicación
               CustomTextField(
                 controller: _locationController,
-                hintText: "Ubicación del corral",
+                hintText: "Ubicación del potrero",
                 labelText: "Ubicación",
                 prefixIcon: Icons.location_on_outlined,
                 validator: (value) => Validators.required(value, 'Ubicación'),
@@ -139,7 +139,7 @@ class _PaddockFormDialogState extends ConsumerState<PaddockFormDialog> {
               // Campo: Descripción (opcional)
               CustomTextField(
                 controller: _descriptionController,
-                hintText: "Descripción del corral (opcional)",
+                hintText: "Descripción del potrero (opcional)",
                 labelText: "Descripción",
                 prefixIcon: Icons.description_outlined,
                 validator: Validators.description,
@@ -213,7 +213,9 @@ class _PaddockFormDialogState extends ConsumerState<PaddockFormDialog> {
 
       // Validación adicional de valor numérico
       if (double.tryParse(surfaceText) == null) {
-        context.showErrorSnack('Ingrese un valor numérico válido en "Superficie"');
+        context.showErrorSnack(
+          'Ingrese un valor numérico válido en "Superficie"',
+        );
         setState(() => _isLoading = false);
         return;
       }
@@ -249,8 +251,8 @@ class _PaddockFormDialogState extends ConsumerState<PaddockFormDialog> {
         Navigator.of(context).pop();
         context.showSuccessSnack(
           widget.paddock != null
-              ? 'Corral actualizado correctamente'
-              : 'Corral creado correctamente',
+              ? 'Potrero actualizado correctamente'
+              : 'Potrero creado correctamente',
         );
       }
     } catch (error) {
