@@ -56,6 +56,28 @@ dev_dependencies:
 
   flutter_lints: ^5.0.0
 
+  flutter_launcher_icons: "^0.14.4"
+
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "assets/logos/app_logo.png"
+  adaptive_icon_background: "#003814"
+  adaptive_icon_foreground: "assets/logos/app_logo.png"
+
+  web:
+    generate: true
+    image_path: "assets/logos/app_logo.png"
+    background_color: "#003814"
+    theme_color: "#003814"
+  windows:
+    generate: true
+    image_path: "assets/logos/app_logo.png"
+    icon_size: 48 # min:48, max:256, default: 48
+  macos:
+    generate: true
+    image_path: "assets/logos/app_logo.png"
+
 flutter:
   uses-material-design: true
 

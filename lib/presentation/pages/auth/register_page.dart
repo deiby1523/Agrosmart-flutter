@@ -6,31 +6,27 @@
 // datos de registro del nuevo usuario.
 // Ruta típica: /register
 
+import 'package:agrosmart_flutter/presentation/widgets/auth/background_blobs.dart';
 import 'package:agrosmart_flutter/presentation/widgets/auth/register_form.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RegisterPage extends ConsumerStatefulWidget {
+class RegisterPage extends StatefulWidget {
   const RegisterPage({super.key});
 
+
   @override
-  ConsumerState<RegisterPage> createState() => _RegisterPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-// -----------------------------------------------------------------------------
-// STATE: _RegisterPageState
-// -----------------------------------------------------------------------------
-class _RegisterPageState extends ConsumerState<RegisterPage> {
+class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            child: const RegisterForm(), // Formulario de registro de usuario
-          ),
-        ),
+      body: Stack(
+        children: const [
+          BackgroundBlobs(key: ValueKey('background_blobs_register')),
+          RegisterForm(key: ValueKey('register_form')),
+        ],
       ),
     );
   }

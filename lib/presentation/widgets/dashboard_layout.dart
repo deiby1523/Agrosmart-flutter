@@ -136,36 +136,42 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
           child: Column(
             children: [
               // Top Bar
-              Container(
-                height: 70,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 10.0),
-                  child: Row(
-                    children: [
-                      if (!isLargeScreen)
-                        IconButton(
-                          icon: Icon(
-                            Icons.menu,
-                            color: theme.colorScheme.onSurface.withOpacity(0.7),
+              SafeArea(
+                child: Container(
+                  height: 70,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                    child: Row(
+                      children: [
+                        if (!isLargeScreen)
+                          IconButton(
+                            icon: Icon(
+                              Icons.menu,
+                              color: theme.colorScheme.onSurface.withOpacity(
+                                0.7,
+                              ),
+                            ),
+                            onPressed: () =>
+                                _scaffoldKey.currentState?.openDrawer(),
                           ),
-                          onPressed: () =>
-                              _scaffoldKey.currentState?.openDrawer(),
+                        const Spacer(),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            right: _userInfoSpacing,
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              _buildThemeToggleButton(isDark, context),
+                              _buildThemeMenuButton(context),
+                              const SizedBox(width: _userInfoSpacing),
+                              _buildUserInfoSection(user!, context),
+                              _buildLogoutMenuButton(context),
+                            ],
+                          ),
                         ),
-                      const Spacer(),
-                      Padding(
-                        padding: const EdgeInsets.only(right: _userInfoSpacing),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            _buildThemeToggleButton(isDark, context),
-                            _buildThemeMenuButton(context),
-                            const SizedBox(width: _userInfoSpacing),
-                            _buildUserInfoSection(user!, context),
-                            _buildLogoutMenuButton(context),
-                          ],
-                        ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -511,104 +517,106 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
     final currentRoute = GoRouterState.of(context).uri.path;
     final theme = Theme.of(context);
 
-    return Column(
-      children: [
-        // Encabezado con logo y nombre del software
-        Container(
-          padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              // Logotipo
-              Image.asset('assets/logos/logo.png', width: 40, height: 40),
-              const SizedBox(width: 12),
-              // Nombre del software
-              Text(
-                'AgroSmart',
-                style: TextStyle(
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                  color: theme.colorScheme.primary,
-                  letterSpacing: 1.2,
+    return SafeArea(
+      child: Column(
+        children: [
+          // Encabezado con logo y nombre del software
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 24, horizontal: 16),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // Logotipo
+                Image.asset('assets/logos/logo.png', width: 40, height: 40),
+                const SizedBox(width: 12),
+                // Nombre del software
+                Text(
+                  'AgroSmart',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.primary,
+                    letterSpacing: 1.2,
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
 
-        // const Divider(thickness: 1),
+          // const Divider(thickness: 1),
 
-        // Menú de navegación
-        Expanded(
-          child: ListView(
-            padding: const EdgeInsets.symmetric(vertical: 8),
-            children: [
-              _buildMenuItem(
-                context,
-                icon: Icons.home,
-                title: _Texts.menuHome,
-                route: '/dashboard',
-                isSelected: currentRoute == '/dashboard',
-                isGroupItem: true,
-              ),
+          // Menú de navegación
+          Expanded(
+            child: ListView(
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              children: [
+                _buildMenuItem(
+                  context,
+                  icon: Icons.home,
+                  title: _Texts.menuHome,
+                  route: '/dashboard',
+                  isSelected: currentRoute == '/dashboard',
+                  isGroupItem: true,
+                ),
 
-              const SizedBox(height: _userInfoSpacing),
+                const SizedBox(height: _userInfoSpacing),
 
-              // Gestión Territorial
-              _buildGroupHeader(context, 'Finca'),
-              _buildMenuItem(
-                context,
-                icon: Icons.grid_view_rounded,
-                title: 'Lotes',
-                route: '/lots',
-                isSelected: currentRoute == '/lots',
-                isGroupItem: true,
-              ),
-              _buildMenuItem(
-                context,
-                icon: Icons.fence,
-                title: 'Potreros',
-                route: '/paddocks',
-                isSelected: currentRoute == '/paddocks',
-                isGroupItem: true,
-              ),
+                // Gestión Territorial
+                _buildGroupHeader(context, 'Finca'),
+                _buildMenuItem(
+                  context,
+                  icon: Icons.grid_view_rounded,
+                  title: 'Lotes',
+                  route: '/lots',
+                  isSelected: currentRoute == '/lots',
+                  isGroupItem: true,
+                ),
+                _buildMenuItem(
+                  context,
+                  icon: Icons.fence,
+                  title: 'Potreros',
+                  route: '/paddocks',
+                  isSelected: currentRoute == '/paddocks',
+                  isGroupItem: true,
+                ),
 
-              // Producción Animal
-              _buildGroupHeader(context, 'Producción'),
-              _buildMenuItem(
-                context,
-                icon: Icons.pets,
-                title: 'Razas',
-                route: '/breeds',
-                isSelected: currentRoute == '/breeds',
-                isGroupItem: true,
-              ),
-              _buildMenuItem(
-                context,
-                svgAsset: 'assets/icons/cow_icon.svg',
-                title: 'Animales',
-                route: '/animals',
-                isSelected:
-                    currentRoute == '/animals' ||
-                    currentRoute == '/animals/create',
-                isGroupItem: true,
-              ),
-              _buildMenuItem(
-                context,
-                icon: Icons.local_drink,
-                title: 'Ordeños',
-                route: '/milkings',
-                isSelected:
-                    currentRoute == '/milkings' ||
-                    currentRoute == '/animals/milkings',
-                isGroupItem: true,
-              ),
-            ],
+                // Producción Animal
+                _buildGroupHeader(context, 'Producción'),
+                _buildMenuItem(
+                  context,
+                  icon: Icons.pets,
+                  title: 'Razas',
+                  route: '/breeds',
+                  isSelected: currentRoute == '/breeds',
+                  isGroupItem: true,
+                ),
+                _buildMenuItem(
+                  context,
+                  svgAsset: 'assets/icons/cow_icon.svg',
+                  title: 'Animales',
+                  route: '/animals',
+                  isSelected:
+                      currentRoute == '/animals' ||
+                      currentRoute == '/animals/create',
+                  isGroupItem: true,
+                ),
+                _buildMenuItem(
+                  context,
+                  icon: Icons.local_drink,
+                  title: 'Ordeños',
+                  route: '/milkings',
+                  isSelected:
+                      currentRoute == '/milkings' ||
+                      currentRoute == '/animals/milkings',
+                  isGroupItem: true,
+                ),
+              ],
+            ),
           ),
-        ),
 
-        _buildSidebarFooter(context),
-      ],
+          _buildSidebarFooter(context),
+        ],
+      ),
     );
   }
 
@@ -695,10 +703,14 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
     bool isGroupItem = false,
   }) {
     final theme = Theme.of(context);
+    final colors = theme.extension<AppColors>()!;
+
     final double iconSize = isGroupItem ? 20 : 24;
     final Color iconColor = isSelected
         ? theme.colorScheme.primary
-        : theme.colorScheme.onSecondary.withAlpha(140);
+        : colors.sidebarGradient1.computeLuminance() < 0.4
+        ? theme.colorScheme.onSecondary.withAlpha(140)
+        : colors.textDefault.withAlpha(170);
 
     return Container(
       decoration: BoxDecoration(

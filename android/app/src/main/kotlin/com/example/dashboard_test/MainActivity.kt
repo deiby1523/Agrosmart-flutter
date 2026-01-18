@@ -1,4 +1,4 @@
-package com.example.dashboard_test
+package com.example.agrosmart
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -23,7 +23,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
-    log('🚨 LOGIN PAGE se está reconstruyendo');
+    // log('🚨 LOGIN PAGE se está reconstruyendo');
     return Scaffold(
       body: Stack(
         children: const [

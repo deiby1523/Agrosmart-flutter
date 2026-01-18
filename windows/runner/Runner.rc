@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "dashboard_test" "\0"
+            VALUE "FileDescription", "AgroSmart" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "dashboard_test" "\0"
+            VALUE "InternalName", "AgroSmart" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "dashboard_test.exe" "\0"
-            VALUE "ProductName", "dashboard_test" "\0"
+            VALUE "OriginalFilename", "AgroSmart.exe" "\0"
+            VALUE "ProductName", "AgroSmart" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

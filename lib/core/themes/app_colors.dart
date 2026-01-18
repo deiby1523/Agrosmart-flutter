@@ -39,9 +39,9 @@ class AppColorSchemes {
 
   static const Color lightSidebar = Color.fromARGB(255, 147, 147, 147);
 
-  static const Color lightSidebarGradient1 = Color.fromARGB(255, 0, 56, 20);
-  static const Color lightSidebarGradient2 = Color.fromARGB(255, 0, 41, 0);
-  static const Color lightSidebarGradient3 = Color.fromARGB(255, 0, 46, 0);
+  static const Color lightSidebarGradient1 = Color.fromARGB(255, 255, 255, 255);
+  static const Color lightSidebarGradient2 = Color.fromARGB(255, 255, 255, 255);
+  static const Color lightSidebarGradient3 = Color.fromARGB(255, 255, 255, 255);
 
   static const Color lightGreen1 = Color.fromARGB(255, 3, 28, 6);
   static const Color lightGreen2 = Color.fromARGB(255, 4, 59, 5);
@@ -89,9 +89,9 @@ class AppColorSchemes {
 
   static const Color darkSidebar = Color.fromARGB(255, 147, 147, 147);
 
-  static const Color darkSidebarGradient1 = Color.fromARGB(255, 0, 56, 20);
-  static const Color darkSidebarGradient2 = Color.fromARGB(255, 0, 41, 0);
-  static const Color darkSidebarGradient3 = Color.fromARGB(255, 0, 46, 0);
+  static const Color darkSidebarGradient1 = Color.fromARGB(255, 16, 31, 7);
+  static const Color darkSidebarGradient2 = Color.fromARGB(255, 16, 31, 7);
+  static const Color darkSidebarGradient3 = Color.fromARGB(255, 16, 31, 7);
 
   static const Color darkGreen1 = Color.fromARGB(255, 3, 28, 6);
   static const Color darkGreen2 = Color.fromARGB(255, 4, 59, 5);
