@@ -346,81 +346,83 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   }
 
   void _showForgotPasswordDialog() {
-  final emailController = TextEditingController();
-  final formKey = GlobalKey<FormState>();
+    final emailController = TextEditingController();
+    final formKey = GlobalKey<FormState>();
 
-  showDialog(
-    context: context,
-    barrierDismissible: false,
-    builder: (context) {
-      final theme = Theme.of(context);
-      final colors = theme.extension<AppColors>()!;
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        final theme = Theme.of(context);
+        final colors = theme.extension<AppColors>()!;
 
-      return AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16),
-        ),
-        title: const Text(
-          'Recuperar contraseña',
-          style: TextStyle(fontWeight: FontWeight.w600),
-        ),
-        content: Form(
-          key: formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              const Text(
-                'Ingresa tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.',
-                style: TextStyle(fontSize: 14),
-              ),
-              const SizedBox(height: 16),
-              CustomTextField(
-                controller: emailController,
-                hintText: 'Correo electrónico',
-                labelText: 'Correo',
-                prefixIcon: Icons.email_outlined,
-                validator: Validators.email,
-              ),
-            ],
+        return AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
-        ),
-        actionsPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(
-              'Cancelar',
-              style: TextStyle(color: colors.cancelTextButton),
+          title: const Text(
+            'Recuperar contraseña',
+            style: TextStyle(fontWeight: FontWeight.w600),
+          ),
+          content: Form(
+            key: formKey,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const Text(
+                  'Ingresa tu correo electrónico asociado. Te enviaremos un enlace para restablecer tu contraseña.',
+                  style: TextStyle(fontSize: 14),
+                ),
+                const SizedBox(height: 16),
+                CustomTextField(
+                  controller: emailController,
+                  hintText: 'Correo electrónico',
+                  labelText: 'Correo',
+                  prefixIcon: Icons.email_outlined,
+                  validator: Validators.email,
+                ),
+              ],
             ),
           ),
-          ElevatedButton(
-            onPressed: () async {
-              if (!formKey.currentState!.validate()) return;
-
-              try {
-                final email = emailController.text.trim();
-                if (mounted) {
-                  Navigator.pop(context);
-                  context.showSuccessSnack(
-                    'Se ha enviado un enlace de recuperación a tu correo.',
-                  );
-                }
-              } catch (error) {
-                if (mounted) {
-                  context.showErrorSnack(
-                    'Error: $error',
-                    backgroundColor: colors.deleteButton,
-                    iconColor: colors.deleteIcon,
-                  );
-                }
-              }
-            },
-            child: const Text('Enviar'),
+          actionsPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 12,
           ),
-        ],
-      );
-    },
-  );
-}
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                'Cancelar',
+                style: TextStyle(color: colors.cancelTextButton),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () async {
+                if (!formKey.currentState!.validate()) return;
 
+                try {
+                  final email = emailController.text.trim();
+                  if (mounted) {
+                    Navigator.pop(context);
+                    context.showSuccessSnack(
+                      'Se ha enviado un enlace de recuperación a tu correo.',
+                    );
+                  }
+                } catch (error) {
+                  if (mounted) {
+                    context.showErrorSnack(
+                      'Error: $error',
+                      backgroundColor: colors.deleteButton,
+                      iconColor: colors.deleteIcon,
+                    );
+                  }
+                }
+              },
+              child: const Text('Enviar'),
+            ),
+          ],
+        );
+      },
+    );
+  }
 }
