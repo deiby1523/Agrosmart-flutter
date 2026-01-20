@@ -447,7 +447,7 @@ class AnimalEditPageState extends ConsumerState<AnimalEditPage> {
         ),
         const SizedBox(width: 12),
         Text(
-          'Nuevo Animal',
+          'Editar Animal',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: Theme.of(context).colorScheme.onSurface,
