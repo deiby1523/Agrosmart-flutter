@@ -70,8 +70,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 40),
-
+                    const SizedBox(height: 30),
                     // Contenedor con margen externo, sin afectar el blur interno
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -86,7 +85,13 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                             ),
                             margin: EdgeInsets.zero,
                             child: ConstrainedBox(
-                              constraints: const BoxConstraints(maxWidth: 500),
+                              constraints: BoxConstraints(
+                                maxWidth: isDesktop
+                                    ? 1200
+                                    : isTablet
+                                    ? 700
+                                    : 500,
+                              ),
                               child: Padding(
                                 padding: const EdgeInsets.all(32),
                                 child: Form(
@@ -99,17 +104,7 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
                         ),
                       ),
                     ),
-
-                    const SizedBox(height: 40),
-
-                    Container(
-                      width: 120,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
+                    const SizedBox(height: 30),
                   ],
                 ),
               ),
@@ -122,6 +117,10 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
 
   Widget _buildFormContent(ThemeData theme, AppColors colors) {
     var authState = ref.watch(authProvider);
+    final colors = Theme.of(context).extension<AppColors>()!;
+    final theme = Theme.of(context);
+    var isDesktop = Responsive.isDesktop(context);
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -186,124 +185,56 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
           ],
         ),
 
-        const SizedBox(height: 32),
+        // Row(
+        //   children: [
+        //     Expanded(child: Column(children: [..._userFields(),])),
+        //     const SizedBox(height: 30, width: 30),
+        //     Expanded(child: Column(children: [..._farmFields()])),
+        //   ],
+        // ),
 
-        // Campos de usuario
-        CustomTextField(
-          controller: _nameController,
-          hintText: 'Ingresa tu nombre',
-          labelText: 'Nombre',
-          prefixIcon: Icons.person_outline,
-          validator: Validators.name,
-        ),
-        const SizedBox(height: 16),
-
-        CustomTextField(
-          controller: _lastNameController,
-          hintText: 'Ingresa tu apellido',
-          labelText: 'Apellido',
-          prefixIcon: Icons.person_outline,
-          validator: Validators.name,
-        ),
-        const SizedBox(height: 16),
-
-        CustomTextField(
-          controller: _dniController,
-          hintText: 'Ingresa tu identificación',
-          labelText: 'Documento',
-          prefixIcon: Icons.credit_card_outlined,
-          validator: Validators.dni,
-        ),
-        const SizedBox(height: 16),
-
-        CustomTextField(
-          controller: _emailController,
-          hintText: 'Ingresa tu correo electrónico',
-          labelText: 'Usuario',
-          prefixIcon: Icons.email_outlined,
-          validator: Validators.email,
-        ),
-        const SizedBox(height: 16),
-
-        CustomTextField(
-          controller: _passwordController,
-          hintText: 'Ingresa tu contraseña',
-          labelText: 'Contraseña',
-          prefixIcon: Icons.lock_outline,
-          validator: Validators.password,
-          obscureText: _obscurePassword,
-          onTogglePassword: () {
-            setState(() => _obscurePassword = !_obscurePassword);
-          },
-        ),
-        const SizedBox(height: 16),
-
-        CustomTextField(
-          controller: _confirmPasswordController,
-          hintText: 'Confirma tu contraseña',
-          labelText: 'Confirmar contraseña',
-          prefixIcon: Icons.lock_outline,
-          validator: (value) =>
-              Validators.confirmPassword(value, _passwordController.text),
-          obscureText: _obscurePassword,
-          onTogglePassword: () {
-            setState(() => _obscurePassword = !_obscurePassword);
-          },
-        ),
-        const SizedBox(height: 24),
+        // --- CUERPO DEL FORMULARIO (Variable) ---
+        if (isDesktop)
+          // VISTA ESCRITORIO: Row con 2 Expanded
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(child: Column(children: _userFields())),
+              const SizedBox(width: 32), // Espacio horizontal entre columnas
+              Expanded(
+                child: Column(
+                  crossAxisAlignment:
+                      CrossAxisAlignment.stretch, // Alinear título finca
+                  children: _farmFields(),
+                ),
+              ),
+            ],
+          )
+        else
+          // VISTA MÓVIL: Column lineal
+          Column(
+            children: [
+              ..._userFields(),
+              const SizedBox(height: 24),
+              // Separador visual solo necesario en móvil
+              Container(
+                height: 1,
+                decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                    colors: [
+                      colors.icon!.withOpacity(0.1),
+                      colors.icon!.withOpacity(0.3),
+                      colors.icon!.withOpacity(0.1),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 24),
+              ..._farmFields(),
+            ],
+          ),
 
         // Separador
-        Container(
-          height: 1,
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                colors.icon!.withOpacity(0.1),
-                colors.icon!.withOpacity(0.3),
-                colors.icon!.withOpacity(0.1),
-              ],
-            ),
-          ),
-        ),
-        const SizedBox(height: 24),
-
-        // Información de la finca
-        Text(
-          "Información de la Finca",
-          style: TextStyle(
-            fontSize: 18,
-            fontWeight: FontWeight.w600,
-            color: colors.icon,
-          ),
-        ),
-        const SizedBox(height: 16),
-
-        CustomTextField(
-          controller: _farmNameController,
-          hintText: 'Nombre de la finca',
-          labelText: 'Finca - Nombre',
-          prefixIcon: Icons.landscape_outlined,
-          validator: (value) =>
-              Validators.required(value, 'Nombre de la finca'),
-        ),
-        const SizedBox(height: 16),
-
-        CustomTextField(
-          controller: _farmDescriptionController,
-          hintText: 'Descripción de la finca',
-          labelText: 'Finca - Descripción',
-          prefixIcon: Icons.description_outlined,
-          validator: (_) => null,
-        ),
-        const SizedBox(height: 16),
-
-        CustomTextField(
-          controller: _farmLocationController,
-          hintText: 'Ubicación de la finca',
-          labelText: 'Finca - Ubicación',
-          prefixIcon: Icons.location_on_outlined,
-          validator: (_) => null,
-        ),
         const SizedBox(height: 24),
 
         // Botón de registro
@@ -404,6 +335,141 @@ class _RegisterFormState extends ConsumerState<RegisterForm> {
         ),
       ],
     );
+  }
+
+  List<Widget> _userFields() {
+    List<Widget> fields = [];
+
+    // Campos de usuario
+    fields.add(
+      CustomTextField(
+        controller: _nameController,
+        hintText: 'Ingresa tu nombre',
+        labelText: 'Nombre',
+        prefixIcon: Icons.person_outline,
+        validator: Validators.name,
+      ),
+    );
+
+    fields.add(const SizedBox(height: 16));
+
+    fields.add(
+      CustomTextField(
+        controller: _lastNameController,
+        hintText: 'Ingresa tu apellido',
+        labelText: 'Apellido',
+        prefixIcon: Icons.person_outline,
+        validator: Validators.name,
+      ),
+    );
+
+    fields.add(const SizedBox(height: 16));
+    fields.add(
+      CustomTextField(
+        controller: _dniController,
+        hintText: 'Ingresa tu identificación',
+        labelText: 'Documento',
+        prefixIcon: Icons.credit_card_outlined,
+        validator: Validators.dni,
+      ),
+    );
+    fields.add(const SizedBox(height: 16));
+    fields.add(
+      CustomTextField(
+        controller: _emailController,
+        hintText: 'Ingresa tu correo electrónico',
+        labelText: 'Usuario',
+        prefixIcon: Icons.email_outlined,
+        validator: Validators.email,
+      ),
+    );
+
+    fields.add(const SizedBox(height: 16));
+
+    fields.add(
+      CustomTextField(
+        controller: _passwordController,
+        hintText: 'Ingresa tu contraseña',
+        labelText: 'Contraseña',
+        prefixIcon: Icons.lock_outline,
+        validator: Validators.password,
+        obscureText: _obscurePassword,
+        onTogglePassword: () {
+          setState(() => _obscurePassword = !_obscurePassword);
+        },
+      ),
+    );
+
+    fields.add(const SizedBox(height: 16));
+
+    fields.add(
+      CustomTextField(
+        controller: _confirmPasswordController,
+        hintText: 'Confirma tu contraseña',
+        labelText: 'Confirmar contraseña',
+        prefixIcon: Icons.lock_outline,
+        validator: (value) =>
+            Validators.confirmPassword(value, _passwordController.text),
+        obscureText: _obscurePassword,
+        onTogglePassword: () {
+          setState(() => _obscurePassword = !_obscurePassword);
+        },
+      ),
+    );
+
+    fields.add(const SizedBox(height: 24));
+
+    return fields;
+  }
+
+  List<Widget> _farmFields() {
+    var colors = Theme.of(context).extension<AppColors>()!;
+    List<Widget> fields = [];
+
+    fields.add(const SizedBox(height: 24));
+    fields.add(
+      Text(
+        "Información de la Finca",
+        style: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: colors.icon,
+        ),
+      ),
+    );
+    fields.add(const SizedBox(height: 16));
+    fields.add(
+      CustomTextField(
+        controller: _farmNameController,
+        hintText: 'Nombre de la finca',
+        labelText: 'Finca - Nombre',
+        prefixIcon: Icons.landscape_outlined,
+        validator: (value) => Validators.required(value, 'Nombre de la finca'),
+      ),
+    );
+    fields.add(const SizedBox(height: 16));
+    fields.add(
+      CustomTextField(
+        controller: _farmDescriptionController,
+        hintText: 'Descripción de la finca',
+        labelText: 'Finca - Descripción',
+        prefixIcon: Icons.description_outlined,
+        validator: (_) => null,
+      ),
+    );
+    fields.add(const SizedBox(height: 16));
+    fields.add(
+      CustomTextField(
+        controller: _farmLocationController,
+        hintText: 'Ubicación de la finca',
+        labelText: 'Finca - Ubicación',
+        prefixIcon: Icons.location_on_outlined,
+        validator: (_) => null,
+      ),
+    );
+    fields.add(const SizedBox(height: 24));
+
+    return fields;
   }
 
   Future<void> _registerSubmit() async {

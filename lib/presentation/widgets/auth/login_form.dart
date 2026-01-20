@@ -52,8 +52,6 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const SizedBox(height: 40),
-
                     // Contenedor con margen externo, sin afectar el blur interno
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -79,17 +77,6 @@ class _LoginFormState extends ConsumerState<LoginForm> {
                             ),
                           ),
                         ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 40),
-
-                    Container(
-                      width: 120,
-                      height: 4,
-                      decoration: BoxDecoration(
-                        color: theme.colorScheme.primary.withOpacity(0.2),
-                        borderRadius: BorderRadius.circular(2),
                       ),
                     ),
                   ],
