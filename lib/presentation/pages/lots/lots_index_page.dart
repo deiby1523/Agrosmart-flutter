@@ -12,6 +12,7 @@
 
 import 'package:agrosmart_flutter/domain/entities/lot.dart';
 import 'package:agrosmart_flutter/presentation/pages/lots/lots_form_page.dart';
+import 'package:agrosmart_flutter/presentation/widgets/animations/fade_entry_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/lot_provider.dart';
@@ -42,34 +43,36 @@ class _LotsContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final lotsState = ref.watch(lotsProvider);
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        actionsPadding: const EdgeInsets.symmetric(horizontal: 30),
-        title: Text(
-          'Lotes',
-          style: Theme.of(context).textTheme.displayMedium,
-        ),
-        centerTitle: false,
+    return FadeEntryWrapper(
+      child: Scaffold(
         backgroundColor: Colors.transparent,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        actions: [
-          ElevatedButton.icon(
-            onPressed: () => _showLotForm(context),
-            icon: const Icon(Icons.add),
-            label: const Text('Nuevo Lote'),
+        appBar: AppBar(
+          actionsPadding: const EdgeInsets.symmetric(horizontal: 30),
+          title: Text(
+            'Lotes',
+            style: Theme.of(context).textTheme.displayMedium,
           ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: lotsState.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, _) => _buildErrorWidget(context, ref, error),
-          data: (lots) => lots.isEmpty
-              ? _buildEmptyState(context)
-              : _buildLotsList(lots),
+          centerTitle: false,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          actions: [
+            ElevatedButton.icon(
+              onPressed: () => _showLotForm(context),
+              icon: const Icon(Icons.add),
+              label: const Text('Nuevo Lote'),
+            ),
+          ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: lotsState.when(
+            loading: () => const Center(),
+            error: (error, _) => _buildErrorWidget(context, ref, error),
+            data: (lots) => lots.isEmpty
+                ? _buildEmptyState(context)
+                : _buildLotsList(lots),
+          ),
         ),
       ),
     );

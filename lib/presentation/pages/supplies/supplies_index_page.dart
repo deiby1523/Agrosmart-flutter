@@ -1,75 +1,70 @@
 // =============================================================================
-// ANIMALS LIST PAGE - Página de listado y gestión de animales
+// SUPPLIES LIST PAGE - Página de listado y gestión de insumos
 // =============================================================================
-// Vista principal para la administración de animales (`Animal`) dentro del
+// Vista principal para la administración de insumos (`Supplies`) dentro del
 // sistema AgroSmart.
 //
-// Capa: presentation/pages/animals
+// Capa: presentation/pages/supplies
 //
 // Integra:
 // - `DashboardLayout` para mantener la coherencia visual del panel principal.
-// - Riverpod (`animalsProvider`) para la gestión del estado y carga de datos.
-// - Componentes adaptativos: `AnimalCards` (móvil/tablet) y `AnimalTable` (desktop).
+// - Riverpod (`suppliesProvider`) para la gestión del estado y carga de datos.
+// - Componentes adaptativos: `SupplyCards` (móvil/tablet) y `SupplyTable` (desktop).
 // - Manejo de estados (carga, error, vacío) de manera declarativa con `AsyncValue.when()`.
 // - Paginación para manejar grandes volúmenes de datos.
 //
 // Flujo general:
-// 1. Se observan los animales a través del provider `animalsProvider`.
+// 1. Se observan los insumos a través del provider `suppliesProvider`.
 // 2. Si la carga está en progreso, se muestra un indicador.
 // 3. Si ocurre un error, se ofrece reintentar.
-// 4. Si no hay animales, se muestra un estado vacío con invitación a crear uno.
-// 5. Si existen animales, se muestran en una vista adaptada según el dispositivo.
+// 4. Si no hay registros, se muestra un estado vacío con invitación a crear uno.
+// 5. Si existen registros, se muestran en una vista adaptada según el dispositivo.
 // 6. Se incluyen controles de paginación para navegar entre páginas.
 //
 // =============================================================================
 
+import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:agrosmart_flutter/core/utils/responsive.dart';
-import 'package:agrosmart_flutter/data/repositories/breed_repository_impl.dart';
-import 'package:agrosmart_flutter/data/repositories/lot_repository_impl.dart';
-import 'package:agrosmart_flutter/data/repositories/paddock_repository_impl.dart';
-import 'package:agrosmart_flutter/data/repositories/animal_repository_impl.dart';
-import 'package:agrosmart_flutter/domain/entities/animal.dart';
-import 'package:agrosmart_flutter/domain/entities/breed.dart';
-import 'package:agrosmart_flutter/domain/entities/lot.dart';
-import 'package:agrosmart_flutter/domain/entities/paddock.dart';
+import 'package:agrosmart_flutter/domain/entities/supply.dart';
 import 'package:agrosmart_flutter/domain/entities/paginated_response.dart';
+import 'package:agrosmart_flutter/presentation/pages/supplies/supplies_form_page.dart';
 import 'package:agrosmart_flutter/presentation/providers/animal_relations_provider.dart';
-import 'package:agrosmart_flutter/presentation/widgets/animals/animal_cards.dart';
-import 'package:agrosmart_flutter/presentation/widgets/animals/animal_table.dart';
 import 'package:agrosmart_flutter/presentation/widgets/animations/fade_entry_wrapper.dart';
+import 'package:agrosmart_flutter/presentation/widgets/supplies/supply_cards.dart';
+import 'package:agrosmart_flutter/presentation/widgets/supplies/supply_table.dart';
 import 'package:agrosmart_flutter/presentation/widgets/dashboard_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../providers/animal_provider.dart';
+import '../../providers/supply_provider.dart';
 
 /// ---------------------------------------------------------------------------
-/// # AnimalsListPage
+/// # SuppliesListPage
 ///
-/// Página principal que muestra el listado general de animales registrados.
+/// Página principal que muestra el listado general de insumos.
 /// Incluye opciones para:
-/// - Crear nuevos animales.
-/// - Visualizar animales existentes en diferentes formatos según el dispositivo.
+/// - Crear nuevos Insumos.
+/// - Visualizar insumos existentes en diferentes formatos según el dispositivo.
 /// - Navegar entre páginas de resultados.
 ///
-class AnimalsListPage extends ConsumerWidget {
-  const AnimalsListPage({super.key});
+class SuppliesListPage extends ConsumerWidget {
+  const SuppliesListPage({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return const DashboardLayout(child: _AnimalsContent());
+    return const DashboardLayout(child: _SuppliesContent());
   }
 }
 
 // -----------------------------------------------------------------------------
-// _AnimalsContent - Contenido principal de la página de animales
+// _SuppliesContent - Contenido principal de la página de insumos
 // -----------------------------------------------------------------------------
-class _AnimalsContent extends ConsumerWidget {
-  const _AnimalsContent();
+class _SuppliesContent extends ConsumerWidget {
+  const _SuppliesContent();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final animalsState = ref.watch(animalsProvider);
+    final suppliesState = ref.watch(suppliesProvider);
 
     return FadeEntryWrapper(
       child: Scaffold(
@@ -77,7 +72,7 @@ class _AnimalsContent extends ConsumerWidget {
         appBar: AppBar(
           actionsPadding: const EdgeInsets.symmetric(horizontal: 30),
           title: Text(
-            'Animales',
+            'Insumos',
             style: Theme.of(context).textTheme.displayMedium,
           ),
           centerTitle: false,
@@ -86,95 +81,137 @@ class _AnimalsContent extends ConsumerWidget {
           automaticallyImplyLeading: false,
           actions: [
             ElevatedButton.icon(
-              onPressed: () => context.go('/animals/create'),
+              onPressed: () => _showSupplyForm(context),
               icon: const Icon(Icons.add),
-              label: const Text('Nuevo Animal'),
+              label: const Text('Nuevo Insumo'),
             ),
           ],
         ),
       
         body: Padding(
           padding: const EdgeInsets.all(6.0),
-          child: animalsState.when(
+          child: suppliesState.when(
             loading: () => const Center(),
             error: (error, stack) => _buildErrorWidget(context, ref, error),
             data: (paginatedResponse) => paginatedResponse.items.isEmpty
                 ? _buildEmptyState(context)
-                : _buildAnimalsWithRelations(context, ref, paginatedResponse),
+                : _buildSuppliesList(
+                    context,
+                    ref,
+                    paginatedResponse,
+                    paginatedResponse.items,
+                  ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildAnimalsWithRelations(
+  // Build supplies list with pagination
+  Widget _buildSuppliesList(
     BuildContext context,
     WidgetRef ref,
-    PaginatedResponse<Animal> paginatedResponse,
+    PaginatedResponse<Supply> paginatedResponse,
+    List<Supply> supplies,
   ) {
-    final animalsWithRelations = ref.watch(
-      animalsWithRelationsProvider(paginatedResponse.items),
-    );
+    final paginationInfo = paginatedResponse.paginationInfo;
 
-    return animalsWithRelations.when(
-      loading: () => _buildLoadingState(context),
-      error: (error, stack) => _buildErrorWidget(context, ref, error),
-      data: (animals) =>
-          _buildAnimalsList(context, ref, paginatedResponse, animals),
+    return Responsive(
+      mobile: _buildCards(context, ref, paginatedResponse, supplies),
+      tablet: _buildCards(context, ref, paginatedResponse, supplies),
+      desktop: _buildTable(context, ref, paginatedResponse, supplies),
     );
   }
 
-  Widget _buildLoadingState(BuildContext context) {
-    return Center(
-      // child: Column(
-      //   mainAxisAlignment: MainAxisAlignment.center,
-      //   children: [
-      //     const CircularProgressIndicator(),
-      //     const SizedBox(height: 16),
-      //     Text(
-      //       'Cargando relaciones...',
-      //       style: Theme.of(context).textTheme.bodyLarge,
-      //     ),
-      //   ],
-      // ),
-    );
-  }
+  Widget _buildCards(
+    BuildContext context,
+    WidgetRef ref,
+    PaginatedResponse<Supply> paginatedResponse,
+    List<Supply> supplies,
+  ) {
+    final paginationInfo = paginatedResponse.paginationInfo;
 
-  // Build animals list synchronously using already-populated animals
-  Widget _buildAnimalsList(
-  BuildContext context,
-  WidgetRef ref,
-  PaginatedResponse<Animal> paginatedResponse,
-  List<Animal> animals,
-) {
-  final paginationInfo = paginatedResponse.paginationInfo;
-
-  return SingleChildScrollView(
-    child: Padding(
+    return Padding(
       padding: const EdgeInsets.all(10.0),
       child: Column(
         children: [
+
           // Información de paginación
-          _buildPaginationInfo(paginationInfo),
+          _buildPaginationAndStats(paginationInfo, supplies, context),
 
           const SizedBox(height: 16),
 
-          // Lista de animales - QUITA EL ROW
-          Responsive(
-            mobile: AnimalCards(animals: animals),
-            tablet: AnimalCards(animals: animals),
-            desktop: AnimalTable(animals: animals),
-          ),
-          
+          SupplyCards(supplies: supplies),
+
           const SizedBox(height: 20),
 
           // Controles de paginación
           _buildPaginationControls(context, ref, paginationInfo),
         ],
       ),
-    ),
-  );
-}
+    );
+  }
+
+  Widget _buildTable(
+    BuildContext context,
+    WidgetRef ref,
+    PaginatedResponse<Supply> paginatedResponse,
+    List<Supply> supplies,
+  ) {
+    final paginationInfo = paginatedResponse.paginationInfo;
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            // Información de paginación
+            _buildPaginationAndStats(paginationInfo, supplies, context),
+
+            const SizedBox(height: 16),
+
+            SupplyTable(supplies: supplies),
+
+            const SizedBox(height: 20),
+
+            // Controles de paginación
+            _buildPaginationControls(context, ref, paginationInfo),
+          ],
+        ),
+      ),
+    );
+  }
+
+  // Método para información de paginación
+  Widget _buildPaginationAndStats(
+    PaginationInfo paginationInfo,
+    List<Supply> supplies,
+    BuildContext context,
+  ) {
+    final startItem =
+        (paginationInfo.currentPage - 1) * paginationInfo.size + 1;
+    final endItem = _calculateEndItem(paginationInfo);
+
+    return Column(
+      children: [
+        const SizedBox(height: 8),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Mostrando $startItem a $endItem de ${paginationInfo.totalItems} registros',
+              style: const TextStyle(color: Colors.grey),
+            ),
+            Text(
+              'Página ${paginationInfo.currentPage} de ${paginationInfo.totalPages}',
+              style: const TextStyle(color: Colors.grey),
+            ),
+          ],
+        ),
+
+        // Badge de producción
+      ],
+    );
+  }
 
   // Método para controles de paginación
   Widget _buildPaginationControls(
@@ -189,7 +226,7 @@ class _AnimalsContent extends ConsumerWidget {
         children: [
           ElevatedButton.icon(
             onPressed: paginationInfo.hasPrevious
-                ? () => ref.read(animalsProvider.notifier).loadPreviousPage()
+                ? () => ref.read(suppliesProvider.notifier).loadPreviousPage()
                 : null,
             icon: const Icon(Icons.arrow_back),
             label: const Text('Anterior'),
@@ -213,34 +250,13 @@ class _AnimalsContent extends ConsumerWidget {
 
           ElevatedButton.icon(
             onPressed: paginationInfo.hasNext
-                ? () => ref.read(animalsProvider.notifier).loadNextPage()
+                ? () => ref.read(suppliesProvider.notifier).loadNextPage()
                 : null,
             icon: const Icon(Icons.arrow_forward),
             label: const Text('Siguiente'),
           ),
         ],
       ),
-    );
-  }
-
-  // Método para información de paginación
-  Widget _buildPaginationInfo(PaginationInfo paginationInfo) {
-    final startItem =
-        (paginationInfo.currentPage - 1) * paginationInfo.size + 1;
-    final endItem = _calculateEndItem(paginationInfo);
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: [
-        Text(
-          'Mostrando $startItem a $endItem de ${paginationInfo.totalItems} animales',
-          style: const TextStyle(color: Colors.grey),
-        ),
-        Text(
-          'Página ${paginationInfo.currentPage} de ${paginationInfo.totalPages}',
-          style: const TextStyle(color: Colors.grey),
-        ),
-      ],
     );
   }
 
@@ -261,24 +277,24 @@ class _AnimalsContent extends ConsumerWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.pets, size: 64, color: Colors.grey.shade400),
+          Icon(Icons.agriculture, size: 64, color: Colors.grey.shade400),
           const SizedBox(height: 16),
           Text(
-            'No hay animales registrados',
+            'No hay insumoss',
             style: textTheme.headlineSmall?.copyWith(
               color: Colors.grey.shade600,
             ),
           ),
           const SizedBox(height: 8),
           Text(
-            'Comienza agregando tu primer animal',
+            'Comienza registrando tu primer insumo',
             style: textTheme.bodyLarge?.copyWith(color: color),
           ),
           const SizedBox(height: 24),
           ElevatedButton.icon(
-            onPressed: () => context.go('/animals/create'),
+            onPressed: () => _showSupplyForm(context),
             icon: const Icon(Icons.add),
-            label: const Text('Agregar Primer Animal'),
+            label: const Text('Registrar Primer Insumo'),
           ),
         ],
       ),
@@ -297,7 +313,7 @@ class _AnimalsContent extends ConsumerWidget {
         children: [
           Icon(Icons.error_outline, size: 64, color: Colors.red.shade400),
           const SizedBox(height: 16),
-          Text('Error al cargar los animales', style: textTheme.headlineSmall),
+          Text('Error al cargar los registros', style: textTheme.headlineSmall),
           const SizedBox(height: 8),
           Text(
             error.toString(),
@@ -306,12 +322,22 @@ class _AnimalsContent extends ConsumerWidget {
           ),
           const SizedBox(height: 24),
           ElevatedButton.icon(
-            onPressed: () => ref.refresh(animalsProvider),
+            onPressed: () => ref.refresh(suppliesProvider),
             icon: const Icon(Icons.refresh),
             label: const Text('Reintentar'),
           ),
         ],
       ),
+    );
+  }
+
+  // ---------------------------------------------------------------------------
+  // Mostrar formulario de creación/edición de Insumos
+  // ---------------------------------------------------------------------------
+  void _showSupplyForm(BuildContext context, {Supply? supply}) {
+    showDialog(
+      context: context,
+      builder: (_) => SupplyFormDialog(supply: supply),
     );
   }
 }

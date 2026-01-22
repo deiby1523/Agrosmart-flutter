@@ -11,6 +11,7 @@ import 'package:agrosmart_flutter/domain/entities/paddock.dart';
 import 'package:agrosmart_flutter/presentation/providers/breed_provider.dart';
 import 'package:agrosmart_flutter/presentation/providers/lot_provider.dart';
 import 'package:agrosmart_flutter/presentation/providers/paddock_provider.dart';
+import 'package:agrosmart_flutter/presentation/widgets/animations/fade_entry_wrapper.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_date_field.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_select_field.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_text_field.dart';
@@ -98,347 +99,349 @@ class AnimalCreatePageState extends ConsumerState<AnimalCreatePage> {
 
     return DashboardLayout(
       child: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    // Header
-                    _buildHeader(context),
-                    const SizedBox(height: 24),
-
-                    // Form Content
-                    Expanded(
-                      child: SingleChildScrollView(
-                        controller: _scrollController,
-                        child: Column(
-                          children: [
-                            // Información Básica
-                            _buildFormSection(
-                              title: 'Información Básica',
-                              icon: Icons.info_outline,
-                              children: [
-                                _buildTwoColumnLayout(
-                                  children: [
-                                    CustomTextField(
-                                      controller: _codeController,
-                                      labelText: 'Código *',
-                                      hintText: 'Código único del animal',
-                                      prefixIcon: Icons.qr_code,
-                                      validator: (value) =>
-                                          Validators.required(value, 'Código'),
-                                    ),
-                                    CustomTextField(
-                                      controller: _nameController,
-                                      labelText: 'Nombre *',
-                                      hintText: 'Nombre del animal',
-                                      prefixIcon: Icons.pets,
-                                      validator: (value) =>
-                                          Validators.required(value, 'Nombre'),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-
-                                _buildTwoColumnLayout(
-                                  children: [
-                                    CustomDateField(
-                                      controller: _birthdayContoller,
-                                      hintText:
-                                          "Seleccione la fecha de nacimiento",
-                                      labelText: "Fecha de nacimiento *",
-                                      onSelected: null,
-                                      prefixIcon: Icons.calendar_today,
-                                      suffixIcon: Icons.edit_calendar_rounded,
-                                      validator: (value) => Validators.required(
-                                        value,
-                                        'Fecha de nacimiento',
+          ? const Center()
+          : FadeEntryWrapper(
+            child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      // Header
+                      _buildHeader(context),
+                      const SizedBox(height: 24),
+            
+                      // Form Content
+                      Expanded(
+                        child: SingleChildScrollView(
+                          controller: _scrollController,
+                          child: Column(
+                            children: [
+                              // Información Básica
+                              _buildFormSection(
+                                title: 'Información Básica',
+                                icon: Icons.info_outline,
+                                children: [
+                                  _buildTwoColumnLayout(
+                                    children: [
+                                      CustomTextField(
+                                        controller: _codeController,
+                                        labelText: 'Código *',
+                                        hintText: 'Código único del animal',
+                                        prefixIcon: Icons.qr_code,
+                                        validator: (value) =>
+                                            Validators.required(value, 'Código'),
                                       ),
-                                    ),
-                                    CustomSelectField<String>(
-                                      labelText: 'Sexo',
-                                      hintText: 'Seleccione el sexo del animal',
-                                      prefixIcon: Icons.male_rounded,
-                                      value: _selectedSex,
-                                      items: const [
-                                        DropdownMenuItem(
-                                          value: 'MALE',
-                                          child: Text('Macho'),
-                                        ),
-                                        DropdownMenuItem(
-                                          value: 'FEMALE',
-                                          child: Text('Hembra'),
-                                        ),
-                                      ],
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedSex = value;
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-
-                                _buildTwoColumnLayout(
-                                  children: [
-                                    CustomSelectField<String>(
-                                      labelText: 'Tipo de registro',
-                                      hintText:
-                                          'Seleccione el tipo de registro',
-                                      prefixIcon: Icons.agriculture,
-                                      value: _selectedRegisterType,
-                                      items: const [
-                                        DropdownMenuItem(
-                                          value: 'BIRTH',
-                                          child: Text('Nacimiento'),
-                                        ),
-                                        DropdownMenuItem(
-                                          value: 'PURCHASE',
-                                          child: Text('Compra'),
-                                        ),
-                                      ],
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedRegisterType = value;
-                                        });
-                                      },
-                                    ),
-                                    CustomSelectField<String>(
-                                      labelText: 'Estado de Salud',
-                                      hintText: 'Seleccione un estado',
-                                      prefixIcon: Icons.agriculture,
-                                      value: _selectedHealthStatus,
-                                      items: const [
-                                        DropdownMenuItem(
-                                          value: 'HEALTHY',
-                                          child: Text('Saludable'),
-                                        ),
-                                        DropdownMenuItem(
-                                          value: 'SICK',
-                                          child: Text('Enfermo'),
-                                        ),
-                                      ],
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedHealthStatus = value;
-                                        });
-                                      },
-                                    ),
-                                    // CustomSelectField<String>(
-                                    //   labelText: 'Estado',
-                                    //   hintText: 'Seleccione un estado',
-                                    //   prefixIcon: Icons.agriculture,
-                                    //   value: _selectedStatus,
-                                    //   items: const [
-                                    //     DropdownMenuItem(
-                                    //       value: 'ACTIVE',
-                                    //       child: Text('Activo'),
-                                    //     ),
-                                    //     DropdownMenuItem(
-                                    //       value: 'SOLD',
-                                    //       child: Text('Vendido'),
-                                    //     ),
-                                    //     DropdownMenuItem(
-                                    //       value: 'DEAD',
-                                    //       child: Text('Muerto'),
-                                    //     ),
-                                    //   ],
-                                    //   onChanged: (value) {
-                                    //     setState(() {
-                                    //       _selectedStatus = value;
-                                    //     });
-                                    //   },
-                                    // ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-
-                                _buildTwoColumnLayout(
-                                  children: [
-                                    CustomTextField(
-                                      controller: _birthWeightController,
-                                      labelText: 'Peso al Nacer *',
-                                      hintText:
-                                          'Ingrese el peso del animal (kg)',
-                                      prefixIcon: Icons.scale,
-                                      keyboardType: TextInputType.number,
-                                      validator: (value) => Validators.required(
-                                        value,
-                                        'Peso al nacer',
+                                      CustomTextField(
+                                        controller: _nameController,
+                                        labelText: 'Nombre *',
+                                        hintText: 'Nombre del animal',
+                                        prefixIcon: Icons.pets,
+                                        validator: (value) =>
+                                            Validators.required(value, 'Nombre'),
                                       ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 24),
-
-                            // Información Adicional
-                            _buildFormSection(
-                              title: 'Información Adicional',
-                              icon: Icons.more_horiz,
-                              children: [
-                                _buildTwoColumnLayout(
-                                  children: [
-                                    CustomTextField(
-                                      controller: _colorController,
-                                      labelText: 'Color *',
-                                      hintText: 'Color del animal',
-                                      prefixIcon: Icons.color_lens,
-                                      validator: (value) =>
-                                          Validators.required(value, 'Color'),
-                                    ),
-                                    CustomTextField(
-                                      controller: _brandController,
-                                      labelText: 'Marca',
-                                      hintText: 'Marca del animal',
-                                      prefixIcon: Icons.branding_watermark,
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-
-                                _buildTwoColumnLayout(
-                                  children: [
-                                    CustomDateField(
-                                      controller: _purchaseDateController,
-                                      hintText: "Seleccione la fecha de compra",
-                                      labelText: "Fecha de compra",
-                                      prefixIcon: Icons.event_available,
-                                      suffixIcon: Icons.edit_calendar_rounded,
-                                    ),
-                                    CustomTextField(
-                                      controller: _purchasePriceController,
-                                      labelText: 'Precio de Compra',
-                                      hintText: '0.00',
-                                      prefixIcon: Icons.attach_money,
-                                      keyboardType: TextInputType.number,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 24),
-
-                            // Relaciones
-                            _buildFormSection(
-                              title: 'Relaciones',
-                              icon: Icons.link,
-                              children: [
-                                _buildTwoColumnLayout(
-                                  children: [
-                                    CustomSelectField<Breed>(
-                                      labelText: 'Raza *',
-                                      hintText: 'Seleccione la raza',
-                                      prefixIcon: Icons.pets,
-                                      value: _selectedBreed,
-                                      items: _buildBreedList(context, ref),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedBreed = value; //error acá;
-                                        });
-                                      },
-                                    ),
-                                    CustomSelectField<Lot>(
-                                      labelText: 'Lote *',
-                                      hintText: 'Seleccione el lote',
-                                      prefixIcon: Icons.pets,
-                                      value: _selectedLot,
-                                      items: _buildLotList(context, ref),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedLot = value; //error acá;
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-
-                                _buildTwoColumnLayout(
-                                  children: [
-                                    CustomSelectField<Paddock>(
-                                      labelText: 'Potrero *',
-                                      hintText: 'Seleccione el potrero',
-                                      prefixIcon: Icons.pets,
-                                      value: _selectedPaddock,
-                                      items: _buildPaddockList(context, ref),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedPaddock = value; //error acá;
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-
-                                // _buildTwoColumnLayout(
-                                //   children: [
-                                //     _buildDropdownButtonFormField<Animal>(
-                                //       value: _selectedFather,
-                                //       items: _animals
-                                //           .where((a) => a.sex == 'Macho')
-                                //           .map((animal) {
-                                //             return DropdownMenuItem<Animal>(
-                                //               value: animal,
-                                //               child: Text(
-                                //                 '${animal.name} (${animal.code})',
-                                //               ),
-                                //             );
-                                //           })
-                                //           .toList(),
-                                //       onChanged: (value) {
-                                //         setState(() {
-                                //           _selectedFather = value;
-                                //         });
-                                //       },
-                                //       labelText: 'Padre',
-                                //       prefixIcon: Icons.male,
-                                //     ),
-                                //     _buildDropdownButtonFormField<Animal>(
-                                //       value: _selectedMother,
-                                //       items: _animals
-                                //           .where((a) => a.sex == 'Hembra')
-                                //           .map((animal) {
-                                //             return DropdownMenuItem<Animal>(
-                                //               value: animal,
-                                //               child: Text(
-                                //                 '${animal.name} (${animal.code})',
-                                //               ),
-                                //             );
-                                //           })
-                                //           .toList(),
-                                //       onChanged: (value) {
-                                //         setState(() {
-                                //           _selectedMother = value;
-                                //         });
-                                //       },
-                                //       labelText: 'Madre',
-                                //       prefixIcon: Icons.female,
-                                //     ),
-                                //   ],
-                                // ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 32),
-
-                            // Botones de acción
-                            _buildActionButtons(colors),
-                          ],
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+            
+                                  _buildTwoColumnLayout(
+                                    children: [
+                                      CustomDateField(
+                                        controller: _birthdayContoller,
+                                        hintText:
+                                            "Seleccione la fecha de nacimiento",
+                                        labelText: "Fecha de nacimiento *",
+                                        onSelected: null,
+                                        prefixIcon: Icons.calendar_today,
+                                        suffixIcon: Icons.edit_calendar_rounded,
+                                        validator: (value) => Validators.required(
+                                          value,
+                                          'Fecha de nacimiento',
+                                        ),
+                                      ),
+                                      CustomSelectField<String>(
+                                        labelText: 'Sexo',
+                                        hintText: 'Seleccione el sexo del animal',
+                                        prefixIcon: Icons.male_rounded,
+                                        value: _selectedSex,
+                                        items: const [
+                                          DropdownMenuItem(
+                                            value: 'MALE',
+                                            child: Text('Macho'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'FEMALE',
+                                            child: Text('Hembra'),
+                                          ),
+                                        ],
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedSex = value;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+            
+                                  _buildTwoColumnLayout(
+                                    children: [
+                                      CustomSelectField<String>(
+                                        labelText: 'Tipo de registro',
+                                        hintText:
+                                            'Seleccione el tipo de registro',
+                                        prefixIcon: Icons.agriculture,
+                                        value: _selectedRegisterType,
+                                        items: const [
+                                          DropdownMenuItem(
+                                            value: 'BIRTH',
+                                            child: Text('Nacimiento'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'PURCHASE',
+                                            child: Text('Compra'),
+                                          ),
+                                        ],
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedRegisterType = value;
+                                          });
+                                        },
+                                      ),
+                                      CustomSelectField<String>(
+                                        labelText: 'Estado de Salud',
+                                        hintText: 'Seleccione un estado',
+                                        prefixIcon: Icons.agriculture,
+                                        value: _selectedHealthStatus,
+                                        items: const [
+                                          DropdownMenuItem(
+                                            value: 'HEALTHY',
+                                            child: Text('Saludable'),
+                                          ),
+                                          DropdownMenuItem(
+                                            value: 'SICK',
+                                            child: Text('Enfermo'),
+                                          ),
+                                        ],
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedHealthStatus = value;
+                                          });
+                                        },
+                                      ),
+                                      // CustomSelectField<String>(
+                                      //   labelText: 'Estado',
+                                      //   hintText: 'Seleccione un estado',
+                                      //   prefixIcon: Icons.agriculture,
+                                      //   value: _selectedStatus,
+                                      //   items: const [
+                                      //     DropdownMenuItem(
+                                      //       value: 'ACTIVE',
+                                      //       child: Text('Activo'),
+                                      //     ),
+                                      //     DropdownMenuItem(
+                                      //       value: 'SOLD',
+                                      //       child: Text('Vendido'),
+                                      //     ),
+                                      //     DropdownMenuItem(
+                                      //       value: 'DEAD',
+                                      //       child: Text('Muerto'),
+                                      //     ),
+                                      //   ],
+                                      //   onChanged: (value) {
+                                      //     setState(() {
+                                      //       _selectedStatus = value;
+                                      //     });
+                                      //   },
+                                      // ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+            
+                                  _buildTwoColumnLayout(
+                                    children: [
+                                      CustomTextField(
+                                        controller: _birthWeightController,
+                                        labelText: 'Peso al Nacer *',
+                                        hintText:
+                                            'Ingrese el peso del animal (kg)',
+                                        prefixIcon: Icons.scale,
+                                        keyboardType: TextInputType.number,
+                                        validator: (value) => Validators.required(
+                                          value,
+                                          'Peso al nacer',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+            
+                              const SizedBox(height: 24),
+            
+                              // Información Adicional
+                              _buildFormSection(
+                                title: 'Información Adicional',
+                                icon: Icons.more_horiz,
+                                children: [
+                                  _buildTwoColumnLayout(
+                                    children: [
+                                      CustomTextField(
+                                        controller: _colorController,
+                                        labelText: 'Color *',
+                                        hintText: 'Color del animal',
+                                        prefixIcon: Icons.color_lens,
+                                        validator: (value) =>
+                                            Validators.required(value, 'Color'),
+                                      ),
+                                      CustomTextField(
+                                        controller: _brandController,
+                                        labelText: 'Marca',
+                                        hintText: 'Marca del animal',
+                                        prefixIcon: Icons.branding_watermark,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+            
+                                  _buildTwoColumnLayout(
+                                    children: [
+                                      CustomDateField(
+                                        controller: _purchaseDateController,
+                                        hintText: "Seleccione la fecha de compra",
+                                        labelText: "Fecha de compra",
+                                        prefixIcon: Icons.event_available,
+                                        suffixIcon: Icons.edit_calendar_rounded,
+                                      ),
+                                      CustomTextField(
+                                        controller: _purchasePriceController,
+                                        labelText: 'Precio de Compra',
+                                        hintText: '0.00',
+                                        prefixIcon: Icons.attach_money,
+                                        keyboardType: TextInputType.number,
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+            
+                              const SizedBox(height: 24),
+            
+                              // Relaciones
+                              _buildFormSection(
+                                title: 'Relaciones',
+                                icon: Icons.link,
+                                children: [
+                                  _buildTwoColumnLayout(
+                                    children: [
+                                      CustomSelectField<Breed>(
+                                        labelText: 'Raza *',
+                                        hintText: 'Seleccione la raza',
+                                        prefixIcon: Icons.pets,
+                                        value: _selectedBreed,
+                                        items: _buildBreedList(context, ref),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedBreed = value; //error acá;
+                                          });
+                                        },
+                                      ),
+                                      CustomSelectField<Lot>(
+                                        labelText: 'Lote *',
+                                        hintText: 'Seleccione el lote',
+                                        prefixIcon: Icons.pets,
+                                        value: _selectedLot,
+                                        items: _buildLotList(context, ref),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedLot = value; //error acá;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+            
+                                  _buildTwoColumnLayout(
+                                    children: [
+                                      CustomSelectField<Paddock>(
+                                        labelText: 'Potrero *',
+                                        hintText: 'Seleccione el potrero',
+                                        prefixIcon: Icons.pets,
+                                        value: _selectedPaddock,
+                                        items: _buildPaddockList(context, ref),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedPaddock = value; //error acá;
+                                          });
+                                        },
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+            
+                                  // _buildTwoColumnLayout(
+                                  //   children: [
+                                  //     _buildDropdownButtonFormField<Animal>(
+                                  //       value: _selectedFather,
+                                  //       items: _animals
+                                  //           .where((a) => a.sex == 'Macho')
+                                  //           .map((animal) {
+                                  //             return DropdownMenuItem<Animal>(
+                                  //               value: animal,
+                                  //               child: Text(
+                                  //                 '${animal.name} (${animal.code})',
+                                  //               ),
+                                  //             );
+                                  //           })
+                                  //           .toList(),
+                                  //       onChanged: (value) {
+                                  //         setState(() {
+                                  //           _selectedFather = value;
+                                  //         });
+                                  //       },
+                                  //       labelText: 'Padre',
+                                  //       prefixIcon: Icons.male,
+                                  //     ),
+                                  //     _buildDropdownButtonFormField<Animal>(
+                                  //       value: _selectedMother,
+                                  //       items: _animals
+                                  //           .where((a) => a.sex == 'Hembra')
+                                  //           .map((animal) {
+                                  //             return DropdownMenuItem<Animal>(
+                                  //               value: animal,
+                                  //               child: Text(
+                                  //                 '${animal.name} (${animal.code})',
+                                  //               ),
+                                  //             );
+                                  //           })
+                                  //           .toList(),
+                                  //       onChanged: (value) {
+                                  //         setState(() {
+                                  //           _selectedMother = value;
+                                  //         });
+                                  //       },
+                                  //       labelText: 'Madre',
+                                  //       prefixIcon: Icons.female,
+                                  //     ),
+                                  //   ],
+                                  // ),
+                                ],
+                              ),
+            
+                              const SizedBox(height: 32),
+            
+                              // Botones de acción
+                              _buildActionButtons(colors),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
+          ),
     );
   }
 

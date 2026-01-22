@@ -6,6 +6,7 @@ import 'package:agrosmart_flutter/domain/entities/farm.dart';
 import 'package:agrosmart_flutter/domain/entities/milking.dart';
 import 'package:agrosmart_flutter/domain/entities/lot.dart';
 import 'package:agrosmart_flutter/presentation/providers/lot_provider.dart';
+import 'package:agrosmart_flutter/presentation/widgets/animations/fade_entry_wrapper.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_date_field.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_select_field.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_text_field.dart';
@@ -86,104 +87,106 @@ class MilkingCreatePageState extends ConsumerState<MilkingCreatePage> {
 
     return DashboardLayout(
       child: _isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    // Header
-                    _buildHeader(context),
-                    const SizedBox(height: 24),
-
-                    // Form Content
-                    Expanded(
-                      child: SingleChildScrollView(
-                        controller: _scrollController,
-                        child: Column(
-                          children: [
-                            // Información del Ordeño
-                            _buildFormSection(
-                              title: 'Información del Ordeño',
-                              icon: Icons.agriculture,
-                              children: [
-                                _buildTwoColumnLayout(
-                                  children: [
-                                    CustomTextField(
-                                      controller: _milkQuantityController,
-                                      labelText: 'Cantidad de Leche (L) *',
-                                      hintText: 'Ingrese la cantidad en litros',
-                                      prefixIcon: Icons.water_drop,
-                                      keyboardType: TextInputType.number,
-                                      validator: (value) {
-                                        if (value == null || value.isEmpty) {
-                                          return 'La cantidad es requerida';
-                                        }
-                                        final quantity = double.tryParse(value);
-                                        if (quantity == null) {
-                                          return 'Ingrese un número válido';
-                                        }
-                                        if (quantity <= 0) {
-                                          return 'La cantidad debe ser mayor a 0';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                    CustomDateField(
-                                      controller: _dateController,
-                                      hintText:
-                                          "Seleccione la fecha del ordeño",
-                                      labelText: "Fecha del Ordeño *",
-                                      prefixIcon: Icons.calendar_today,
-                                      suffixIcon: Icons.edit_calendar_rounded,
-                                      validator: (value) => Validators.required(
-                                        value,
-                                        'Fecha del ordeño',
+          ? const Center()
+          : FadeEntryWrapper(
+            child: Padding(
+                padding: const EdgeInsets.all(20.0),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      // Header
+                      _buildHeader(context),
+                      const SizedBox(height: 24),
+            
+                      // Form Content
+                      Expanded(
+                        child: SingleChildScrollView(
+                          controller: _scrollController,
+                          child: Column(
+                            children: [
+                              // Información del Ordeño
+                              _buildFormSection(
+                                title: 'Información del Ordeño',
+                                icon: Icons.agriculture,
+                                children: [
+                                  _buildTwoColumnLayout(
+                                    children: [
+                                      CustomTextField(
+                                        controller: _milkQuantityController,
+                                        labelText: 'Cantidad de Leche (L) *',
+                                        hintText: 'Ingrese la cantidad en litros',
+                                        prefixIcon: Icons.water_drop,
+                                        keyboardType: TextInputType.number,
+                                        validator: (value) {
+                                          if (value == null || value.isEmpty) {
+                                            return 'La cantidad es requerida';
+                                          }
+                                          final quantity = double.tryParse(value);
+                                          if (quantity == null) {
+                                            return 'Ingrese un número válido';
+                                          }
+                                          if (quantity <= 0) {
+                                            return 'La cantidad debe ser mayor a 0';
+                                          }
+                                          return null;
+                                        },
                                       ),
-                                    ),
-                                  ],
-                                ),
-                                const SizedBox(height: 16),
-
-                                _buildTwoColumnLayout(
-                                  children: [
-                                    CustomSelectField<Lot>(
-                                      labelText: 'Lote *',
-                                      hintText: 'Seleccione el lote',
-                                      prefixIcon: Icons.agriculture,
-                                      value: _selectedLot,
-                                      items: _buildLotList(context, ref),
-                                      onChanged: (value) {
-                                        setState(() {
-                                          _selectedLot = value;
-                                        });
-                                      },
-                                      validator: (value) {
-                                        if (value == null) {
-                                          return 'El lote es requerido';
-                                        }
-                                        return null;
-                                      },
-                                    ),
-                                    const SizedBox(), // Espacio para alineación
-                                  ],
-                                ),
-                              ],
-                            ),
-
-                            const SizedBox(height: 32),
-
-                            // Botones de acción
-                            _buildActionButtons(colors),
-                          ],
+                                      CustomDateField(
+                                        controller: _dateController,
+                                        hintText:
+                                            "Seleccione la fecha del ordeño",
+                                        labelText: "Fecha del Ordeño *",
+                                        prefixIcon: Icons.calendar_today,
+                                        suffixIcon: Icons.edit_calendar_rounded,
+                                        validator: (value) => Validators.required(
+                                          value,
+                                          'Fecha del ordeño',
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+            
+                                  _buildTwoColumnLayout(
+                                    children: [
+                                      CustomSelectField<Lot>(
+                                        labelText: 'Lote *',
+                                        hintText: 'Seleccione el lote',
+                                        prefixIcon: Icons.agriculture,
+                                        value: _selectedLot,
+                                        items: _buildLotList(context, ref),
+                                        onChanged: (value) {
+                                          setState(() {
+                                            _selectedLot = value;
+                                          });
+                                        },
+                                        validator: (value) {
+                                          if (value == null) {
+                                            return 'El lote es requerido';
+                                          }
+                                          return null;
+                                        },
+                                      ),
+                                      const SizedBox(), // Espacio para alineación
+                                    ],
+                                  ),
+                                ],
+                              ),
+            
+                              const SizedBox(height: 32),
+            
+                              // Botones de acción
+                              _buildActionButtons(colors),
+                            ],
+                          ),
                         ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
-            ),
+          ),
     );
   }
 

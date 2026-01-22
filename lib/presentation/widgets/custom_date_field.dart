@@ -34,6 +34,7 @@ class CustomDateField extends StatelessWidget {
   final Iterable<String>? autofillHints;
   final DateTime? initialDate;
   final bool isRequired;
+  final bool afterToday;
 
   const CustomDateField({
     super.key,
@@ -48,6 +49,7 @@ class CustomDateField extends StatelessWidget {
     this.autofillHints,
     this.initialDate,
     this.isRequired = true,
+    this.afterToday = false,
   });
 
   Future<void> _selectDate(BuildContext context) async {
@@ -55,14 +57,14 @@ class CustomDateField extends StatelessWidget {
       context: context,
       initialDate: initialDate ?? DateTime.now(),
       firstDate: DateTime(1900),
-      lastDate: DateTime.now(),
+      lastDate: afterToday ? DateTime(2050) : DateTime.now(),
     );
 
     if (selectedDate != null) {
       // TODO: Arreglar esa mrd de onSelected
       controller.text = DateFormat('dd/MM/yyyy').format(selectedDate);
       if (onSelected != null) {
-      onSelected!(selectedDate);
+        onSelected!(selectedDate);
       }
       // onSelected!(selectedDate);
     }

@@ -28,6 +28,7 @@ import 'package:agrosmart_flutter/core/utils/responsive.dart';
 import 'package:agrosmart_flutter/domain/entities/milking.dart';
 import 'package:agrosmart_flutter/domain/entities/paginated_response.dart';
 import 'package:agrosmart_flutter/presentation/providers/animal_relations_provider.dart';
+import 'package:agrosmart_flutter/presentation/widgets/animations/fade_entry_wrapper.dart';
 import 'package:agrosmart_flutter/presentation/widgets/milkings/milking_table.dart';
 import 'package:agrosmart_flutter/presentation/widgets/dashboard_layout.dart';
 import 'package:flutter/material.dart';
@@ -63,35 +64,37 @@ class _MilkingsContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final milkingsState = ref.watch(milkingsProvider);
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        actionsPadding: const EdgeInsets.symmetric(horizontal: 30),
-        title: Text(
-          'Registros de Ordeño',
-          style: Theme.of(context).textTheme.displayMedium,
-        ),
-        centerTitle: false,
+    return FadeEntryWrapper(
+      child: Scaffold(
         backgroundColor: Colors.transparent,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        actions: [
-          ElevatedButton.icon(
-            onPressed: () => context.go('/milkings/create'),
-            icon: const Icon(Icons.add),
-            label: const Text('Nuevo Ordeño'),
+        appBar: AppBar(
+          actionsPadding: const EdgeInsets.symmetric(horizontal: 30),
+          title: Text(
+            'Registros de Ordeño',
+            style: Theme.of(context).textTheme.displayMedium,
           ),
-        ],
-      ),
-
-      body: Padding(
-        padding: const EdgeInsets.all(6.0),
-        child: milkingsState.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) => _buildErrorWidget(context, ref, error),
-          data: (paginatedResponse) => paginatedResponse.items.isEmpty
-              ? _buildEmptyState(context)
-              : _buildMilkingsWithRelations(context, ref, paginatedResponse),
+          centerTitle: false,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          actions: [
+            ElevatedButton.icon(
+              onPressed: () => context.go('/milkings/create'),
+              icon: const Icon(Icons.add),
+              label: const Text('Nuevo Ordeño'),
+            ),
+          ],
+        ),
+      
+        body: Padding(
+          padding: const EdgeInsets.all(6.0),
+          child: milkingsState.when(
+            loading: () => const Center(),
+            error: (error, stack) => _buildErrorWidget(context, ref, error),
+            data: (paginatedResponse) => paginatedResponse.items.isEmpty
+                ? _buildEmptyState(context)
+                : _buildMilkingsWithRelations(context, ref, paginatedResponse),
+          ),
         ),
       ),
     );
@@ -116,17 +119,17 @@ class _MilkingsContent extends ConsumerWidget {
 
   Widget _buildLoadingState(BuildContext context) {
     return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          const CircularProgressIndicator(),
-          const SizedBox(height: 16),
-          Text(
-            'Cargando relaciones...',
-            style: Theme.of(context).textTheme.bodyLarge,
-          ),
-        ],
-      ),
+      // child: Column(
+      //   mainAxisAlignment: MainAxisAlignment.center,
+      //   children: [
+      //     const CircularProgressIndicator(),
+      //     const SizedBox(height: 16),
+      //     Text(
+      //       'Cargando relaciones...',
+      //       style: Theme.of(context).textTheme.bodyLarge,
+      //     ),
+      //   ],
+      // ),
     );
   }
 

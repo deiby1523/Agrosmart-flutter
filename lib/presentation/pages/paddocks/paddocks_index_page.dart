@@ -24,6 +24,7 @@
 import 'package:agrosmart_flutter/core/utils/responsive.dart';
 import 'package:agrosmart_flutter/domain/entities/paddock.dart';
 import 'package:agrosmart_flutter/presentation/pages/paddocks/paddocks_form_page.dart';
+import 'package:agrosmart_flutter/presentation/widgets/animations/fade_entry_wrapper.dart';
 import 'package:agrosmart_flutter/presentation/widgets/paddocks/paddock_cards.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -60,38 +61,40 @@ class _PaddocksContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final paddocksState = ref.watch(paddocksProvider);
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        actionsPadding: const EdgeInsets.symmetric(horizontal: 30),
-        title: Text(
-          'Potreros',
-          style: Theme.of(context).textTheme.displayMedium,
-        ),
-        centerTitle: false,
+    return FadeEntryWrapper(
+      child: Scaffold(
         backgroundColor: Colors.transparent,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        actions: [
-          ElevatedButton.icon(
-            onPressed: () => _showPaddockForm(context),
-            icon: const Icon(Icons.add),
-            label: const Text('Nuevo Potrero'),
+        appBar: AppBar(
+          actionsPadding: const EdgeInsets.symmetric(horizontal: 30),
+          title: Text(
+            'Potreros',
+            style: Theme.of(context).textTheme.displayMedium,
           ),
-        ],
-      ),
-
-      // -----------------------------------------------------------------------
-      // Contenido principal según el estado del provider
-      // -----------------------------------------------------------------------
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: paddocksState.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stack) => _buildErrorWidget(context, ref, error),
-          data: (paddocks) => paddocks.isEmpty
-              ? _buildEmptyState(context)
-              : _buildPaddocksList(paddocks),
+          centerTitle: false,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          actions: [
+            ElevatedButton.icon(
+              onPressed: () => _showPaddockForm(context),
+              icon: const Icon(Icons.add),
+              label: const Text('Nuevo Potrero'),
+            ),
+          ],
+        ),
+      
+        // -----------------------------------------------------------------------
+        // Contenido principal según el estado del provider
+        // -----------------------------------------------------------------------
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: paddocksState.when(
+            loading: () => const Center(),
+            error: (error, stack) => _buildErrorWidget(context, ref, error),
+            data: (paddocks) => paddocks.isEmpty
+                ? _buildEmptyState(context)
+                : _buildPaddocksList(paddocks),
+          ),
         ),
       ),
     );

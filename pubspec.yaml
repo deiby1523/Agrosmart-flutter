@@ -43,6 +43,7 @@ dependencies:
   # icons
   cupertino_icons: ^1.0.8
   blobs: 2.0.0
+  shimmer: ^3.0.0
 
 dev_dependencies:
 

@@ -592,6 +592,14 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
                 ),
                 _buildMenuItem(
                   context,
+                  icon: Icons.grass,
+                  title: 'Insumos',
+                  route: '/supplies',
+                  isSelected: currentRoute == '/supplies',
+                  isGroupItem: true,
+                ),
+                _buildMenuItem(
+                  context,
                   svgAsset: 'assets/icons/cow_icon.svg',
                   title: 'Animales',
                   route: '/animals',

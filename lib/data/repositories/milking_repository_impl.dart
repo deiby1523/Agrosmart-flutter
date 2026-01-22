@@ -38,7 +38,7 @@ class MilkingRepositoryImpl implements MilkingRepository {
       // GET /farm/{farmId}/milkings?page=$page&size=$size
       final response = await _apiClient.dio.get(
         ApiConstants.milkings,
-        queryParameters: {'page': page, 'size': size},
+        queryParameters: {'page': page, 'size': size, 'sort': 'date,desc',},
       );
 
       log(response.toString());

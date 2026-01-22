@@ -1,5 +1,6 @@
 import 'package:agrosmart_flutter/domain/entities/breed.dart';
 import 'package:agrosmart_flutter/presentation/pages/breeds/breeds_form_page.dart';
+import 'package:agrosmart_flutter/presentation/widgets/animations/fade_entry_wrapper.dart';
 import 'package:agrosmart_flutter/presentation/widgets/breeds/breed_table.dart';
 import 'package:agrosmart_flutter/presentation/widgets/dashboard_layout.dart';
 import 'package:flutter/material.dart';
@@ -44,34 +45,36 @@ class _BreedsContent extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final breedsState = ref.watch(breedsProvider);
 
-    return Scaffold(
-      backgroundColor: Colors.transparent,
-      appBar: AppBar(
-        actionsPadding: const EdgeInsets.symmetric(horizontal: 30),
-        title: Text(
-          'Razas',
-          style: Theme.of(context).textTheme.displayMedium,
-        ),
-        centerTitle: false,
+    return FadeEntryWrapper(
+      child: Scaffold(
         backgroundColor: Colors.transparent,
-        elevation: 0,
-        automaticallyImplyLeading: false,
-        actions: [
-          ElevatedButton.icon(
-            onPressed: () => _showBreedForm(context),
-            icon: const Icon(Icons.add),
-            label: const Text('Nueva Raza'),
+        appBar: AppBar(
+          actionsPadding: const EdgeInsets.symmetric(horizontal: 30),
+          title: Text(
+            'Razas',
+            style: Theme.of(context).textTheme.displayMedium,
           ),
-        ],
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: breedsState.when(
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, _) => _buildErrorWidget(context, ref, error),
-          data: (breeds) => breeds.isEmpty
-              ? _buildEmptyState(context)
-              : _buildBreedsList(breeds),
+          centerTitle: false,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
+          automaticallyImplyLeading: false,
+          actions: [
+            ElevatedButton.icon(
+              onPressed: () => _showBreedForm(context),
+              icon: const Icon(Icons.add),
+              label: const Text('Nueva Raza'),
+            ),
+          ],
+        ),
+        body: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: breedsState.when(
+            loading: () => const Center(),
+            error: (error, _) => _buildErrorWidget(context, ref, error),
+            data: (breeds) => breeds.isEmpty
+                ? _buildEmptyState(context)
+                : _buildBreedsList(breeds),
+          ),
         ),
       ),
     );

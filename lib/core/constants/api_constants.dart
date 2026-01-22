@@ -19,7 +19,7 @@ class ApiConstants {
   static const String paddocks = '/farm/{farmId}/paddocks'; // CRUD Potreros
   static const String animals = '/farm/{farmId}/animals'; // CRUD Animales
   static const String milkings = '/farm/{farmId}/milkings'; // CRUD Ordeños
-  static const String insumos = '/farm/{farmId}/insumos'; // CRUD Insumos
+  static const String supplies = '/farm/{farmId}/supplies'; // CRUD Insumos
 
   static const String dashboard = '/farm/{farmId}/metrics/dashboard'; // Estadísticas
   
