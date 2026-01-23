@@ -29,8 +29,10 @@ import 'package:agrosmart_flutter/domain/entities/milking.dart';
 import 'package:agrosmart_flutter/domain/entities/paginated_response.dart';
 import 'package:agrosmart_flutter/presentation/providers/animal_relations_provider.dart';
 import 'package:agrosmart_flutter/presentation/widgets/animations/fade_entry_wrapper.dart';
+import 'package:agrosmart_flutter/presentation/widgets/cards_skeleton.dart';
 import 'package:agrosmart_flutter/presentation/widgets/milkings/milking_table.dart';
 import 'package:agrosmart_flutter/presentation/widgets/dashboard_layout.dart';
+import 'package:agrosmart_flutter/presentation/widgets/milkings/milking_table_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -70,7 +72,7 @@ class _MilkingsContent extends ConsumerWidget {
         appBar: AppBar(
           actionsPadding: const EdgeInsets.symmetric(horizontal: 30),
           title: Text(
-            'Registros de Ordeño',
+            'Ordeños',
             style: Theme.of(context).textTheme.displayMedium,
           ),
           centerTitle: false,
@@ -89,7 +91,7 @@ class _MilkingsContent extends ConsumerWidget {
         body: Padding(
           padding: const EdgeInsets.all(6.0),
           child: milkingsState.when(
-            loading: () => const Center(),
+            loading: () => _LoadingSkeletonView(),
             error: (error, stack) => _buildErrorWidget(context, ref, error),
             data: (paginatedResponse) => paginatedResponse.items.isEmpty
                 ? _buildEmptyState(context)
@@ -110,26 +112,10 @@ class _MilkingsContent extends ConsumerWidget {
     );
 
     return milkingsWithRelations.when(
-      loading: () => _buildLoadingState(context),
+      loading: () => _LoadingSkeletonView(),
       error: (error, stack) => _buildErrorWidget(context, ref, error),
       data: (milkings) =>
           _buildMilkingsList(context, ref, paginatedResponse, milkings),
-    );
-  }
-
-  Widget _buildLoadingState(BuildContext context) {
-    return Center(
-      // child: Column(
-      //   mainAxisAlignment: MainAxisAlignment.center,
-      //   children: [
-      //     const CircularProgressIndicator(),
-      //     const SizedBox(height: 16),
-      //     Text(
-      //       'Cargando relaciones...',
-      //       style: Theme.of(context).textTheme.bodyLarge,
-      //     ),
-      //   ],
-      // ),
     );
   }
 
@@ -469,3 +455,42 @@ class _MilkingsContent extends ConsumerWidget {
     );
   }
 }
+
+// -----------------------------------------------------------------------------
+// Nuevo Widget privado para encapsular la vista de carga responsiva
+// -----------------------------------------------------------------------------
+class _LoadingSkeletonView extends StatelessWidget {
+  const _LoadingSkeletonView();
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            // Skeleton pequeño para la info de paginación (opcional)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(width: 150, height: 14, color: Colors.grey.withOpacity(0.1)),
+                Container(width: 100, height: 14, color: Colors.grey.withOpacity(0.1)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            
+            // Skeleton principal
+            Responsive(
+              // En móvil/tablet podrías querer otro skeleton (CardSkeleton), 
+              // Asumiremos que quieres simular la vista correspondiente:
+              mobile: const CardsSkeleton(quantity: 5,), // O un componente de Cards skeleton
+              tablet: const CardsSkeleton(quantity: 8,),
+              desktop: const MilkingTableSkeleton(rowCount: 10),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+

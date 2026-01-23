@@ -2,6 +2,7 @@ import 'package:agrosmart_flutter/domain/entities/breed.dart';
 import 'package:agrosmart_flutter/presentation/pages/breeds/breeds_form_page.dart';
 import 'package:agrosmart_flutter/presentation/widgets/animations/fade_entry_wrapper.dart';
 import 'package:agrosmart_flutter/presentation/widgets/breeds/breed_table.dart';
+import 'package:agrosmart_flutter/presentation/widgets/breeds/breed_table_skeleton.dart';
 import 'package:agrosmart_flutter/presentation/widgets/dashboard_layout.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -69,7 +70,7 @@ class _BreedsContent extends ConsumerWidget {
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: breedsState.when(
-            loading: () => const Center(),
+            loading: () => const BreedTableSkeleton(rowCount: 8,),
             error: (error, _) => _buildErrorWidget(context, ref, error),
             data: (breeds) => breeds.isEmpty
                 ? _buildEmptyState(context)

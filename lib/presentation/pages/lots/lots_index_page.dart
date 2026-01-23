@@ -13,6 +13,7 @@
 import 'package:agrosmart_flutter/domain/entities/lot.dart';
 import 'package:agrosmart_flutter/presentation/pages/lots/lots_form_page.dart';
 import 'package:agrosmart_flutter/presentation/widgets/animations/fade_entry_wrapper.dart';
+import 'package:agrosmart_flutter/presentation/widgets/lots/lot_table_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/lot_provider.dart';
@@ -67,7 +68,7 @@ class _LotsContent extends ConsumerWidget {
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: lotsState.when(
-            loading: () => const Center(),
+            loading: () => const LotTableSkeleton(rowCount: 8,),
             error: (error, _) => _buildErrorWidget(context, ref, error),
             data: (lots) => lots.isEmpty
                 ? _buildEmptyState(context)

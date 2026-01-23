@@ -25,7 +25,9 @@ import 'package:agrosmart_flutter/core/utils/responsive.dart';
 import 'package:agrosmart_flutter/domain/entities/paddock.dart';
 import 'package:agrosmart_flutter/presentation/pages/paddocks/paddocks_form_page.dart';
 import 'package:agrosmart_flutter/presentation/widgets/animations/fade_entry_wrapper.dart';
+import 'package:agrosmart_flutter/presentation/widgets/cards_skeleton.dart';
 import 'package:agrosmart_flutter/presentation/widgets/paddocks/paddock_cards.dart';
+import 'package:agrosmart_flutter/presentation/widgets/paddocks/paddock_table_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../providers/paddock_provider.dart';
@@ -89,7 +91,7 @@ class _PaddocksContent extends ConsumerWidget {
         body: Padding(
           padding: const EdgeInsets.all(16.0),
           child: paddocksState.when(
-            loading: () => const Center(),
+            loading: () => _LoadingSkeletonView(),
             error: (error, stack) => _buildErrorWidget(context, ref, error),
             data: (paddocks) => paddocks.isEmpty
                 ? _buildEmptyState(context)
@@ -194,5 +196,33 @@ class _PaddocksContent extends ConsumerWidget {
   /// Se utiliza tanto desde el AppBar como desde el estado vacío.
   void _showPaddockForm(BuildContext context) {
     showDialog(context: context, builder: (_) => const PaddockFormDialog());
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Nuevo Widget privado para encapsular la vista de carga responsiva
+// -----------------------------------------------------------------------------
+class _LoadingSkeletonView extends StatelessWidget {
+  const _LoadingSkeletonView();
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: [
+          // Skeleton pequeño para la info de paginación (opcional)
+          
+          
+          // Skeleton principal
+          Responsive(
+            // En móvil/tablet podrías querer otro skeleton (CardSkeleton), 
+            // Asumiremos que quieres simular la vista correspondiente:
+            mobile: const CardsSkeleton(quantity: 5,), // O un componente de Cards skeleton
+            tablet: const CardsSkeleton(quantity: 8,),
+            desktop: const PaddockTableSkeleton(rowCount: 10),
+          ),
+        ],
+      ),
+    );
   }
 }

@@ -36,6 +36,8 @@ import 'package:agrosmart_flutter/domain/entities/paginated_response.dart';
 import 'package:agrosmart_flutter/presentation/providers/animal_relations_provider.dart';
 import 'package:agrosmart_flutter/presentation/widgets/animals/animal_cards.dart';
 import 'package:agrosmart_flutter/presentation/widgets/animals/animal_table.dart';
+import 'package:agrosmart_flutter/presentation/widgets/animals/animal_table_skeleton.dart';
+import 'package:agrosmart_flutter/presentation/widgets/cards_skeleton.dart';
 import 'package:agrosmart_flutter/presentation/widgets/animations/fade_entry_wrapper.dart';
 import 'package:agrosmart_flutter/presentation/widgets/dashboard_layout.dart';
 import 'package:flutter/material.dart';
@@ -96,7 +98,7 @@ class _AnimalsContent extends ConsumerWidget {
         body: Padding(
           padding: const EdgeInsets.all(6.0),
           child: animalsState.when(
-            loading: () => const Center(),
+            loading: () => _LoadingSkeletonView(),
             error: (error, stack) => _buildErrorWidget(context, ref, error),
             data: (paginatedResponse) => paginatedResponse.items.isEmpty
                 ? _buildEmptyState(context)
@@ -117,7 +119,7 @@ class _AnimalsContent extends ConsumerWidget {
     );
 
     return animalsWithRelations.when(
-      loading: () => _buildLoadingState(context),
+      loading: () => _LoadingSkeletonView(),
       error: (error, stack) => _buildErrorWidget(context, ref, error),
       data: (animals) =>
           _buildAnimalsList(context, ref, paginatedResponse, animals),
@@ -175,6 +177,8 @@ class _AnimalsContent extends ConsumerWidget {
     ),
   );
 }
+
+
 
   // Método para controles de paginación
   Widget _buildPaginationControls(
@@ -311,6 +315,45 @@ class _AnimalsContent extends ConsumerWidget {
             label: const Text('Reintentar'),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// -----------------------------------------------------------------------------
+// Nuevo Widget privado para encapsular la vista de carga responsiva
+// -----------------------------------------------------------------------------
+class _LoadingSkeletonView extends StatelessWidget {
+  const _LoadingSkeletonView();
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            // Skeleton pequeño para la info de paginación (opcional)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(width: 150, height: 14, color: Colors.grey.withOpacity(0.1)),
+                Container(width: 100, height: 14, color: Colors.grey.withOpacity(0.1)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            
+            // Skeleton principal
+            Responsive(
+              // En móvil/tablet podrías querer otro skeleton (CardSkeleton), 
+              // pero si quieres tabla siempre, usa AnimalTableSkeleton.
+              // Asumiremos que quieres simular la vista correspondiente:
+              mobile: const CardsSkeleton(quantity: 5,), // O un componente de Cards skeleton
+              tablet: const CardsSkeleton(quantity: 8,),
+              desktop: const AnimalTableSkeleton(rowCount: 10),
+            ),
+          ],
+        ),
       ),
     );
   }

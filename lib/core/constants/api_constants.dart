@@ -4,7 +4,7 @@
 
 class ApiConstants {
   // --- Base URL ---
-  static const String baseUrl = 'http://localhost:8080/api';
+  static const String baseUrl = 'https://agrosmartrest.onrender.com/api';
 
   // --- Authentication ---
   static const String authenticate = '/auth/authenticate'; // Login

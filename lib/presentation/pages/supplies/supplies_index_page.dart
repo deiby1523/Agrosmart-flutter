@@ -30,9 +30,11 @@ import 'package:agrosmart_flutter/domain/entities/paginated_response.dart';
 import 'package:agrosmart_flutter/presentation/pages/supplies/supplies_form_page.dart';
 import 'package:agrosmart_flutter/presentation/providers/animal_relations_provider.dart';
 import 'package:agrosmart_flutter/presentation/widgets/animations/fade_entry_wrapper.dart';
+import 'package:agrosmart_flutter/presentation/widgets/cards_skeleton.dart';
 import 'package:agrosmart_flutter/presentation/widgets/supplies/supply_cards.dart';
 import 'package:agrosmart_flutter/presentation/widgets/supplies/supply_table.dart';
 import 'package:agrosmart_flutter/presentation/widgets/dashboard_layout.dart';
+import 'package:agrosmart_flutter/presentation/widgets/supplies/supply_table_skeleton.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -91,7 +93,7 @@ class _SuppliesContent extends ConsumerWidget {
         body: Padding(
           padding: const EdgeInsets.all(6.0),
           child: suppliesState.when(
-            loading: () => const Center(),
+            loading: () => _LoadingSkeletonView(),
             error: (error, stack) => _buildErrorWidget(context, ref, error),
             data: (paginatedResponse) => paginatedResponse.items.isEmpty
                 ? _buildEmptyState(context)
@@ -280,7 +282,7 @@ class _SuppliesContent extends ConsumerWidget {
           Icon(Icons.agriculture, size: 64, color: Colors.grey.shade400),
           const SizedBox(height: 16),
           Text(
-            'No hay insumoss',
+            'No hay insumos',
             style: textTheme.headlineSmall?.copyWith(
               color: Colors.grey.shade600,
             ),
@@ -341,3 +343,43 @@ class _SuppliesContent extends ConsumerWidget {
     );
   }
 }
+
+// -----------------------------------------------------------------------------
+// Nuevo Widget privado para encapsular la vista de carga responsiva
+// -----------------------------------------------------------------------------
+class _LoadingSkeletonView extends StatelessWidget {
+  const _LoadingSkeletonView();
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            // Skeleton pequeño para la info de paginación (opcional)
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Container(width: 150, height: 14, color: Colors.grey.withOpacity(0.1)),
+                Container(width: 100, height: 14, color: Colors.grey.withOpacity(0.1)),
+              ],
+            ),
+            const SizedBox(height: 16),
+            
+            // Skeleton principal
+            Responsive(
+              // En móvil/tablet podrías querer otro skeleton (CardSkeleton), 
+              // pero si quieres tabla siempre, usa AnimalTableSkeleton.
+              // Asumiremos que quieres simular la vista correspondiente:
+              mobile: const CardsSkeleton(quantity: 5,), // O un componente de Cards skeleton
+              tablet: const CardsSkeleton(quantity: 8,),
+              desktop: const SupplyTableSkeleton(rowCount: 10),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
