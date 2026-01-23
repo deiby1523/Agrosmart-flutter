@@ -7,6 +7,7 @@
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:agrosmart_flutter/data/models/dashboard_models.dart';
 import 'package:agrosmart_flutter/presentation/widgets/animations/fade_entry_wrapper.dart';
+import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fl_chart/fl_chart.dart';
@@ -53,7 +54,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   }
 }
 
-class _DashboardContent extends StatelessWidget {
+class _DashboardContent extends StatefulWidget {
   final Dashboard metrics;
   final Color primaryColor;
   final ColorScheme colorScheme;
@@ -65,6 +66,19 @@ class _DashboardContent extends StatelessWidget {
   });
 
   @override
+  State<_DashboardContent> createState() => _DashboardContentState();
+}
+
+class _DashboardContentState extends State<_DashboardContent> {
+  final _controller = ScrollController();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colors = theme.extension<AppColors>()!;
@@ -72,8 +86,166 @@ class _DashboardContent extends StatelessWidget {
     return FadeEntryWrapper(
       child: Scaffold(
         backgroundColor: theme.colorScheme.surface,
-        body: CustomScrollView(
-          slivers: [
+        body: FadingEdgeScrollView.fromSingleChildScrollView(
+          gradientFractionOnEnd: 0.1,
+          gradientFractionOnStart: 0.1,
+          child: SingleChildScrollView(
+            controller: _controller,
+            child: Column(
+              children: [
+                // Contenido principal
+                // Tarjeta de producción del día
+                _DailyProductionCard(metrics: widget.metrics),
+                const SizedBox(height: 20),
+        
+                // Grid de métricas principales (Ahora es Responsive)
+                Responsive(
+                  mobile: _MainMetricsGrid(
+                    metrics: widget.metrics,
+                    primaryColor: widget.primaryColor,
+                    crossAxisCount: 2,
+                    childAspectRatio: 1.2, // Más altas que anchas
+                  ),
+                  tablet: _MainMetricsGrid(
+                    metrics: widget.metrics,
+                    primaryColor: widget.primaryColor,
+                    crossAxisCount: 2,
+                    childAspectRatio: 1.2,
+                  ),
+                  desktop: _MainMetricsGrid(
+                    metrics: widget.metrics,
+                    primaryColor: widget.primaryColor,
+                    crossAxisCount: 4,
+                    childAspectRatio: 1.2,
+                  ),
+                ),
+                const SizedBox(height: 20),
+        
+                // Sección de gráficos (Ahora es Responsive)
+                Responsive(
+                  mobile: Column(
+                    children: [
+                      _MilkTrendLineChart(
+                        data: widget.metrics.milkTrend.byDate,
+                      ),
+                      const SizedBox(height: 16),
+                      _MilkByLotDonutChart(
+                        data: widget.metrics.milkTrend.byLot,
+                      ),
+                    ],
+                  ),
+                  tablet: Column(
+                    children: [
+                      _MilkTrendLineChart(
+                        data: widget.metrics.milkTrend.byDate,
+                      ),
+                      const SizedBox(height: 16),
+                      _MilkByLotDonutChart(
+                        data: widget.metrics.milkTrend.byLot,
+                      ),
+                    ],
+                  ),
+                  desktop: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        flex: 3,
+                        child: _MilkTrendLineChart(
+                          data: widget.metrics.milkTrend.byDate,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        flex: 2,
+                        child: _MilkByLotDonutChart(
+                          data: widget.metrics.milkTrend.byLot,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+        
+                // Métricas de producción (Ahora es Responsive)
+                Responsive(
+                  mobile: _ProductionMetricsSection(
+                    metrics: widget.metrics,
+                    primaryColor: widget.primaryColor,
+                    crossAxisCount: 1, // Una columna en móvil
+                    childAspectRatio: 6, // Aspect ratio para tipo lista
+                  ),
+                  tablet: _ProductionMetricsSection(
+                    metrics: widget.metrics,
+                    primaryColor: widget.primaryColor,
+                    crossAxisCount: 2,
+                    childAspectRatio: 3,
+                  ),
+                  desktop: _ProductionMetricsSection(
+                    metrics: widget.metrics,
+                    primaryColor: widget.primaryColor,
+                    crossAxisCount: 4, // 4 columnas en desktop
+                    childAspectRatio: 2.5,
+                  ),
+                ),
+                const SizedBox(height: 20),
+        
+                // Eficiencia y alimentación (Ahora es Responsive)
+                Responsive(
+                  mobile: Column(
+                    children: [
+                      _EfficiencyCard(
+                        metrics: widget.metrics,
+                        primaryColor: widget.primaryColor,
+                      ),
+                      const SizedBox(height: 16),
+                      _FeedingSummaryCard(
+                        metrics: widget.metrics,
+                        primaryColor: widget.primaryColor,
+                      ),
+                    ],
+                  ),
+                  tablet: Column(
+                    children: [
+                      _EfficiencyCard(
+                        metrics: widget.metrics,
+                        primaryColor: widget.primaryColor,
+                      ),
+                      const SizedBox(height: 16),
+                      _FeedingSummaryCard(
+                        metrics: widget.metrics,
+                        primaryColor: widget.primaryColor,
+                      ),
+                    ],
+                  ),
+                  desktop: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: _EfficiencyCard(
+                          metrics: widget.metrics,
+                          primaryColor: widget.primaryColor,
+                        ),
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: _FeedingSummaryCard(
+                          metrics: widget.metrics,
+                          primaryColor: widget.primaryColor,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 20),
+        
+                // Comparativa de lotes
+                _LotsComparisonCard(
+                  data: widget.metrics.milkTrend.byLot,
+                  primaryColor: widget.primaryColor,
+                ),
+              ],
+            ),
+        
             // Header con gradiente
             // SliverAppBar(
             //   pinned: true,
@@ -84,157 +256,7 @@ class _DashboardContent extends StatelessWidget {
             //     background: _DashboardHeader(metrics: metrics),
             //   ),
             // ),
-
-            // Contenido principal
-            SliverPadding(
-              padding: const EdgeInsets.all(20),
-              sliver: SliverList(
-                delegate: SliverChildListDelegate([
-                  // Tarjeta de producción del día
-                  _DailyProductionCard(metrics: metrics),
-                  const SizedBox(height: 20),
-
-                  // Grid de métricas principales (Ahora es Responsive)
-                  Responsive(
-                    mobile: _MainMetricsGrid(
-                      metrics: metrics,
-                      primaryColor: primaryColor,
-                      crossAxisCount: 2,
-                      childAspectRatio: 1.2, // Más altas que anchas
-                    ),
-                    tablet: _MainMetricsGrid(
-                      metrics: metrics,
-                      primaryColor: primaryColor,
-                      crossAxisCount: 2,
-                      childAspectRatio: 1.2,
-                    ),
-                    desktop: _MainMetricsGrid(
-                      metrics: metrics,
-                      primaryColor: primaryColor,
-                      crossAxisCount: 4,
-                      childAspectRatio: 1.2,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Sección de gráficos (Ahora es Responsive)
-                  Responsive(
-                    mobile: Column(
-                      children: [
-                        _MilkTrendLineChart(data: metrics.milkTrend.byDate),
-                        const SizedBox(height: 16),
-                        _MilkByLotDonutChart(data: metrics.milkTrend.byLot),
-                      ],
-                    ),
-                    tablet: Column(
-                      children: [
-                        _MilkTrendLineChart(data: metrics.milkTrend.byDate),
-                        const SizedBox(height: 16),
-                        _MilkByLotDonutChart(data: metrics.milkTrend.byLot),
-                      ],
-                    ),
-                    desktop: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 3,
-                          child: _MilkTrendLineChart(
-                            data: metrics.milkTrend.byDate,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          flex: 2,
-                          child: _MilkByLotDonutChart(
-                            data: metrics.milkTrend.byLot,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Métricas de producción (Ahora es Responsive)
-                  Responsive(
-                    mobile: _ProductionMetricsSection(
-                      metrics: metrics,
-                      primaryColor: primaryColor,
-                      crossAxisCount: 1, // Una columna en móvil
-                      childAspectRatio: 6, // Aspect ratio para tipo lista
-                    ),
-                    tablet: _ProductionMetricsSection(
-                      metrics: metrics,
-                      primaryColor: primaryColor,
-                      crossAxisCount: 2,
-                      childAspectRatio: 3,
-                    ),
-                    desktop: _ProductionMetricsSection(
-                      metrics: metrics,
-                      primaryColor: primaryColor,
-                      crossAxisCount: 4, // 4 columnas en desktop
-                      childAspectRatio: 2.5,
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Eficiencia y alimentación (Ahora es Responsive)
-                  Responsive(
-                    mobile: Column(
-                      children: [
-                        _EfficiencyCard(
-                          metrics: metrics,
-                          primaryColor: primaryColor,
-                        ),
-                        const SizedBox(height: 16),
-                        _FeedingSummaryCard(
-                          metrics: metrics,
-                          primaryColor: primaryColor,
-                        ),
-                      ],
-                    ),
-                    tablet: Column(
-                      children: [
-                        _EfficiencyCard(
-                          metrics: metrics,
-                          primaryColor: primaryColor,
-                        ),
-                        const SizedBox(height: 16),
-                        _FeedingSummaryCard(
-                          metrics: metrics,
-                          primaryColor: primaryColor,
-                        ),
-                      ],
-                    ),
-                    desktop: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: _EfficiencyCard(
-                            metrics: metrics,
-                            primaryColor: primaryColor,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: _FeedingSummaryCard(
-                            metrics: metrics,
-                            primaryColor: primaryColor,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  // Comparativa de lotes
-                  _LotsComparisonCard(
-                    data: metrics.milkTrend.byLot,
-                    primaryColor: primaryColor,
-                  ),
-                ]),
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
@@ -924,8 +946,8 @@ class _MilkTrendLineChart extends StatelessWidget {
                       show: true,
                       gradient: LinearGradient(
                         colors: [
-                          theme.colorScheme.primary.withAlpha(40),
-                          theme.colorScheme.primary.withAlpha(20),
+                          theme.colorScheme.primary.withAlpha(50),
+                          theme.colorScheme.primary.withAlpha(0),
                         ],
                         begin: Alignment.topCenter,
                         end: Alignment.bottomCenter,
@@ -1281,7 +1303,8 @@ class _FeedingSummaryCard extends StatelessWidget {
             children: [
               _FeedingInfoItem(
                 label: 'Alimento del Mes',
-                value: '${metrics.feedingSummary.totalFeedQuantityMonthKg.toStringAsFixed(2)} kg',
+                value:
+                    '${metrics.feedingSummary.totalFeedQuantityMonthKg.toStringAsFixed(2)} kg',
               ),
               const SizedBox(height: 12),
               _FeedingInfoItem(

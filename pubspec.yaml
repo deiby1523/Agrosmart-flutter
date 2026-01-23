@@ -44,6 +44,9 @@ dependencies:
   cupertino_icons: ^1.0.8
   blobs: 2.0.0
   shimmer: ^3.0.0
+  fading_edge_scrollview: ^4.1.1
+
+  # scroll
 
 dev_dependencies:
 

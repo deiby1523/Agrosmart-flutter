@@ -465,6 +465,13 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
             colors.sidebarGradient3,
           ],
         ),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
       ),
       child: _buildSidebarContent(context),
     );

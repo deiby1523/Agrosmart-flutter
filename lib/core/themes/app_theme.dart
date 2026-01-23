@@ -36,7 +36,7 @@ class AppTheme {
     scrollbarTheme: DScrollbarTheme.lightScrollbarTheme,
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: AppColorSchemes.lightScheme.primary,
-      selectionColor: Color.fromARGB(90, 155, 210, 36),
+      selectionColor: AppColorSchemes.lightTextSelection,
       selectionHandleColor: AppColorSchemes.lightScheme.primary,
     ),
     pageTransitionsTheme: PageTransitionsTheme(
@@ -75,7 +75,7 @@ class AppTheme {
     scrollbarTheme: DScrollbarTheme.darkScrollbarTheme,
     textSelectionTheme: TextSelectionThemeData(
       cursorColor: AppColorSchemes.lightScheme.primary,
-      selectionColor: Color.fromARGB(90, 155, 210, 36),
+      selectionColor: AppColorSchemes.darkTextSelection,
       selectionHandleColor: AppColorSchemes.lightScheme.primary,
     ),
 

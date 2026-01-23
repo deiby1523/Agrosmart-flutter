@@ -5,6 +5,7 @@ class AppColorSchemes {
   // Light colors
   // =========================
   static const Color lightPrimary = Color.fromARGB(255, 104, 190, 51);
+  
   static const Color lightOnPrimary = Color.fromARGB(255, 255, 255, 255);
 
   static const Color lightSecondary = Color.fromARGB(255, 120, 235, 235);
@@ -43,6 +44,8 @@ class AppColorSchemes {
   static const Color lightSidebarGradient2 = Color.fromARGB(255, 255, 255, 255);
   static const Color lightSidebarGradient3 = Color.fromARGB(255, 255, 255, 255);
 
+  static const Color lightTextSelection = Color.fromARGB(90, 155, 210, 36);
+
   static const Color lightGreen1 = Color.fromARGB(255, 3, 28, 6);
   static const Color lightGreen2 = Color.fromARGB(255, 4, 59, 5);
   static const Color lightGreen3 = Color.fromARGB(255, 32, 123, 37);
@@ -55,9 +58,9 @@ class AppColorSchemes {
   // Dark colors
   // =========================
   static const Color darkPrimary = Color.fromARGB(255, 104, 190, 51);
-  static const Color darkOnPrimary = Color.fromARGB(255, 0, 0, 0);
+  static const Color darkOnPrimary = Color.fromARGB(255, 6, 10, 13);
 
-  static const Color darkSecondary = Color.fromARGB(255, 8, 210, 150);
+  static const Color darkSecondary = Color.fromARGB(255, 29, 29, 29);
   static const Color darkOnSecondary = Colors.white;
 
   static const Color darkTertiary = Color(0xFF4FC3F7); // Azul más vivo
@@ -69,10 +72,10 @@ class AppColorSchemes {
   static const Color darkBackground = Color(0xFF121212);
   static const Color darkOnBackground = Colors.white;
 
-  static const Color darkSurface = Color.fromARGB(255, 24, 35, 20);
+  static const Color darkSurface = Color.fromARGB(255, 29, 29, 29);
   static const Color darkOnSurface = Colors.white;
 
-  static const Color darkCard = Color.fromARGB(255, 32, 46, 26);
+  static const Color darkCard = Color.fromARGB(255, 41, 41, 41);
 
   static const Color darkText = Color.fromARGB(255, 255, 255, 255);
   static const Color darkTextDisabled = Color.fromARGB(221, 124, 124, 124);
@@ -89,9 +92,11 @@ class AppColorSchemes {
 
   static const Color darkSidebar = Color.fromARGB(255, 147, 147, 147);
 
-  static const Color darkSidebarGradient1 = Color.fromARGB(255, 16, 31, 7);
-  static const Color darkSidebarGradient2 = Color.fromARGB(255, 16, 31, 7);
-  static const Color darkSidebarGradient3 = Color.fromARGB(255, 16, 31, 7);
+  static const Color darkSidebarGradient1 = Color.fromARGB(255, 41, 41, 41);
+  static const Color darkSidebarGradient2 = Color.fromARGB(255, 41, 41, 41);
+  static const Color darkSidebarGradient3 = Color.fromARGB(255, 41, 41, 41);
+
+  static const Color darkTextSelection = Color.fromARGB(90, 155, 210, 36);
 
   static const Color darkGreen1 = Color.fromARGB(255, 3, 28, 6);
   static const Color darkGreen2 = Color.fromARGB(255, 4, 59, 5);
@@ -155,7 +160,6 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color green5;
   final Color green6;
   final Color green7;
-  
 
   const AppColors({
     required this.button,
