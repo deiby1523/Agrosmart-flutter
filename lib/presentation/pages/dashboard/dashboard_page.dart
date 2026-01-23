@@ -84,7 +84,7 @@ class _DashboardContent extends StatelessWidget {
             //     background: _DashboardHeader(metrics: metrics),
             //   ),
             // ),
-      
+
             // Contenido principal
             SliverPadding(
               padding: const EdgeInsets.all(20),
@@ -93,7 +93,7 @@ class _DashboardContent extends StatelessWidget {
                   // Tarjeta de producción del día
                   _DailyProductionCard(metrics: metrics),
                   const SizedBox(height: 20),
-      
+
                   // Grid de métricas principales (Ahora es Responsive)
                   Responsive(
                     mobile: _MainMetricsGrid(
@@ -116,7 +116,7 @@ class _DashboardContent extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-      
+
                   // Sección de gráficos (Ahora es Responsive)
                   Responsive(
                     mobile: Column(
@@ -153,7 +153,7 @@ class _DashboardContent extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-      
+
                   // Métricas de producción (Ahora es Responsive)
                   Responsive(
                     mobile: _ProductionMetricsSection(
@@ -176,7 +176,7 @@ class _DashboardContent extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-      
+
                   // Eficiencia y alimentación (Ahora es Responsive)
                   Responsive(
                     mobile: Column(
@@ -225,7 +225,7 @@ class _DashboardContent extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-      
+
                   // Comparativa de lotes
                   _LotsComparisonCard(
                     data: metrics.milkTrend.byLot,
@@ -568,27 +568,32 @@ class _ProductionMetricsSection extends StatelessWidget {
           GridView.count(
             shrinkWrap: true,
             physics: const NeverScrollableScrollPhysics(),
-            crossAxisCount: crossAxisCount, // Usamos el valor responsive
+            crossAxisCount: crossAxisCount,
             crossAxisSpacing: 16,
             mainAxisSpacing: 16,
-            childAspectRatio: childAspectRatio, // Usamos el valor responsive
+            childAspectRatio: childAspectRatio,
             children: [
               _ProductionMetricItem(
                 label: 'Mes Actual',
-                value: '${metrics.milkProduction.currentMonthLiters} L',
+                // Aplicamos toStringAsFixed(2) para asegurar 2 decimales
+                value:
+                    '${metrics.milkProduction.currentMonthLiters.toStringAsFixed(2)} L',
               ),
               _ProductionMetricItem(
                 label: 'Promedio Mensual',
-                value: '${metrics.milkProduction.monthlyAverageLiters} L',
+                value:
+                    '${metrics.milkProduction.monthlyAverageLiters.toStringAsFixed(2)} L',
               ),
               _ProductionMetricItem(
                 label: 'Últimos 30 Registros',
-                value: '${metrics.milkProduction.last30RecordsLiters} L',
+                value:
+                    '${metrics.milkProduction.last30RecordsLiters.toStringAsFixed(2)} L',
               ),
               _ProductionMetricItem(
                 label: 'Eficiencia por Animal',
+                // Actualizado de .toStringAsFixed(1) a .toStringAsFixed(2)
                 value:
-                    '${metrics.efficiencyIndicators.milkPerAnimal.toStringAsFixed(1)} L/animal',
+                    '${metrics.efficiencyIndicators.milkPerAnimal.toStringAsFixed(2)} L/animal',
               ),
             ],
           ),
@@ -1276,7 +1281,7 @@ class _FeedingSummaryCard extends StatelessWidget {
             children: [
               _FeedingInfoItem(
                 label: 'Alimento del Mes',
-                value: '${metrics.feedingSummary.totalFeedQuantityMonthKg} kg',
+                value: '${metrics.feedingSummary.totalFeedQuantityMonthKg.toStringAsFixed(2)} kg',
               ),
               const SizedBox(height: 12),
               _FeedingInfoItem(
@@ -1413,7 +1418,7 @@ class _LotComparisonItem extends StatelessWidget {
           Expanded(
             flex: 1,
             child: Text(
-              '${lot.liters} L',
+              '${lot.liters.toStringAsFixed(2)} L',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w600,
