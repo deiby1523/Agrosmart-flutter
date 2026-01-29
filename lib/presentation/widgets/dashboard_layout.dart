@@ -559,20 +559,39 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
               children: [
                 _buildMenuItem(
                   context,
-                  icon: Icons.home,
-                  title: _Texts.menuHome,
+                  icon: Icons.home_rounded,
+                  title: 'Panel Principal',
                   route: '/dashboard',
                   isSelected: currentRoute == '/dashboard',
                   isGroupItem: true,
                 ),
 
-                const SizedBox(height: _userInfoSpacing),
+                const SizedBox(height: 16),
 
-                // Gestión Territorial
                 _buildGroupHeader(context, 'Finca'),
                 _buildMenuItem(
                   context,
-                  icon: Icons.grid_view_rounded,
+                  icon: Icons.fence_rounded, // O Icons.fence
+                  title: 'Potreros',
+                  route: '/paddocks',
+                  isSelected: currentRoute == '/paddocks',
+                  isGroupItem: true,
+                ),
+                _buildMenuItem(
+                  context,
+                  icon: Icons.compost_rounded,
+                  title: 'Insumos',
+                  route: '/supplies',
+                  isSelected: currentRoute == '/supplies',
+                  isGroupItem: true,
+                ),
+
+                const SizedBox(height: 16),
+
+                _buildGroupHeader(context, 'Control de Ganado'),
+                _buildMenuItem(
+                  context,
+                  icon: Icons.grid_view_rounded, // Icono de grupos para Lotes
                   title: 'Lotes',
                   route: '/lots',
                   isSelected: currentRoute == '/lots',
@@ -580,18 +599,7 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
                 ),
                 _buildMenuItem(
                   context,
-                  icon: Icons.fence,
-                  title: 'Potreros',
-                  route: '/paddocks',
-                  isSelected: currentRoute == '/paddocks',
-                  isGroupItem: true,
-                ),
-
-                // Producción Animal
-                _buildGroupHeader(context, 'Producción'),
-                _buildMenuItem(
-                  context,
-                  icon: Icons.pets,
+                  icon: Icons.pets_rounded,
                   title: 'Razas',
                   route: '/breeds',
                   isSelected: currentRoute == '/breeds',
@@ -599,32 +607,33 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
                 ),
                 _buildMenuItem(
                   context,
-                  icon: Icons.grass,
-                  title: 'Insumos',
-                  route: '/supplies',
-                  isSelected: currentRoute == '/supplies',
-                  isGroupItem: true,
-                ),
-                _buildMenuItem(
-                  context,
                   svgAsset: 'assets/icons/cow_icon.svg',
                   title: 'Animales',
                   route: '/animals',
-                  isSelected:
-                      currentRoute == '/animals' ||
-                      currentRoute == '/animals/create',
+                  isSelected: currentRoute.startsWith('/animals'),
+                  isGroupItem: true,
+                ),
+
+                const SizedBox(height: 16),
+
+                _buildGroupHeader(context, 'Producción'),
+                _buildMenuItem(
+                  context,
+                  icon: Icons.grass_rounded, // O Icons.Agriculture
+                  title: 'Alimentación',
+                  route: '/feedings',
+                  isSelected: currentRoute.startsWith('/feedings'),
                   isGroupItem: true,
                 ),
                 _buildMenuItem(
                   context,
-                  icon: Icons.local_drink,
+                  icon: Icons.local_drink_rounded,
                   title: 'Ordeños',
                   route: '/milkings',
-                  isSelected:
-                      currentRoute == '/milkings' ||
-                      currentRoute == '/animals/milkings',
+                  isSelected: currentRoute.contains('milkings'),
                   isGroupItem: true,
                 ),
+                
               ],
             ),
           ),

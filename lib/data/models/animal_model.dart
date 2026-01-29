@@ -15,7 +15,6 @@ import 'package:agrosmart_flutter/domain/entities/breed.dart';
 import 'package:agrosmart_flutter/domain/entities/farm.dart';
 import 'package:agrosmart_flutter/domain/entities/lot.dart';
 import 'package:agrosmart_flutter/domain/entities/paddock.dart';
-import 'package:flutter/foundation.dart';
 import 'package:json_annotation/json_annotation.dart';
 import '../../domain/entities/animal.dart';
 

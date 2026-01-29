@@ -1,43 +1,45 @@
-import 'package:agrosmart_flutter/data/repositories/supply_repository_impl.dart';
-import 'package:agrosmart_flutter/domain/entities/supply.dart';
-import 'package:agrosmart_flutter/domain/entities/lot.dart';
+import 'dart:developer';
+
+import 'package:agrosmart_flutter/data/repositories/feeding_repository_impl.dart';
+import 'package:agrosmart_flutter/domain/entities/feeding.dart';
 import 'package:agrosmart_flutter/domain/entities/farm.dart';
+import 'package:agrosmart_flutter/domain/entities/lot.dart';
 import 'package:agrosmart_flutter/domain/entities/paginated_response.dart';
+import 'package:agrosmart_flutter/domain/entities/supply.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'supply_provider.g.dart';
+part 'feeding_provider.g.dart';
 
 @riverpod
-SupplyRepositoryImpl supplyRepository(Ref ref) {
-  return SupplyRepositoryImpl();
+FeedingRepositoryImpl feedingRepository(Ref ref) {
+  return FeedingRepositoryImpl();
 }
 
 @riverpod
-class Supplies extends _$Supplies {
+class Feedings extends _$Feedings {
   // Variables para controlar la paginación
   int _currentPage = 0;
-  int _pageSize = 30;
+  int _pageSize = 10;
 
   /// ---------------------------------------------------------------------------
-  /// Carga inicial de la lista de insumos desde el repositorio con paginación.
+  /// Carga inicial de la lista de feedinges desde el repositorio con paginación.
   ///
-  /// Retorna un `PaginatedResponse<Supply>` envuelto en un `AsyncValue`.
+  /// Retorna un `PaginatedResponse<Feeding>` envuelto en un `AsyncValue`.
   /// ---------------------------------------------------------------------------
   @override
-  FutureOr<PaginatedResponse<Supply>> build() async {
+  FutureOr<PaginatedResponse<Feeding>> build() async {
     // Carga inicial - página 1
-    return await _loadSupplies(page: _currentPage, size: _pageSize);
+    return await _loadFeedings(page: _currentPage, size: _pageSize);
   }
 
-
   /// ---------------------------------------------------------------------------
-  /// Carga una página específica de insumos
+  /// Carga una página específica de feedinges
   /// ---------------------------------------------------------------------------
   Future<void> loadPage(int page, {int size = 10}) async {
     // No modificar el state directamente, usar AsyncValue.guard
     state = await AsyncValue.guard(() async {
-      final response = await _loadSupplies(page: page, size: size);
+      final response = await _loadFeedings(page: page, size: size);
       _currentPage = page;
       _pageSize = size;
       return response;
@@ -45,7 +47,7 @@ class Supplies extends _$Supplies {
   }
 
   /// ---------------------------------------------------------------------------
-  /// Carga la siguiente página de insumos
+  /// Carga la siguiente página de feedinges
   /// ---------------------------------------------------------------------------
   Future<void> loadNextPage() async {
     if (state.value?.paginationInfo.hasNext == true) {
@@ -54,7 +56,7 @@ class Supplies extends _$Supplies {
   }
 
   /// ---------------------------------------------------------------------------
-  /// Carga la página anterior de insumos
+  /// Carga la página anterior de feedinges
   /// ---------------------------------------------------------------------------
   Future<void> loadPreviousPage() async {
     if (state.value?.paginationInfo.hasPrevious == true) {
@@ -63,61 +65,80 @@ class Supplies extends _$Supplies {
   }
 
   /// ---------------------------------------------------------------------------
-  /// Crea un nuevo insumo en el sistema.
+  /// Crea un nuevo feeding en el sistema.
   /// Recarga la página actual al finalizar.
   /// ---------------------------------------------------------------------------
-  Future<void> createSupply(
-    String name,
-    String type,
-    DateTime expirationDate,
+  Future<void> createFeeding(
+    DateTime startDate,
+    DateTime? endDate,
+    double quantity,
+    String measurement,
+    String frequency,
+    Supply supply,
+    Lot lot,
+    Farm? farm,
   ) async {
-    // Usar guard para manejar el estado de forma segura
     state = await AsyncValue.guard(() async {
-      final supply = Supply(
-        name: name,
-        type: type,
-        expirationDate: expirationDate
+      final feeding = Feeding(
+        startDate: startDate,
+        endDate: endDate,
+        quantity: quantity,
+        measurement: measurement,
+        frequency: frequency,
+        supply: supply,
+        lot: lot,
+        farm: farm,
       );
 
-      await ref.read(supplyRepositoryProvider).createSupply(supply);
+      await ref.read(feedingRepositoryProvider).createFeeding(feeding);
       // Recargar la página actual después de crear
-      return await _loadSupplies(page: _currentPage, size: _pageSize);
+      return await _loadFeedings(page: _currentPage, size: _pageSize);
     });
   }
 
   /// ---------------------------------------------------------------------------
-  /// Actualiza un insumo existente en base a su [id].
+  /// Actualiza un feeding existente en base a su [id].
   ///
   /// Tras actualizar, recarga la página actual.
   /// ---------------------------------------------------------------------------
-  Future<void> updateSupply(
+  Future<void> updateFeeding(
     int id,
-    String name,
-    String type,
-    DateTime expirationDate
+    DateTime startDate,
+    DateTime? endDate,
+    double quantity,
+    String measurement,
+    String frequency,
+    Supply supply,
+    Lot lot,
+    Farm? farm,
   ) async {
     state = await AsyncValue.guard(() async {
       final updates = {
-        'name': name,
-        'type':type,
-        'expirationDate': expirationDate.toIso8601String(),
+        'startDate': startDate.toIso8601String(),
+        if (endDate != null) 'endDate': endDate.toIso8601String(),
+        'quantity': quantity,
+        'measurement': measurement,
+        'frequency': frequency,
+        'suppliesId': supply.id,
+        'lotId': lot.id,
       };
-      await ref.read(supplyRepositoryProvider).updateSupply(id, updates);
+      await ref.read(feedingRepositoryProvider).updateFeeding(id, updates);
+      log("SE ESTA HACIENDO UPDATE: $updates");
       // Recargar la página actual después de actualizar
-      return await _loadSupplies(page: _currentPage, size: _pageSize);
+      return await _loadFeedings(page: _currentPage, size: _pageSize);
     });
   }
 
   /// ---------------------------------------------------------------------------
-  /// Elimina un insumo existente por su [id].
+  /// Elimina un feeding existente por su [id].
   ///
   /// Actualiza el estado y recarga la página actual tras la eliminación.
   /// ---------------------------------------------------------------------------
-  Future<void> deleteSupply(int id) async {
+  Future<void> deleteFeeding(int id) async {
     state = await AsyncValue.guard(() async {
-      await ref.read(supplyRepositoryProvider).deleteSupply(id);
+      await ref.read(feedingRepositoryProvider).deleteFeeding(id);
       // Recargar la página actual después de eliminar
-      return await _loadSupplies(page: _currentPage, size: _pageSize);
+      return await _loadFeedings(page: _currentPage, size: _pageSize);
     });
   }
 
@@ -125,21 +146,23 @@ class Supplies extends _$Supplies {
   // Métodos privados
   // ---------------------------------------------------------------------------
 
-  /// Carga insumos desde el repositorio
-  Future<PaginatedResponse<Supply>> _loadSupplies({int page = 1, int size = 10}) async {
-    return await ref.read(supplyRepositoryProvider).getSupplies(
-      page: page,
-      size: size,
-    );
+  /// Carga feedinges desde el repositorio
+  Future<PaginatedResponse<Feeding>> _loadFeedings({
+    int page = 1,
+    int size = 10,
+  }) async {
+    return await ref
+        .read(feedingRepositoryProvider)
+        .getFeedings(page: page, size: size);
   }
-  
+
   /// ---------------------------------------------------------------------------
   /// Getters para acceder a información de paginación desde la UI
   /// ---------------------------------------------------------------------------
-  
+
   int get currentPage => _currentPage;
   int get pageSize => _pageSize;
-  
+
   bool get hasNextPage => state.value?.paginationInfo.hasNext ?? false;
   bool get hasPreviousPage => state.value?.paginationInfo.hasPrevious ?? false;
   bool get isFirstPage => state.value?.paginationInfo.isFirst ?? true;

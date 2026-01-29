@@ -19,10 +19,14 @@
 // =============================================================================
 
 import 'package:agrosmart_flutter/domain/entities/animal.dart';
+import 'package:agrosmart_flutter/domain/entities/feeding.dart';
 import 'package:agrosmart_flutter/domain/entities/milking.dart';
 import 'package:agrosmart_flutter/presentation/pages/animals/animal_create_page.dart';
 import 'package:agrosmart_flutter/presentation/pages/animals/animal_edit_page.dart';
 import 'package:agrosmart_flutter/presentation/pages/animals/animals_index_page.dart';
+import 'package:agrosmart_flutter/presentation/pages/feedings/feeding_create_page.dart';
+import 'package:agrosmart_flutter/presentation/pages/feedings/feeding_edit_page.dart';
+import 'package:agrosmart_flutter/presentation/pages/feedings/feeding_index_page.dart';
 import 'package:agrosmart_flutter/presentation/pages/milkings/milking_create_page.dart';
 import 'package:agrosmart_flutter/presentation/pages/milkings/milking_edit_page.dart';
 import 'package:agrosmart_flutter/presentation/pages/milkings/milking_index_page.dart';
@@ -221,6 +225,36 @@ final routerProvider = Provider<GoRouter>((ref) {
           transitionsBuilder: (_, __, ___, child) => child,
           transitionDuration: Duration.zero,
         ),
+      ),
+      GoRoute(
+        path: '/feedings',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const FeedingsListPage(),
+          transitionsBuilder: (_, __, ___, child) => child,
+          transitionDuration: Duration.zero,
+        ),
+      ),
+      GoRoute(
+        path: '/feedings/create',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const FeedingCreatePage(),
+          transitionsBuilder: (_, __, ___, child) => child,
+          transitionDuration: Duration.zero,
+        ),
+      ),
+      GoRoute(
+        path: '/feedings/edit',
+        pageBuilder: (context, state) {
+          final feeding = state.extra as Feeding;
+          return CustomTransitionPage(
+            key: state.pageKey,
+            child: FeedingEditPage(feeding: feeding),
+            transitionsBuilder: (_, __, ___, child) => child,
+            transitionDuration: Duration.zero,
+          );
+        },
       ),
 
       // -------------------------------

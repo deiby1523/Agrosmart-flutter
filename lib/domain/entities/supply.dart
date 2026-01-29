@@ -7,7 +7,7 @@ class Supply {
 
   final String name;
   final String type;
-  final DateTime expirationDate;
+  DateTime expirationDate;
 
   Supply({
     this.id,
@@ -41,7 +41,8 @@ class Supply {
   }
 
   @override
-  int get hashCode => id.hashCode ^ name.hashCode ^ type.hashCode ^ expirationDate.hashCode;
+  int get hashCode =>
+      id.hashCode ^ name.hashCode ^ type.hashCode ^ expirationDate.hashCode;
 
   @override
   String toString() {

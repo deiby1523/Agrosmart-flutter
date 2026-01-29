@@ -1,47 +1,47 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'supply_provider.dart';
+part of 'feeding_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$supplyRepositoryHash() => r'9753ecb13c3bd7fb3252ad9fdf49adf90a6581c7';
+String _$feedingRepositoryHash() => r'2565417cb4c3744da617c6a415276d7311058d62';
 
-/// See also [supplyRepository].
-@ProviderFor(supplyRepository)
-final supplyRepositoryProvider =
-    AutoDisposeProvider<SupplyRepositoryImpl>.internal(
-      supplyRepository,
-      name: r'supplyRepositoryProvider',
+/// See also [feedingRepository].
+@ProviderFor(feedingRepository)
+final feedingRepositoryProvider =
+    AutoDisposeProvider<FeedingRepositoryImpl>.internal(
+      feedingRepository,
+      name: r'feedingRepositoryProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
           ? null
-          : _$supplyRepositoryHash,
+          : _$feedingRepositoryHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef SupplyRepositoryRef = AutoDisposeProviderRef<SupplyRepositoryImpl>;
-String _$suppliesHash() => r'5c209879e321d9163507d5feb503f087c1913169';
+typedef FeedingRepositoryRef = AutoDisposeProviderRef<FeedingRepositoryImpl>;
+String _$feedingsHash() => r'f6542a36f643b551543590ee8daabd629d52c03f';
 
-/// See also [Supplies].
-@ProviderFor(Supplies)
-final suppliesProvider =
+/// See also [Feedings].
+@ProviderFor(Feedings)
+final feedingsProvider =
     AutoDisposeAsyncNotifierProvider<
-      Supplies,
-      PaginatedResponse<Supply>
+      Feedings,
+      PaginatedResponse<Feeding>
     >.internal(
-      Supplies.new,
-      name: r'suppliesProvider',
+      Feedings.new,
+      name: r'feedingsProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
           ? null
-          : _$suppliesHash,
+          : _$feedingsHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
 
-typedef _$Supplies = AutoDisposeAsyncNotifier<PaginatedResponse<Supply>>;
+typedef _$Feedings = AutoDisposeAsyncNotifier<PaginatedResponse<Feeding>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
