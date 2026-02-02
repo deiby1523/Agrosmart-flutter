@@ -633,7 +633,15 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
                   isSelected: currentRoute.contains('milkings'),
                   isGroupItem: true,
                 ),
-                
+                SizedBox(height: 25),
+                _buildMenuItem(
+                  context,
+                  icon: Icons.sim_card_download_rounded,
+                  title: 'Reportes',
+                  route: '/reports',
+                  isSelected: currentRoute.contains('reports'),
+                  isGroupItem: true,
+                ),
               ],
             ),
           ),

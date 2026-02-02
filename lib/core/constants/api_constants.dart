@@ -22,11 +22,12 @@ class ApiConstants {
   static const String supplies = '/farm/{farmId}/supplies'; // CRUD Insumos
   static const String feedings = '/farm/{farmId}/feedings'; // CRUD Alimentacion
 
-  static const String dashboard = '/farm/{farmId}/metrics/dashboard'; // Estadísticas
-  
+  static const String dashboard =
+      '/farm/{farmId}/metrics/dashboard'; // Estadísticas
+
   static const String upload = '/farm/{farmId}/upload'; // Subir archivos
 
-  // static const String dashboardMetricsEndpoint = "/api/farm/metrics/dashboard";
-  
+  static const String productionReport = '/farm/{farmId}/reportes/produccion'; // Reportes de produccion
 
+  // static const String dashboardMetricsEndpoint = "/api/farm/metrics/dashboard";
 }

@@ -5,7 +5,7 @@ class AppColorSchemes {
   // Light colors
   // =========================
   static const Color lightPrimary = Color.fromARGB(255, 104, 190, 51);
-  
+
   static const Color lightOnPrimary = Color.fromARGB(255, 255, 255, 255);
 
   static const Color lightSecondary = Color.fromARGB(255, 120, 235, 235);
@@ -53,6 +53,14 @@ class AppColorSchemes {
   static const Color lightGreen5 = Color.fromARGB(255, 159, 227, 122);
   static const Color lightGreen6 = Color.fromARGB(255, 61, 190, 119);
   static const Color lightGreen7 = Color.fromARGB(255, 23, 200, 165);
+
+  static const Color lightCategory1 = Color.fromARGB(255, 116, 212, 204);
+  static const Color lightCategory2 = Color.fromARGB(255, 228, 180, 125);
+  static const Color lightCategory3 = Color.fromARGB(255, 208, 138, 229);
+  static const Color lightCategory4 = Color.fromARGB(255, 144, 209, 116);
+  static const Color lightCategory5 = Color.fromARGB(255, 230, 233, 81);
+  static const Color lightCategory6 = Color.fromARGB(255, 206, 98, 98);
+  static const Color lightCategory7 = Color.fromARGB(255, 96, 151, 223);
 
   // =========================
   // Dark colors
@@ -105,6 +113,14 @@ class AppColorSchemes {
   static const Color darkGreen5 = Color.fromARGB(255, 159, 227, 122);
   static const Color darkGreen6 = Color.fromARGB(255, 61, 190, 119);
   static const Color darkGreen7 = Color.fromARGB(255, 23, 200, 165);
+
+  static const Color darkCategory1 = Color.fromARGB(255, 116, 212, 204);
+  static const Color darkCategory2 = Color.fromARGB(255, 228, 180, 125);
+  static const Color darkCategory3 = Color.fromARGB(255, 208, 138, 229);
+  static const Color darkCategory4 = Color.fromARGB(255, 144, 209, 116);
+  static const Color darkCategory5 = Color.fromARGB(255, 225, 227, 122);
+  static const Color darkCategory6 = Color.fromARGB(255, 206, 98, 98);
+  static const Color darkCategory7 = Color.fromARGB(255, 96, 151, 223);
 
   // =========================
   // Schemes
@@ -160,6 +176,13 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color green5;
   final Color green6;
   final Color green7;
+  final Color category1;
+  final Color category2;
+  final Color category3;
+  final Color category4;
+  final Color category5;
+  final Color category6;
+  final Color category7;
 
   const AppColors({
     required this.button,
@@ -182,6 +205,13 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.green5,
     required this.green6,
     required this.green7,
+    required this.category1,
+    required this.category2,
+    required this.category3,
+    required this.category4,
+    required this.category5,
+    required this.category6,
+    required this.category7,
   });
 
   // =========================
@@ -208,6 +238,13 @@ class AppColors extends ThemeExtension<AppColors> {
     green5: AppColorSchemes.lightGreen5,
     green6: AppColorSchemes.lightGreen6,
     green7: AppColorSchemes.lightGreen7,
+    category1: AppColorSchemes.lightCategory1,
+    category2: AppColorSchemes.lightCategory2,
+    category3: AppColorSchemes.lightCategory3,
+    category4: AppColorSchemes.lightCategory4,
+    category5: AppColorSchemes.lightCategory5,
+    category6: AppColorSchemes.lightCategory6,
+    category7: AppColorSchemes.lightCategory7,
   );
 
   // =========================
@@ -234,6 +271,14 @@ class AppColors extends ThemeExtension<AppColors> {
     green5: AppColorSchemes.darkGreen5,
     green6: AppColorSchemes.darkGreen6,
     green7: AppColorSchemes.darkGreen7,
+    category1: AppColorSchemes.darkCategory1,
+    category2: AppColorSchemes.darkCategory2,
+    category3: AppColorSchemes.darkCategory3,
+    category4: AppColorSchemes.darkCategory4,
+    category5: AppColorSchemes.darkCategory5,
+    category6: AppColorSchemes.darkCategory6,
+    category7: AppColorSchemes.darkCategory7,
+
   );
 
   @override
@@ -258,6 +303,13 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? green5,
     Color? green6,
     Color? green7,
+    Color? category1,
+    Color? category2,
+    Color? category3,
+    Color? category4,
+    Color? category5,
+    Color? category6,
+    Color? category7,
   }) {
     return AppColors(
       button: button ?? this.button,
@@ -280,6 +332,13 @@ class AppColors extends ThemeExtension<AppColors> {
       green5: green5 ?? this.green5,
       green6: green6 ?? this.green6,
       green7: green7 ?? this.green7,
+      category1: category1 ?? this.category1,
+      category2: category2 ?? this.category2,
+      category3: category3 ?? this.category3,
+      category4: category4 ?? this.category4,
+      category5: category5 ?? this.category5,
+      category6: category6 ?? this.category6,
+      category7: category7 ?? this.category7,
     );
   }
 
@@ -323,6 +382,13 @@ class AppColors extends ThemeExtension<AppColors> {
       green5: Color.lerp(green5, other.green5, t)!,
       green6: Color.lerp(green6, other.green6, t)!,
       green7: Color.lerp(green7, other.green7, t)!,
+      category1: Color.lerp(category1, other.category1, t)!,
+      category2: Color.lerp(category2, other.category2, t)!,
+      category3: Color.lerp(category3, other.category3, t)!,
+      category4: Color.lerp(category4, other.category4, t)!,
+      category5: Color.lerp(category5, other.category5, t)!,
+      category6: Color.lerp(category6, other.category6, t)!,
+      category7: Color.lerp(category7, other.category7, t)!,
     );
   }
 }

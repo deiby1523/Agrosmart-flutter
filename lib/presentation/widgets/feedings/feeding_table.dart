@@ -26,6 +26,7 @@ import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 /// ---------------------------------------------------------------------------
 /// # FeedingTable
@@ -150,17 +151,35 @@ class FeedingTable extends ConsumerWidget {
     );
   }
 
+  String _parseMeasurement(String measurement) {
+    switch (measurement) {
+      case 'GRAMS':
+        return 'g';
+      case 'KILOGRAMS':
+        return 'kg';
+      case 'LITERS':
+        return 'L';
+      default:
+        return '';
+    }
+  }
+
+  String _parseFrequency(String frequency) {
+    switch (frequency) {
+      case 'ONE PER DAY':
+        return 'una vez al día';
+      case 'TWO PER DAY':
+        return 'dos veces al día';
+      case 'THREE PER DAY':
+        return 'Tres veces al día';
+      default:
+        return '';
+    }
+  }
+
   // ---------------------------------------------------------------------------
   // _buildDataRow
   // ---------------------------------------------------------------------------
-  /// Construye cada fila de la tabla (`DataRow`) para un feeding.
-  /// Incluye:
-  /// - Nombre
-  /// - Ubicación
-  /// - Superficie (solo pantallas grandes)
-  /// - Descripción (si aplica y no es mobile)
-  /// - Tipo de suelo (solo desktop)
-  /// - Acciones: editar y eliminar
   DataRow _buildDataRow(BuildContext context, WidgetRef ref, Feeding feeding) {
     final colors = Theme.of(context).extension<AppColors>()!;
 
@@ -168,13 +187,13 @@ class FeedingTable extends ConsumerWidget {
       cells: [
         DataCell(
           Text(
-            feeding.startDate.toIso8601String(),
+            DateFormat('dd/MM/yyyy').format(feeding.startDate),
             style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
           ),
         ),
         DataCell(
           Text(
-            feeding.endDate!.toIso8601String(),
+            DateFormat('dd/MM/yyyy').format(feeding.endDate!),
             style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
           ),
         ),
@@ -188,13 +207,13 @@ class FeedingTable extends ConsumerWidget {
         // if (MediaQuery.sizeOf(context).width > 1700)
         DataCell(
           Text(
-            feeding.quantity.toString(),
+            '${feeding.quantity.toString()} ${_parseMeasurement(feeding.measurement)}',
             style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
           ),
         ),
         DataCell(
           Text(
-            feeding.frequency,
+            _parseFrequency(feeding.frequency),
             style: const TextStyle(fontWeight: FontWeight.w500, fontSize: 14),
           ),
         ),

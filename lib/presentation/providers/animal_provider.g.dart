@@ -6,33 +6,29 @@ part of 'animal_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$animalRepositoryHash() => r'1d12058986dece41eb67bf427dea3eedd82dd1fe';
+String _$animalRepositoryHash() => r'1c2651fff783a5ecc08808f200ee1eca90d3d44e';
 
 /// See also [animalRepository].
 @ProviderFor(animalRepository)
-final animalRepositoryProvider =
-    AutoDisposeProvider<AnimalRepositoryImpl>.internal(
-      animalRepository,
-      name: r'animalRepositoryProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$animalRepositoryHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+final animalRepositoryProvider = Provider<AnimalRepositoryImpl>.internal(
+  animalRepository,
+  name: r'animalRepositoryProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$animalRepositoryHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef AnimalRepositoryRef = AutoDisposeProviderRef<AnimalRepositoryImpl>;
-String _$animalsHash() => r'1f71e9cd41774ccc604aafe2cf83d3168670b715';
+typedef AnimalRepositoryRef = ProviderRef<AnimalRepositoryImpl>;
+String _$animalsHash() => r'5f6a1287b24c8c2787403c3f3dff991c64ed58be';
 
 /// See also [Animals].
 @ProviderFor(Animals)
 final animalsProvider =
-    AutoDisposeAsyncNotifierProvider<
-      Animals,
-      PaginatedResponse<Animal>
-    >.internal(
+    AsyncNotifierProvider<Animals, PaginatedResponse<Animal>>.internal(
       Animals.new,
       name: r'animalsProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -42,6 +38,6 @@ final animalsProvider =
       allTransitiveDependencies: null,
     );
 
-typedef _$Animals = AutoDisposeAsyncNotifier<PaginatedResponse<Animal>>;
+typedef _$Animals = AsyncNotifier<PaginatedResponse<Animal>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

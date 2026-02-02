@@ -10,12 +10,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'animal_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 AnimalRepositoryImpl animalRepository(Ref ref) {
   return AnimalRepositoryImpl();
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class Animals extends _$Animals {
   // Variables para controlar la paginación
   int _currentPage = 0;

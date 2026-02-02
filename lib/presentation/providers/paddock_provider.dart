@@ -27,7 +27,7 @@ part 'paddock_provider.g.dart';
 /// 
 /// Se utiliza dentro de otros providers o controladores de estado.
 /// -----------------------------------------------------------------------------
-@riverpod
+@Riverpod(keepAlive: true)
 PaddockRepositoryImpl paddockRepository(Ref ref) {
   return PaddockRepositoryImpl();
 }
@@ -46,7 +46,8 @@ PaddockRepositoryImpl paddockRepository(Ref ref) {
 /// - `updatePaddock()`: Actualiza los datos de un potrero existente.
 /// - `deletePaddock()`: Elimina un potrero.
 /// -----------------------------------------------------------------------------
-@riverpod
+
+@Riverpod(keepAlive: true)
 class Paddocks extends _$Paddocks {
   /// ---------------------------------------------------------------------------
   /// Carga inicial de todos los potreros disponibles.

@@ -6,7 +6,7 @@ part of 'lot_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$lotRepositoryHash() => r'8c9a593be9b19d909e3929c3972cc2c503831bb5';
+String _$lotRepositoryHash() => r'e674fbeddd3a81e3ac08bba61109e6c81c1fe76d';
 
 /// =============================================================================
 /// # LOT PROVIDER
@@ -30,7 +30,7 @@ String _$lotRepositoryHash() => r'8c9a593be9b19d909e3929c3972cc2c503831bb5';
 ///
 /// Copied from [lotRepository].
 @ProviderFor(lotRepository)
-final lotRepositoryProvider = AutoDisposeProvider<LotRepositoryImpl>.internal(
+final lotRepositoryProvider = Provider<LotRepositoryImpl>.internal(
   lotRepository,
   name: r'lotRepositoryProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -42,8 +42,8 @@ final lotRepositoryProvider = AutoDisposeProvider<LotRepositoryImpl>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef LotRepositoryRef = AutoDisposeProviderRef<LotRepositoryImpl>;
-String _$lotsHash() => r'547cbd760f1b1f5ce80244b57f8a735e1e8a24bb';
+typedef LotRepositoryRef = ProviderRef<LotRepositoryImpl>;
+String _$lotsHash() => r'7333a1ed9bdde6caeb59571283cea10e28165af7';
 
 /// -----------------------------------------------------------------------------
 /// ## Provider de Estado: `Lots`
@@ -61,7 +61,7 @@ String _$lotsHash() => r'547cbd760f1b1f5ce80244b57f8a735e1e8a24bb';
 ///
 /// Copied from [Lots].
 @ProviderFor(Lots)
-final lotsProvider = AutoDisposeAsyncNotifierProvider<Lots, List<Lot>>.internal(
+final lotsProvider = AsyncNotifierProvider<Lots, List<Lot>>.internal(
   Lots.new,
   name: r'lotsProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -71,6 +71,6 @@ final lotsProvider = AutoDisposeAsyncNotifierProvider<Lots, List<Lot>>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef _$Lots = AutoDisposeAsyncNotifier<List<Lot>>;
+typedef _$Lots = AsyncNotifier<List<Lot>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

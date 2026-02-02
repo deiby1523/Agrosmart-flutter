@@ -8,12 +8,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'milking_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 MilkingRepositoryImpl milkingRepository(Ref ref) {
   return MilkingRepositoryImpl();
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class Milkings extends _$Milkings {
   // Variables para controlar la paginación
   int _currentPage = 0;

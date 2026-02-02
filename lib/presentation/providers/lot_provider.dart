@@ -25,7 +25,7 @@ part 'lot_provider.g.dart';
 /// Inyecta una instancia de `LotRepositoryImpl` para acceder a las operaciones
 /// de persistencia de lotes desde cualquier parte de la aplicación.
 /// -----------------------------------------------------------------------------
-@riverpod
+@Riverpod(keepAlive: true)
 LotRepositoryImpl lotRepository(Ref ref) {
   return LotRepositoryImpl();
 }
@@ -43,7 +43,7 @@ LotRepositoryImpl lotRepository(Ref ref) {
 /// - `updateLot()`: Actualiza un lote existente.
 /// - `deleteLot()`: Elimina un lote.
 /// -----------------------------------------------------------------------------
-@riverpod
+@Riverpod(keepAlive: true)
 class Lots extends _$Lots {
   /// ---------------------------------------------------------------------------
   /// Carga inicial de todos los lotes disponibles.

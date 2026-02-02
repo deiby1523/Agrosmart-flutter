@@ -11,12 +11,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'feeding_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 FeedingRepositoryImpl feedingRepository(Ref ref) {
   return FeedingRepositoryImpl();
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class Feedings extends _$Feedings {
   // Variables para controlar la paginación
   int _currentPage = 0;

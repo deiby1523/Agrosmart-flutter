@@ -22,7 +22,7 @@ part 'breed_provider.g.dart';
 /// Inyecta una instancia de `BreedRepositoryImpl`, permitiendo acceder a las
 /// operaciones del repositorio de razas desde cualquier punto de la app.
 /// -----------------------------------------------------------------------------
-@riverpod
+@Riverpod(keepAlive: true)
 BreedRepositoryImpl breedRepository(Ref ref) {
   return BreedRepositoryImpl();
 }
@@ -40,7 +40,7 @@ BreedRepositoryImpl breedRepository(Ref ref) {
 /// - `updateBreed()`: Actualiza una raza existente.
 /// - `deleteBreed()`: Elimina una raza por su ID.
 /// -----------------------------------------------------------------------------
-@riverpod
+@Riverpod(keepAlive: true)
 class Breeds extends _$Breeds {
   /// ---------------------------------------------------------------------------
   /// Carga inicial de la lista de razas desde el repositorio.

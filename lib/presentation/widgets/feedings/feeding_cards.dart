@@ -1,61 +1,50 @@
 // =============================================================================
-// ANIMAL CARDS WIDGET - Tarjetas de animales
+// FEEDING CARDS WIDGET - Tarjetas de registros de alimentacion
 // =============================================================================
-// Componente que muestra un listado de animales (`Animal`) en formato de tarjetas.
+// Componente que muestra un listado de registros de alimentacion (`Feeding`) en formato de tarjetas.
 // Ideal para dispositivos móviles o tabletas, donde las tablas no son óptimas.
 //
-// Capa: presentation/widgets/animals
+// Capa: presentation/widgets/feedings
 //
 // Integra:
-// - Riverpod (`animalProvider`) para acciones de edición y eliminación.
+// - Riverpod (`feedingProvider`) para acciones de edición y eliminación.
 // - Componentes personalizados: `CustomActions` para las acciones de cada tarjeta.
 // - Feedback visual mediante snackbars extendidos (`showSuccessSnack`, `showErrorSnack`).
 //
 // Flujo general:
-// 1. Recibe la lista de animales como parámetro.
-// 2. Genera una lista de tarjetas (`Card`) con información básica del animal.
+// 1. Recibe la lista de registros de alimentacion como parámetro.
+// 2. Genera una lista de tarjetas (`Card`) con información básica del feeding.
 // 3. Cada tarjeta incluye acciones de editar y eliminar.
 // 4. Al eliminar, se confirma la acción con un `AlertDialog` y se notifica al usuario.
 // =============================================================================
 
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
-import 'package:agrosmart_flutter/domain/entities/animal.dart';
-import 'package:agrosmart_flutter/presentation/pages/animals/animal_create_page.dart';
-import 'package:agrosmart_flutter/presentation/providers/animal_provider.dart';
+import 'package:agrosmart_flutter/domain/entities/feeding.dart';
+import 'package:agrosmart_flutter/presentation/pages/feedings/feeding_create_page.dart';
+import 'package:agrosmart_flutter/presentation/providers/feeding_provider.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_actions.dart';
 import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
-/// ---------------------------------------------------------------------------
-/// # AnimalCards
-///
-/// Widget que muestra una lista de animales (`Animal`) en tarjetas.
-/// Cada tarjeta incluye:
-/// - Codigo del animal
-/// - Nombre del animal
-/// - Sexo
-/// - Raza
-/// - Estado
-/// - Lote
-/// - Acciones: editar y eliminar
-/// ---------------------------------------------------------------------------
-class AnimalCards extends ConsumerWidget {
-  final List<Animal> animals;
+class FeedingCards extends ConsumerWidget {
+  final List<Feeding> feedings;
 
-  const AnimalCards({super.key, required this.animals});
+  const FeedingCards({super.key, required this.feedings});
 
   @override
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return ListView.separated(
       shrinkWrap: true, // Importante para usar dentro de Column
-      physics: const NeverScrollableScrollPhysics(), // Evita conflicto de scroll
-      itemCount: animals.length,
+      physics:
+          const NeverScrollableScrollPhysics(), // Evita conflicto de scroll
+      itemCount: feedings.length,
       separatorBuilder: (_, __) => const SizedBox(height: 8),
       itemBuilder: (context, index) {
-        final animal = animals[index];
+        final feeding = feedings[index];
         final colors = Theme.of(context).extension<AppColors>()!;
 
         return Card(
@@ -68,79 +57,60 @@ class AnimalCards extends ConsumerWidget {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Información del animal
+                // Información del feeding
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Nombre del animal
+                      // Fecha inicio
                       Text(
-                        animal.name,
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w600,
-                          fontSize: 16,
-                        ),
+                        'Fecha inicio: ${DateFormat('dd/MM/yyyy').format(feeding.startDate)}',
+                        style: const TextStyle(fontSize: 14),
                       ),
                       const SizedBox(height: 6),
 
-                      // Código del animal
+                      // Fecha fin
                       Text(
-                        'Código: ${animal.code}',
-                        style: const TextStyle(
-                          fontSize: 14,
-                        ),
+                        'Fecha fin: ${DateFormat('dd/MM/yyyy').format(feeding.endDate!)}',
+                        style: const TextStyle(fontSize: 14),
                       ),
                       const SizedBox(height: 6),
 
-                      // Sexo y raza
+                      // lote
                       Text(
-                        '${animal.sex} • ${animal.breed.name}',
-                        style: const TextStyle(
-                          fontSize: 14,
-                        ),
+                        'Lote: ${feeding.lot.name}',
+                        style: const TextStyle(fontSize: 14),
                       ),
                       const SizedBox(height: 6),
 
-                      // Estado
-                      Row(
-                        children: [
-                          const Text(
-                            'Estado: ',
-                            style: TextStyle(
-                              fontSize: 14,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                          Container(
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 8,
-                              vertical: 4,
-                            ),
-                            decoration: BoxDecoration(
-                              color: _getStatusColor(
-                                animal.status,
-                              ).withOpacity(0.2),
-                              borderRadius: BorderRadius.circular(12),
-                            ),
-                            child: Text(
-                              animal.status,
-                              style: TextStyle(
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
-                                color: _getStatusColor(animal.status),
-                              ),
-                            ),
-                          ),
-                        ],
+                      // insumo
+                      Text(
+                        'Insumo: ${feeding.supply.name}',
+                        style: const TextStyle(fontSize: 14),
                       ),
+                      const SizedBox(height: 6),
+
+                      // cantidad
+                      Text(
+                        'Cantidad: ${feeding.quantity} ${_parseMeasurement(feeding.measurement)}',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      const SizedBox(height: 6),
+
+                      // frecuencia
+                      Text(
+                        'Frecuencia: ${_parseFrequency(feeding.frequency)}',
+                        style: const TextStyle(fontSize: 14),
+                      ),
+                      const SizedBox(height: 6),
                     ],
                   ),
                 ),
 
                 // Acciones de la tarjeta
                 CustomActions(
-                  onEdit: () => _editAnimal(context, animal),
-                  onDelete: () => _confirmDelete(context, ref, animal),
+                  onEdit: () => _editFeeding(context, feeding),
+                  onDelete: () => _confirmDelete(context, ref, feeding),
                 ),
               ],
             ),
@@ -150,23 +120,48 @@ class AnimalCards extends ConsumerWidget {
     );
   }
 
+  String _parseMeasurement(String measurement) {
+    switch (measurement) {
+      case 'GRAMS':
+        return 'g';
+      case 'KILOGRAMS':
+        return 'kg';
+      case 'LITERS':
+        return 'L';
+      default:
+        return '';
+    }
+  }
+
+  String _parseFrequency(String frequency) {
+    switch (frequency) {
+      case 'ONE PER DAY':
+        return 'una vez al día';
+      case 'TWO PER DAY':
+        return 'dos veces al día';
+      case 'THREE PER DAY':
+        return 'Tres veces al día';
+      default:
+        return '';
+    }
+  }
 
   // ---------------------------------------------------------------------------
-  // _editAnimal
+  // _editFeeding
   // ---------------------------------------------------------------------------
 
-void _editAnimal(BuildContext context, Animal animal) {
-    context.go('/animals/edit', extra: animal);
+  void _editFeeding(BuildContext context, Feeding feeding) {
+    context.go('/feedings/edit', extra: feeding);
   }
 
   // ---------------------------------------------------------------------------
   // _confirmDelete
   // ---------------------------------------------------------------------------
-  /// Muestra un `AlertDialog` para confirmar la eliminación del animal.
-  /// - Si el usuario confirma, se elimina mediante `animalsProvider`.
+  /// Muestra un `AlertDialog` para confirmar la eliminación del feeding.
+  /// - Si el usuario confirma, se elimina mediante `feedingsProvider`.
   /// - Se muestran snackbars de éxito o error según corresponda.
-  void _confirmDelete(BuildContext context, WidgetRef ref, Animal animal) {
-        final colors = Theme.of(context).extension<AppColors>()!;
+  void _confirmDelete(BuildContext context, WidgetRef ref, Feeding feeding) {
+    final colors = Theme.of(context).extension<AppColors>()!;
 
     showDialog(
       context: context,
@@ -188,7 +183,7 @@ void _editAnimal(BuildContext context, Animal animal) {
             ),
             const SizedBox(width: 12),
             const Text(
-              'Eliminar Animal',
+              'Eliminar Feeding',
               style: TextStyle(fontWeight: FontWeight.w600, fontSize: 18),
             ),
           ],
@@ -196,11 +191,8 @@ void _editAnimal(BuildContext context, Animal animal) {
         content: Padding(
           padding: const EdgeInsets.only(top: 8),
           child: Text(
-            '¿Estás seguro que quieres eliminar el animal "${animal.name}"?\n\nEsta acción no se puede deshacer.',
-            style: TextStyle(
-              fontSize: 14,
-              height: 1.4,
-            ),
+            '¿Estás seguro que quieres eliminar el registro de alimentacion de "${feeding.supply.name}"?\n\nEsta acción no se puede deshacer.',
+            style: TextStyle(fontSize: 14, height: 1.4),
           ),
         ),
         actions: [
@@ -221,11 +213,11 @@ void _editAnimal(BuildContext context, Animal animal) {
             onPressed: () async {
               try {
                 await ref
-                    .read(animalsProvider.notifier)
-                    .deleteAnimal(animal.id!);
+                    .read(feedingsProvider.notifier)
+                    .deleteFeeding(feeding.id!);
                 if (context.mounted) {
                   context.showSuccessSnack(
-                    'Animal "${animal.name}" eliminada correctamente',
+                    'Alimentacion de "${feeding.supply.name}" eliminado correctamente',
                   );
                   Navigator.of(context).pop();
                 }
@@ -258,20 +250,4 @@ void _editAnimal(BuildContext context, Animal animal) {
     );
   }
 
-  // ---------------------------------------------------------------------------
-  // _getStatusColor()
-  // ---------------------------------------------------------------------------
-  /// Devuelve un color asociado al estado del animal.
-  Color _getStatusColor(String status) {
-    switch (status) {
-      case 'ACTIVE':
-        return Colors.green;
-      case 'SOLD':
-        return Colors.blueGrey;
-      case 'DEAD':
-        return Colors.red;
-      default:
-        return Colors.grey;
-    }
-  }
 }

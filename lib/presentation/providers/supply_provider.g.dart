@@ -6,33 +6,29 @@ part of 'supply_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$supplyRepositoryHash() => r'9753ecb13c3bd7fb3252ad9fdf49adf90a6581c7';
+String _$supplyRepositoryHash() => r'5555232980193197059ea82d7f31da9afc88b4b3';
 
 /// See also [supplyRepository].
 @ProviderFor(supplyRepository)
-final supplyRepositoryProvider =
-    AutoDisposeProvider<SupplyRepositoryImpl>.internal(
-      supplyRepository,
-      name: r'supplyRepositoryProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$supplyRepositoryHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+final supplyRepositoryProvider = Provider<SupplyRepositoryImpl>.internal(
+  supplyRepository,
+  name: r'supplyRepositoryProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$supplyRepositoryHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef SupplyRepositoryRef = AutoDisposeProviderRef<SupplyRepositoryImpl>;
-String _$suppliesHash() => r'5c209879e321d9163507d5feb503f087c1913169';
+typedef SupplyRepositoryRef = ProviderRef<SupplyRepositoryImpl>;
+String _$suppliesHash() => r'a7fa02b7f81d0c85d72d5a82302d37c16871ff02';
 
 /// See also [Supplies].
 @ProviderFor(Supplies)
 final suppliesProvider =
-    AutoDisposeAsyncNotifierProvider<
-      Supplies,
-      PaginatedResponse<Supply>
-    >.internal(
+    AsyncNotifierProvider<Supplies, PaginatedResponse<Supply>>.internal(
       Supplies.new,
       name: r'suppliesProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -42,6 +38,6 @@ final suppliesProvider =
       allTransitiveDependencies: null,
     );
 
-typedef _$Supplies = AutoDisposeAsyncNotifier<PaginatedResponse<Supply>>;
+typedef _$Supplies = AsyncNotifier<PaginatedResponse<Supply>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

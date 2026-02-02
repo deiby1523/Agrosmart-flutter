@@ -440,7 +440,7 @@ class FeedingCreatePageState extends ConsumerState<FeedingCreatePage> {
                         color: Colors.white,
                       ),
                     )
-                  : Text('Crear Feeding'),
+                  : Text('Crear Registro'),
             ),
           ),
         ],

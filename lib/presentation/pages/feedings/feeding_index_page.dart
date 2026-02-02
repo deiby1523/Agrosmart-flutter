@@ -79,7 +79,7 @@ class _FeedingsContent extends ConsumerWidget {
         appBar: AppBar(
           actionsPadding: const EdgeInsets.symmetric(horizontal: 30),
           title: Text(
-            'Registros de alimentacion',
+            'Registros de Alimentación',
             style: Theme.of(context).textTheme.displayMedium,
           ),
           centerTitle: false,
@@ -94,7 +94,7 @@ class _FeedingsContent extends ConsumerWidget {
             ),
           ],
         ),
-      
+
         body: Padding(
           padding: const EdgeInsets.all(6.0),
           child: feedingsState.when(
@@ -144,40 +144,39 @@ class _FeedingsContent extends ConsumerWidget {
 
   // Build feedings list synchronously using already-populated feedings
   Widget _buildFeedingsList(
-  BuildContext context,
-  WidgetRef ref,
-  PaginatedResponse<Feeding> paginatedResponse,
-  List<Feeding> feedings,
-) {
-  final paginationInfo = paginatedResponse.paginationInfo;
+    BuildContext context,
+    WidgetRef ref,
+    PaginatedResponse<Feeding> paginatedResponse,
+    List<Feeding> feedings,
+  ) {
+    final paginationInfo = paginatedResponse.paginationInfo;
 
-  return SingleChildScrollView(
-    child: Padding(
-      padding: const EdgeInsets.all(10.0),
-      child: Column(
-        children: [
-          // Información de paginación
-          _buildPaginationInfo(paginationInfo),
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Column(
+          children: [
+            // Información de paginación
+            _buildPaginationInfo(paginationInfo),
 
-          const SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-          // Lista de registros de alimentacion - QUITA EL ROW
-          Responsive(
-            mobile: FeedingTable(feedings: feedings),
-            tablet: FeedingTable(feedings: feedings),
-            desktop: FeedingTable(feedings: feedings),
-          ),
-          
-          const SizedBox(height: 20),
+            // Lista de registros de alimentacion - QUITA EL ROW
+            Responsive(
+              mobile: FeedingTable(feedings: feedings),
+              tablet: FeedingTable(feedings: feedings),
+              desktop: FeedingTable(feedings: feedings),
+            ),
 
-          // Controles de paginación
-          _buildPaginationControls(context, ref, paginationInfo),
-        ],
+            const SizedBox(height: 20),
+
+            // Controles de paginación
+            _buildPaginationControls(context, ref, paginationInfo),
+          ],
+        ),
       ),
-    ),
-  );
-}
-
+    );
+  }
 
 
   // Método para controles de paginación
@@ -301,7 +300,10 @@ class _FeedingsContent extends ConsumerWidget {
         children: [
           Icon(Icons.error_outline, size: 64, color: Colors.red.shade400),
           const SizedBox(height: 16),
-          Text('Error al cargar los registros de alimentacion', style: textTheme.headlineSmall),
+          Text(
+            'Error al cargar los registros de alimentacion',
+            style: textTheme.headlineSmall,
+          ),
           const SizedBox(height: 8),
           Text(
             error.toString(),
@@ -337,19 +339,29 @@ class _LoadingSkeletonView extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(width: 150, height: 14, color: Colors.grey.withOpacity(0.1)),
-                Container(width: 100, height: 14, color: Colors.grey.withOpacity(0.1)),
+                Container(
+                  width: 150,
+                  height: 14,
+                  color: Colors.grey.withOpacity(0.1),
+                ),
+                Container(
+                  width: 100,
+                  height: 14,
+                  color: Colors.grey.withOpacity(0.1),
+                ),
               ],
             ),
             const SizedBox(height: 16),
-            
+
             // Skeleton principal
             Responsive(
-              // En móvil/tablet podrías querer otro skeleton (CardSkeleton), 
+              // En móvil/tablet podrías querer otro skeleton (CardSkeleton),
               // pero si quieres tabla siempre, usa FeedingTableSkeleton.
               // Asumiremos que quieres simular la vista correspondiente:
-              mobile: const CardsSkeleton(quantity: 5,), // O un componente de Cards skeleton
-              tablet: const CardsSkeleton(quantity: 8,),
+              mobile: const CardsSkeleton(
+                quantity: 5,
+              ), // O un componente de Cards skeleton
+              tablet: const CardsSkeleton(quantity: 8),
               desktop: const FeedingTableSkeleton(rowCount: 10),
             ),
           ],

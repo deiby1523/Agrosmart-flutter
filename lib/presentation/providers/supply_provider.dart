@@ -8,12 +8,12 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'supply_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 SupplyRepositoryImpl supplyRepository(Ref ref) {
   return SupplyRepositoryImpl();
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class Supplies extends _$Supplies {
   // Variables para controlar la paginación
   int _currentPage = 0;
