@@ -45,7 +45,7 @@ final paddockRepositoryProvider = Provider<PaddockRepositoryImpl>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef PaddockRepositoryRef = ProviderRef<PaddockRepositoryImpl>;
-String _$paddocksHash() => r'de7dfce21ccb866d52690354ee2b07faa9490425';
+String _$paddocksHash() => r'58fe02d77e7fce1f09b7c06620d2b9674bb77c8b';
 
 /// -----------------------------------------------------------------------------
 /// ## Provider de Estado: `Paddocks`

@@ -23,7 +23,7 @@ final supplyRepositoryProvider = Provider<SupplyRepositoryImpl>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SupplyRepositoryRef = ProviderRef<SupplyRepositoryImpl>;
-String _$suppliesHash() => r'a7fa02b7f81d0c85d72d5a82302d37c16871ff02';
+String _$suppliesHash() => r'4f6da9b3712a2a21c937b128dc7288fe2725b583';
 
 /// See also [Supplies].
 @ProviderFor(Supplies)

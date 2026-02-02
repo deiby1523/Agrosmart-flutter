@@ -3,6 +3,7 @@ import 'package:agrosmart_flutter/domain/entities/supply.dart';
 import 'package:agrosmart_flutter/domain/entities/lot.dart';
 import 'package:agrosmart_flutter/domain/entities/farm.dart';
 import 'package:agrosmart_flutter/domain/entities/paginated_response.dart';
+import 'package:agrosmart_flutter/presentation/providers/dashboard_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -80,6 +81,7 @@ class Supplies extends _$Supplies {
       );
 
       await ref.read(supplyRepositoryProvider).createSupply(supply);
+      ref.invalidate(dashboardMetricsProvider);
       // Recargar la página actual después de crear
       return await _loadSupplies(page: _currentPage, size: _pageSize);
     });
@@ -103,6 +105,7 @@ class Supplies extends _$Supplies {
         'expirationDate': expirationDate.toIso8601String(),
       };
       await ref.read(supplyRepositoryProvider).updateSupply(id, updates);
+      ref.invalidate(dashboardMetricsProvider);
       // Recargar la página actual después de actualizar
       return await _loadSupplies(page: _currentPage, size: _pageSize);
     });
@@ -117,6 +120,7 @@ class Supplies extends _$Supplies {
     state = await AsyncValue.guard(() async {
       await ref.read(supplyRepositoryProvider).deleteSupply(id);
       // Recargar la página actual después de eliminar
+      ref.invalidate(dashboardMetricsProvider);
       return await _loadSupplies(page: _currentPage, size: _pageSize);
     });
   }

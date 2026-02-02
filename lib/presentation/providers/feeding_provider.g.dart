@@ -23,7 +23,7 @@ final feedingRepositoryProvider = Provider<FeedingRepositoryImpl>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef FeedingRepositoryRef = ProviderRef<FeedingRepositoryImpl>;
-String _$feedingsHash() => r'9b0114c0f4bba052e0a41a72020587c04cfd9ccd';
+String _$feedingsHash() => r'99d2729fd7493d509ee0e83e9e252f75945edee6';
 
 /// See also [Feedings].
 @ProviderFor(Feedings)

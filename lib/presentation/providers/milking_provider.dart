@@ -3,6 +3,7 @@ import 'package:agrosmart_flutter/domain/entities/milking.dart';
 import 'package:agrosmart_flutter/domain/entities/lot.dart';
 import 'package:agrosmart_flutter/domain/entities/farm.dart';
 import 'package:agrosmart_flutter/domain/entities/paginated_response.dart';
+import 'package:agrosmart_flutter/presentation/providers/dashboard_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -81,6 +82,7 @@ class Milkings extends _$Milkings {
       );
 
       await ref.read(milkingRepositoryProvider).createMilking(milking);
+      ref.invalidate(dashboardMetricsProvider);
       // Recargar la página actual después de crear
       return await _loadMilkings(page: _currentPage, size: _pageSize);
     });
@@ -115,6 +117,7 @@ class Milkings extends _$Milkings {
         },
       };
       await ref.read(milkingRepositoryProvider).updateMilking(id, updates);
+      ref.invalidate(dashboardMetricsProvider);
       // Recargar la página actual después de actualizar
       return await _loadMilkings(page: _currentPage, size: _pageSize);
     });
@@ -128,6 +131,7 @@ class Milkings extends _$Milkings {
   Future<void> deleteMilking(int id) async {
     state = await AsyncValue.guard(() async {
       await ref.read(milkingRepositoryProvider).deleteMilking(id);
+      ref.invalidate(dashboardMetricsProvider);
       // Recargar la página actual después de eliminar
       return await _loadMilkings(page: _currentPage, size: _pageSize);
     });

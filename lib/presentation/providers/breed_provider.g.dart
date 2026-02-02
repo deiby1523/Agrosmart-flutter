@@ -40,7 +40,7 @@ final breedRepositoryProvider = Provider<BreedRepositoryImpl>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef BreedRepositoryRef = ProviderRef<BreedRepositoryImpl>;
-String _$breedsHash() => r'b6aab478c93d3e61cf5f9915202565636cdaee13';
+String _$breedsHash() => r'134f8441f473047f75706550d19d5a3780dbb8dc';
 
 /// -----------------------------------------------------------------------------
 /// ## Provider de Estado: `Breeds`

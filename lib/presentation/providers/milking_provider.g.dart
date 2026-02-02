@@ -23,7 +23,7 @@ final milkingRepositoryProvider = Provider<MilkingRepositoryImpl>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MilkingRepositoryRef = ProviderRef<MilkingRepositoryImpl>;
-String _$milkingsHash() => r'a247de9124ff33752c1ba6b6ed94b83cfe805e03';
+String _$milkingsHash() => r'7f39fac51424aedbe546fbdd582b574dbbe63993';
 
 /// See also [Milkings].
 @ProviderFor(Milkings)

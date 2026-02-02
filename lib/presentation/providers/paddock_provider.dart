@@ -1,3 +1,4 @@
+import 'package:agrosmart_flutter/presentation/providers/dashboard_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../data/repositories/paddock_repository_impl.dart';
@@ -89,6 +90,7 @@ class Paddocks extends _$Paddocks {
         grassType: grassType,
       );
       await ref.read(paddockRepositoryProvider).createPaddock(paddock);
+      ref.invalidate(dashboardMetricsProvider);
       ref.invalidateSelf(); // Fuerza la reconstrucción del estado
     } catch (error) {
       state = AsyncError(error, StackTrace.current);
@@ -126,6 +128,7 @@ class Paddocks extends _$Paddocks {
         'grassType': grassType,
       };
       await ref.read(paddockRepositoryProvider).updatePaddock(id, updates);
+      ref.invalidate(dashboardMetricsProvider);
       ref.invalidateSelf();
     } catch (error) {
       state = AsyncError(error, StackTrace.current);
@@ -143,6 +146,7 @@ class Paddocks extends _$Paddocks {
     state = const AsyncLoading();
     try {
       await ref.read(paddockRepositoryProvider).deletePaddock(id);
+      ref.invalidate(dashboardMetricsProvider);
       ref.invalidateSelf();
     } catch (error) {
       state = AsyncError(error, StackTrace.current);

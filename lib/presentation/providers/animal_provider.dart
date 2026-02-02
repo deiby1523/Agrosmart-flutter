@@ -5,6 +5,7 @@ import 'package:agrosmart_flutter/domain/entities/farm.dart';
 import 'package:agrosmart_flutter/domain/entities/lot.dart';
 import 'package:agrosmart_flutter/domain/entities/paddock.dart';
 import 'package:agrosmart_flutter/domain/entities/paginated_response.dart';
+import 'package:agrosmart_flutter/presentation/providers/dashboard_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -107,11 +108,12 @@ class Animals extends _$Animals {
         father: father,
         mother: mother,
         purchaseDate: purchaseDate,
-        purchasePrice: purchasePrice
+        purchasePrice: purchasePrice,
       );
 
-      
       await ref.read(animalRepositoryProvider).createAnimal(animal);
+
+      ref.invalidate(dashboardMetricsProvider);
       // Recargar la página actual después de crear
       return await _loadAnimals(page: _currentPage, size: _pageSize);
     });
@@ -184,6 +186,8 @@ class Animals extends _$Animals {
         if (farm != null) 'farm': {'id': farm.id, 'name': farm.name},
       };
       await ref.read(animalRepositoryProvider).updateAnimal(id, updates);
+      ref.invalidate(dashboardMetricsProvider);
+
       // Recargar la página actual después de actualizar
       return await _loadAnimals(page: _currentPage, size: _pageSize);
     });
@@ -197,6 +201,8 @@ class Animals extends _$Animals {
   Future<void> deleteAnimal(int id) async {
     state = await AsyncValue.guard(() async {
       await ref.read(animalRepositoryProvider).deleteAnimal(id);
+            ref.invalidate(dashboardMetricsProvider);
+
       // Recargar la página actual después de eliminar
       return await _loadAnimals(page: _currentPage, size: _pageSize);
     });
@@ -207,20 +213,22 @@ class Animals extends _$Animals {
   // ---------------------------------------------------------------------------
 
   /// Carga animales desde el repositorio
-  Future<PaginatedResponse<Animal>> _loadAnimals({int page = 1, int size = 10}) async {
-    return await ref.read(animalRepositoryProvider).getAnimals(
-      page: page,
-      size: size,
-    );
+  Future<PaginatedResponse<Animal>> _loadAnimals({
+    int page = 1,
+    int size = 10,
+  }) async {
+    return await ref
+        .read(animalRepositoryProvider)
+        .getAnimals(page: page, size: size);
   }
 
   /// ---------------------------------------------------------------------------
   /// Getters para acceder a información de paginación desde la UI
   /// ---------------------------------------------------------------------------
-  
+
   int get currentPage => _currentPage;
   int get pageSize => _pageSize;
-  
+
   bool get hasNextPage => state.value?.paginationInfo.hasNext ?? false;
   bool get hasPreviousPage => state.value?.paginationInfo.hasPrevious ?? false;
   bool get isFirstPage => state.value?.paginationInfo.isFirst ?? true;

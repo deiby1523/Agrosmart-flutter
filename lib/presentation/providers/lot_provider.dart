@@ -1,3 +1,4 @@
+import 'package:agrosmart_flutter/presentation/providers/dashboard_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../data/repositories/lot_repository_impl.dart';
@@ -70,6 +71,7 @@ class Lots extends _$Lots {
     try {
       final lot = Lot(name: name, description: description);
       await ref.read(lotRepositoryProvider).createLot(lot);
+      ref.invalidate(dashboardMetricsProvider);
       ref.invalidateSelf(); // Fuerza reconstrucción y actualización del estado
     } catch (error) {
       state = AsyncError(error, StackTrace.current);
@@ -94,6 +96,7 @@ class Lots extends _$Lots {
         'description': description,
       };
       await ref.read(lotRepositoryProvider).updateLot(id, updates);
+      ref.invalidate(dashboardMetricsProvider);
       ref.invalidateSelf();
     } catch (error) {
       state = AsyncError(error, StackTrace.current);
@@ -111,6 +114,7 @@ class Lots extends _$Lots {
     state = const AsyncLoading();
     try {
       await ref.read(lotRepositoryProvider).deleteLot(id);
+      ref.invalidate(dashboardMetricsProvider);
       ref.invalidateSelf();
     } catch (error) {
       state = AsyncError(error, StackTrace.current);

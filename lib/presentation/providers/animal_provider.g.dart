@@ -23,7 +23,7 @@ final animalRepositoryProvider = Provider<AnimalRepositoryImpl>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AnimalRepositoryRef = ProviderRef<AnimalRepositoryImpl>;
-String _$animalsHash() => r'5f6a1287b24c8c2787403c3f3dff991c64ed58be';
+String _$animalsHash() => r'9f8f716e91c36b92ade4ff6557639640879b7b7c';
 
 /// See also [Animals].
 @ProviderFor(Animals)

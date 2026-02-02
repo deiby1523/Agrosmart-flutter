@@ -6,6 +6,7 @@ import 'package:agrosmart_flutter/domain/entities/farm.dart';
 import 'package:agrosmart_flutter/domain/entities/lot.dart';
 import 'package:agrosmart_flutter/domain/entities/paginated_response.dart';
 import 'package:agrosmart_flutter/domain/entities/supply.dart';
+import 'package:agrosmart_flutter/presentation/providers/dashboard_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -91,6 +92,7 @@ class Feedings extends _$Feedings {
       );
 
       await ref.read(feedingRepositoryProvider).createFeeding(feeding);
+      ref.invalidate(dashboardMetricsProvider);
       // Recargar la página actual después de crear
       return await _loadFeedings(page: _currentPage, size: _pageSize);
     });
@@ -123,7 +125,8 @@ class Feedings extends _$Feedings {
         'lotId': lot.id,
       };
       await ref.read(feedingRepositoryProvider).updateFeeding(id, updates);
-      log("SE ESTA HACIENDO UPDATE: $updates");
+        // log("SE ESTA HACIENDO UPDATE: $updates");
+      ref.invalidate(dashboardMetricsProvider);  
       // Recargar la página actual después de actualizar
       return await _loadFeedings(page: _currentPage, size: _pageSize);
     });
@@ -138,6 +141,7 @@ class Feedings extends _$Feedings {
     state = await AsyncValue.guard(() async {
       await ref.read(feedingRepositoryProvider).deleteFeeding(id);
       // Recargar la página actual después de eliminar
+      ref.invalidate(dashboardMetricsProvider);
       return await _loadFeedings(page: _currentPage, size: _pageSize);
     });
   }

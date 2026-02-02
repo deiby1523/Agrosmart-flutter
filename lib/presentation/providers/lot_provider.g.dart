@@ -43,7 +43,7 @@ final lotRepositoryProvider = Provider<LotRepositoryImpl>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef LotRepositoryRef = ProviderRef<LotRepositoryImpl>;
-String _$lotsHash() => r'7333a1ed9bdde6caeb59571283cea10e28165af7';
+String _$lotsHash() => r'fc21e5cab33ded8b397e1eaafcd3f4264ac43550';
 
 /// -----------------------------------------------------------------------------
 /// ## Provider de Estado: `Lots`
