@@ -299,7 +299,7 @@ class FeedingEditPageState extends ConsumerState<FeedingEditPage> {
         ),
         const SizedBox(width: 12),
         Text(
-          'Editar Feeding',
+          'Editar Registro de alimentación',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: Theme.of(context).colorScheme.onSurface,

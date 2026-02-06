@@ -317,7 +317,7 @@ class FeedingCreatePageState extends ConsumerState<FeedingCreatePage> {
         ),
         const SizedBox(width: 12),
         Text(
-          'Nuevo Feeding',
+          'Nuevo Registro de alimentación',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: Theme.of(context).colorScheme.onSurface,

@@ -850,7 +850,7 @@ class _MilkTrendLineChart extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'TENDENCIA DE PRODUCCIÓN DIARIA (últimos 7 registros)',
+            'TENDENCIA DE PRODUCCIÓN DIARIA (últimos 7 días)',
             style: TextStyle(
               color: colors.icon,
               fontSize: 12,
@@ -1024,7 +1024,7 @@ class _MilkByLotDonutChartState extends State<_MilkByLotDonutChart> {
                 Row(
                   children: [
                     Text(
-                      'PRODUCCIÓN POR LOTE (últimos 7 registros)',
+                      'PRODUCCIÓN POR LOTE (últimos 7 días)',
                       style: TextStyle(
                         color: colors.icon,
                         fontSize: 12,
