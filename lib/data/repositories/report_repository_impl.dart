@@ -21,12 +21,44 @@ class ReportRepositoryImpl implements ReportRepository {
       "fechaFin": fechaFin.toIso8601String(),
     };
 
-    // Apuntamos al endpoint correcto (ajusta la URL según tu API)
     const endpoint = ApiConstants.productionReport;
 
     try {
       final response = await _apiClient.dio.download(
-        ApiConstants.productionReport,
+        endpoint,
+        savePath,
+        options: Options(
+          method: 'POST',
+          responseType: ResponseType.bytes,
+          followRedirects: false,
+          validateStatus: (status) => status! < 500,
+        ),
+        data: payload,
+      );
+      log("Peticion de reporte: $payload");
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<void> downloadSupplyReport({
+    required String? tipoInsumo,
+    required DateTime? fechaInicio,
+    required DateTime? fechaFin,
+    required String savePath,
+  }) async {
+    final payload = {
+      "tipoInsumo": tipoInsumo,
+      "fechaInicio": fechaInicio?.toIso8601String(),
+      "fechaFin": fechaFin?.toIso8601String(),
+    };
+
+    const endpoint = ApiConstants.supplyReport;
+
+    try {
+      final response = await _apiClient.dio.download(
+        endpoint,
         savePath,
         options: Options(
           method: 'POST',

@@ -97,7 +97,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                 // Tarjeta de producción del día
                 _DailyProductionCard(metrics: widget.metrics),
                 const SizedBox(height: 20),
-        
+
                 // Grid de métricas principales (Ahora es Responsive)
                 Responsive(
                   mobile: _MainMetricsGrid(
@@ -120,7 +120,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                   ),
                 ),
                 const SizedBox(height: 20),
-        
+
                 // Sección de gráficos (Ahora es Responsive)
                 Responsive(
                   mobile: Column(
@@ -165,7 +165,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                   ),
                 ),
                 const SizedBox(height: 20),
-        
+
                 // Métricas de producción (Ahora es Responsive)
                 Responsive(
                   mobile: _ProductionMetricsSection(
@@ -188,7 +188,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                   ),
                 ),
                 const SizedBox(height: 20),
-        
+
                 // Eficiencia y alimentación (Ahora es Responsive)
                 Responsive(
                   mobile: Column(
@@ -237,7 +237,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                   ),
                 ),
                 const SizedBox(height: 20),
-        
+
                 // Comparativa de lotes
                 _LotsComparisonCard(
                   data: widget.metrics.milkTrend.byLot,
@@ -245,7 +245,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                 ),
               ],
             ),
-        
+
             // Header con gradiente
             // SliverAppBar(
             //   pinned: true,
@@ -1189,13 +1189,16 @@ class _EfficiencyCard extends StatelessWidget {
                     '${metrics.efficiencyIndicators.milkPerLot.toStringAsFixed(1)} L',
               ),
               _EfficiencyIndicator(
-                label: 'Efic. Alimenticia',
-                value: metrics.efficiencyIndicators.feedEfficiencyRatio
-                    .toStringAsFixed(2),
+                label: 'Crecimiento',
+                value:
+                    '${(metrics.efficiencyIndicators.productionGrowthRate * 100).toStringAsFixed(1)}%',
               ),
               _EfficiencyIndicator(
-                label: 'Lotes + Promedio',
-                value: metrics.efficiencyIndicators.lotsAboveAverage.toString(),
+                label: 'Pico Diario',
+                // Mostramos los litros del día de mayor producción
+                value: metrics.efficiencyIndicators.peakProductionDay != null
+                    ? '${metrics.efficiencyIndicators.peakProductionDay!.liters.toStringAsFixed(1)} L'
+                    : '',
               ),
             ],
           ),
@@ -1302,9 +1305,9 @@ class _FeedingSummaryCard extends StatelessWidget {
           Column(
             children: [
               _FeedingInfoItem(
-                label: 'Alimento del Mes',
-                value:
-                    '${metrics.feedingSummary.totalFeedQuantityMonthKg.toStringAsFixed(2)} kg',
+                label: 'Alimentos por vencer',
+                value: metrics.feedingSummary.suppliesExpiringSoonCount
+                    .toString(),
               ),
               const SizedBox(height: 12),
               _FeedingInfoItem(

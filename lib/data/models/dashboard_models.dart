@@ -146,13 +146,13 @@ class MilkRecordDetail {
 // feedingSummary
 @JsonSerializable()
 class FeedingSummary {
-  final double totalFeedQuantityMonthKg;
+  final int suppliesExpiringSoonCount; // CAMBIO: Nuevo campo del JSON
   final String mostUsedSupplyType;
   final String mostUsedGrassType;
   final String feedingFrequencyDominant;
 
   FeedingSummary({
-    required this.totalFeedQuantityMonthKg,
+    required this.suppliesExpiringSoonCount,
     required this.mostUsedSupplyType,
     required this.mostUsedGrassType,
     required this.feedingFrequencyDominant,
@@ -163,19 +163,35 @@ class FeedingSummary {
   Map<String, dynamic> toJson() => _$FeedingSummaryToJson(this);
 }
 
-// efficiencyIndicators
+// Nueva clase auxiliar para EfficiencyIndicators
 @JsonSerializable()
+class PeakProductionDay {
+  final DateTime date;
+  final double liters;
+
+  PeakProductionDay({
+    required this.date,
+    required this.liters,
+  });
+
+  factory PeakProductionDay.fromJson(Map<String, dynamic> json) =>
+      _$PeakProductionDayFromJson(json);
+  Map<String, dynamic> toJson() => _$PeakProductionDayToJson(this);
+}
+
+// efficiencyIndicators
+@JsonSerializable(explicitToJson: true) // Agregado explicitToJson para el objeto anidado
 class EfficiencyIndicators {
   final double milkPerAnimal;
   final double milkPerLot;
-  final double feedEfficiencyRatio;
-  final int lotsAboveAverage;
+  final double productionGrowthRate; // CAMBIO: Nuevo campo
+  final PeakProductionDay? peakProductionDay; // CAMBIO: Nuevo objeto anidado
 
   EfficiencyIndicators({
     required this.milkPerAnimal,
     required this.milkPerLot,
-    required this.feedEfficiencyRatio,
-    required this.lotsAboveAverage,
+    required this.productionGrowthRate,
+    this.peakProductionDay,
   });
 
   factory EfficiencyIndicators.fromJson(Map<String, dynamic> json) =>

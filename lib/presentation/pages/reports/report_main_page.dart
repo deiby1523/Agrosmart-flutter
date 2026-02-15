@@ -273,7 +273,7 @@ class _MainMetricsGrid extends StatelessWidget {
           subtitle: 'Gestión de recursos',
           icon: Icons.compost_rounded,
           primaryColor: colors.category4,
-          route: '/reports/production',
+          route: '/reports/supplies',
         ),
         _ReportCard(
           title: 'Animales',

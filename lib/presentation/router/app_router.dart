@@ -32,6 +32,7 @@ import 'package:agrosmart_flutter/presentation/pages/milkings/milking_edit_page.
 import 'package:agrosmart_flutter/presentation/pages/milkings/milking_index_page.dart';
 import 'package:agrosmart_flutter/presentation/pages/reports/production_report_page.dart';
 import 'package:agrosmart_flutter/presentation/pages/reports/report_main_page.dart';
+import 'package:agrosmart_flutter/presentation/pages/reports/supply_report_page.dart';
 import 'package:agrosmart_flutter/presentation/pages/supplies/supplies_index_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
@@ -274,6 +275,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const ProductionReportPage(),
+          transitionsBuilder: (_, __, ___, child) => child,
+          transitionDuration: Duration.zero,
+        ),
+      ),
+      GoRoute(
+        path: '/reports/supplies',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const SupplyReportPage(),
           transitionsBuilder: (_, __, ___, child) => child,
           transitionDuration: Duration.zero,
         ),

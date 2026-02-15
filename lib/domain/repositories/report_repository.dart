@@ -7,9 +7,14 @@ abstract class ReportRepository {
     required String savePath,
   });
 
-  // downloadAnimalReport
+  Future<void> downloadSupplyReport({
+    required String tipoInsumo,
+    required DateTime fechaInicio,
+    required DateTime fechaFin,
+    required String savePath,
+  });
 
-  // downloadSupplyReport
+  // downloadAnimalReport
 
   // downloadFeedingReport
   

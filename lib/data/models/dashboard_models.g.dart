@@ -124,8 +124,8 @@ Map<String, dynamic> _$MilkRecordDetailToJson(MilkRecordDetail instance) =>
 
 FeedingSummary _$FeedingSummaryFromJson(Map<String, dynamic> json) =>
     FeedingSummary(
-      totalFeedQuantityMonthKg: (json['totalFeedQuantityMonthKg'] as num)
-          .toDouble(),
+      suppliesExpiringSoonCount: (json['suppliesExpiringSoonCount'] as num)
+          .toInt(),
       mostUsedSupplyType: json['mostUsedSupplyType'] as String,
       mostUsedGrassType: json['mostUsedGrassType'] as String,
       feedingFrequencyDominant: json['feedingFrequencyDominant'] as String,
@@ -133,10 +133,22 @@ FeedingSummary _$FeedingSummaryFromJson(Map<String, dynamic> json) =>
 
 Map<String, dynamic> _$FeedingSummaryToJson(FeedingSummary instance) =>
     <String, dynamic>{
-      'totalFeedQuantityMonthKg': instance.totalFeedQuantityMonthKg,
+      'suppliesExpiringSoonCount': instance.suppliesExpiringSoonCount,
       'mostUsedSupplyType': instance.mostUsedSupplyType,
       'mostUsedGrassType': instance.mostUsedGrassType,
       'feedingFrequencyDominant': instance.feedingFrequencyDominant,
+    };
+
+PeakProductionDay _$PeakProductionDayFromJson(Map<String, dynamic> json) =>
+    PeakProductionDay(
+      date: DateTime.parse(json['date'] as String),
+      liters: (json['liters'] as num).toDouble(),
+    );
+
+Map<String, dynamic> _$PeakProductionDayToJson(PeakProductionDay instance) =>
+    <String, dynamic>{
+      'date': instance.date.toIso8601String(),
+      'liters': instance.liters,
     };
 
 EfficiencyIndicators _$EfficiencyIndicatorsFromJson(
@@ -144,8 +156,12 @@ EfficiencyIndicators _$EfficiencyIndicatorsFromJson(
 ) => EfficiencyIndicators(
   milkPerAnimal: (json['milkPerAnimal'] as num).toDouble(),
   milkPerLot: (json['milkPerLot'] as num).toDouble(),
-  feedEfficiencyRatio: (json['feedEfficiencyRatio'] as num).toDouble(),
-  lotsAboveAverage: (json['lotsAboveAverage'] as num).toInt(),
+  productionGrowthRate: (json['productionGrowthRate'] as num).toDouble(),
+  peakProductionDay: json['peakProductionDay'] == null
+      ? null
+      : PeakProductionDay.fromJson(
+          json['peakProductionDay'] as Map<String, dynamic>,
+        ),
 );
 
 Map<String, dynamic> _$EfficiencyIndicatorsToJson(
@@ -153,6 +169,6 @@ Map<String, dynamic> _$EfficiencyIndicatorsToJson(
 ) => <String, dynamic>{
   'milkPerAnimal': instance.milkPerAnimal,
   'milkPerLot': instance.milkPerLot,
-  'feedEfficiencyRatio': instance.feedEfficiencyRatio,
-  'lotsAboveAverage': instance.lotsAboveAverage,
+  'productionGrowthRate': instance.productionGrowthRate,
+  'peakProductionDay': instance.peakProductionDay?.toJson(),
 };

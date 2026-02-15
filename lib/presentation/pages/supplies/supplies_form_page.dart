@@ -386,7 +386,7 @@ class _SupplyFormDialogState extends ConsumerState<SupplyFormDialog> {
   /// --------------------------------------------------------------------------
   Future<void> _processFormSubmission() async {
     final name = _nameController.text.trim();
-    final type = _typeController.text.trim();
+    final type = _typeController.text.trim().toLowerCase();
 
     // Validaciones adicionales
     if (_expirationDateController.text.isEmpty) {

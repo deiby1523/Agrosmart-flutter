@@ -24,7 +24,7 @@ final reportRepositoryProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ReportRepositoryRef = AutoDisposeProviderRef<ReportRepositoryImpl>;
-String _$reportsHash() => r'e0a429a4971e1f89915ff5cb9765c2d649911b86';
+String _$reportsHash() => r'3580422378f1caf2ac7451f5de8f725b789ddb6a';
 
 /// See also [Reports].
 @ProviderFor(Reports)

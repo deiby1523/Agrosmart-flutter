@@ -3,53 +3,36 @@ import 'dart:async';
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:agrosmart_flutter/core/utils/validators.dart';
 import 'package:agrosmart_flutter/domain/entities/lot.dart';
+import 'package:agrosmart_flutter/domain/entities/supply.dart';
 import 'package:agrosmart_flutter/presentation/providers/lot_provider.dart';
 import 'package:agrosmart_flutter/presentation/providers/report_provider.dart';
+import 'package:agrosmart_flutter/presentation/providers/supply_provider.dart';
 import 'package:agrosmart_flutter/presentation/widgets/animations/fade_entry_wrapper.dart';
 import 'package:agrosmart_flutter/presentation/widgets/custom_date_field.dart';
+import 'package:agrosmart_flutter/presentation/widgets/custom_select_field.dart';
 import 'package:agrosmart_flutter/presentation/widgets/dashboard_layout.dart';
 import 'package:agrosmart_flutter/presentation/widgets/snackbar_extensions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class ProductionReportPage extends ConsumerStatefulWidget {
-  const ProductionReportPage({super.key});
+class SupplyReportPage extends ConsumerStatefulWidget {
+  const SupplyReportPage({super.key});
 
   @override
-  ConsumerState<ProductionReportPage> createState() =>
-      _ProductionReportPageState();
+  ConsumerState<SupplyReportPage> createState() => _SupplyReportPageState();
 }
 
-class _ProductionReportPageState extends ConsumerState<ProductionReportPage> {
+class _SupplyReportPageState extends ConsumerState<SupplyReportPage> {
   final _formKey = GlobalKey<FormState>();
 
-  List<Lot> _lots = [];
+  List<Supply> _supplies = [];
+  List<String> _supplyTypes = [];
 
-  final List<int> _selectedLotIds = [];
-
-  void _toggleLot(int id) {
-    setState(() {
-      if (_selectedLotIds.contains(id)) {
-        _selectedLotIds.remove(id);
-      } else {
-        _selectedLotIds.add(id);
-      }
-    });
-  }
-
-  void _toggleAllLots() {
-    setState(() {
-      if (_selectedLotIds.length == _lots.length) {
-        _selectedLotIds.clear(); // Deseleccionar todo
-      } else {
-        _selectedLotIds.clear();
-        _selectedLotIds.addAll(_lots.map((e) => e.id as int));
-      }
-    });
-  }
+  String? _selectedSupplyType;
 
   final _scrollController = ScrollController();
+
   // Controladores básicos
   final _startDateController = TextEditingController();
   final _endDateController = TextEditingController();
@@ -123,11 +106,6 @@ class _ProductionReportPageState extends ConsumerState<ProductionReportPage> {
                                         onSelected: null,
                                         prefixIcon: Icons.calendar_today,
                                         suffixIcon: Icons.edit_calendar_rounded,
-                                        validator: (value) =>
-                                            Validators.required(
-                                              value,
-                                              'Fecha inicio',
-                                            ),
                                       ),
                                       CustomDateField(
                                         controller: _endDateController,
@@ -136,11 +114,6 @@ class _ProductionReportPageState extends ConsumerState<ProductionReportPage> {
                                         onSelected: null,
                                         prefixIcon: Icons.calendar_today,
                                         suffixIcon: Icons.edit_calendar_rounded,
-                                        validator: (value) =>
-                                            Validators.required(
-                                              value,
-                                              'Fecha fin',
-                                            ),
                                       ),
                                     ],
                                   ),
@@ -148,11 +121,24 @@ class _ProductionReportPageState extends ConsumerState<ProductionReportPage> {
                               ),
 
                               _buildFormSection(
-                                title: 'Selección de Lotes',
+                                title: 'Selección de Insumo',
                                 icon: Icons.grid_view_rounded,
                                 children: [
-                                  // Pasamos el contexto para acceder al tema
-                                  _buildLotSelectionList(context),
+                                  CustomSelectField<String>(
+                                    labelText: 'Tipo Insumo *',
+                                    hintText: 'Seleccione el tipo de insumo',
+                                    prefixIcon: Icons.grass_rounded,
+                                    value: _selectedSupplyType,
+                                    items: _buildSupplyList(
+                                      context,
+                                      ref,
+                                    ), // Tu método dinámico
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _selectedSupplyType = value;
+                                      });
+                                    },
+                                  ),
                                 ],
                               ),
 
@@ -292,171 +278,42 @@ class _ProductionReportPageState extends ConsumerState<ProductionReportPage> {
     );
   }
 
-  Widget _buildLotSelectionList(BuildContext context) {
-    final lotsState = ref.watch(lotsProvider);
-    lotsState.when(
+  List<DropdownMenuItem<String>> _buildSupplyList(
+    BuildContext context,
+    WidgetRef ref,
+  ) {
+    final suppliesState = ref.watch(suppliesProvider);
+    suppliesState.when(
       loading: () => null,
       error: (error, stack) => null,
-      data: (lots) => _lots = lots,
+      data: (supplies) => {_supplies = supplies.items},
     );
-    final theme = Theme.of(context);
-    final isAllSelected =
-        _selectedLotIds.length == _lots.length && _lots.isNotEmpty;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // --- Cabecera con botón "Seleccionar Todo" ---
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              "Lotes Disponibles (${_lots.length})",
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: Colors.grey[600],
-                fontWeight: FontWeight.w500,
-              ),
+    List<DropdownMenuItem<String>> supplyOptions = List.empty(growable: true);
+
+    if (_supplies.isEmpty) {
+      supplyOptions.add(
+        DropdownMenuItem<String>(
+          enabled: false,
+          value: null,
+          child: Text("No existen Insumos"),
+        ),
+      );
+    } else {
+      _supplies.map((supply) {
+        if (true) {
+          supplyOptions.add(
+            DropdownMenuItem<String>(
+              value: supply.type,
+              child: Text(supply.type),
             ),
-            TextButton.icon(
-              onPressed: _toggleAllLots,
-              style: TextButton.styleFrom(
-                foregroundColor: isAllSelected
-                    ? theme.colorScheme.primary
-                    : Colors.grey,
-                padding: EdgeInsets.zero,
-                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              ),
-              icon: Icon(
-                isAllSelected
-                    ? Icons.check_circle
-                    : Icons.radio_button_unchecked,
-                size: 18,
-              ),
-              label: Text(
-                isAllSelected ? "Deseleccionar todo" : "Seleccionar todo",
-              ),
-            ),
-          ],
-        ),
+          );
+          _supplyTypes.add(supply.type);
+        }
+      }).toList();
+    }
 
-        const SizedBox(height: 12),
-
-        // --- Lista de Tarjetas Seleccionables ---
-        ListView.separated(
-          shrinkWrap: true,
-          physics:
-              const NeverScrollableScrollPhysics(), // El scroll lo maneja el padre
-          itemCount: _lots.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 8),
-          itemBuilder: (context, index) {
-            final lot = _lots[index];
-            final isSelected = _selectedLotIds.contains(lot.id);
-
-            return _buildLotCard(
-              context: context,
-              name: lot.name,
-              description: lot.description ?? '',
-              isSelected: isSelected,
-              onTap: () => _toggleLot(lot.id!),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildLotCard({
-    required BuildContext context,
-    required String name,
-    required String description,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    final theme = Theme.of(context);
-    final colors = theme.extension<AppColors>()!;
-    // Usamos AnimatedContainer para una transición suave de colores
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 200),
-      decoration: BoxDecoration(
-        color: isSelected
-            ? theme.colorScheme.primary.withOpacity(
-                0.08,
-              ) // Fondo tintado si seleccionado
-            : colors.card, // Fondo blanco/card si no
-        border: Border.all(
-          color: isSelected
-              ? theme.colorScheme.primary
-              : Colors.grey.withOpacity(0.3),
-          width: isSelected ? 1.5 : 1.0,
-        ),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          splashColor: Colors.transparent,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                // --- Icono Checkbox Customizado ---
-                AnimatedContainer(
-                  duration: const Duration(milliseconds: 200),
-                  height: 24,
-                  width: 24,
-                  decoration: BoxDecoration(
-                    color: isSelected
-                        ? theme.colorScheme.primary
-                        : Colors.transparent,
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color: isSelected
-                          ? theme.colorScheme.primary
-                          : Colors.grey.withOpacity(0.5),
-                      width: 2,
-                    ),
-                  ),
-                  child: isSelected
-                      ? const Icon(Icons.check, size: 16, color: Colors.white)
-                      : null,
-                ),
-
-                const SizedBox(width: 16),
-
-                // --- Textos ---
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        name,
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                          color: isSelected
-                              ? theme.colorScheme.primary
-                              : null, // Color primario si activo
-                        ),
-                      ),
-                      const SizedBox(height: 2),
-                      Text(
-                        description,
-                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Colors.grey[600],
-                          height: 1.2,
-                        ),
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
+    return supplyOptions;
   }
 
   Widget _buildHeader(BuildContext context) {
@@ -475,7 +332,7 @@ class _ProductionReportPageState extends ConsumerState<ProductionReportPage> {
         ),
         const SizedBox(width: 12),
         Text(
-          'Reporte de producción',
+          'Reporte de insumos',
           style: Theme.of(context).textTheme.headlineSmall?.copyWith(
             fontWeight: FontWeight.bold,
             color: Theme.of(context).colorScheme.onSurface,
@@ -500,34 +357,35 @@ class _ProductionReportPageState extends ConsumerState<ProductionReportPage> {
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) return;
 
+    DateTime? startDate;
+    DateTime? endDate;
+
     // Validaciones adicionales (tu código existente)
     if (_startDateController.text.isEmpty) {
-      context.showErrorSnack('La fecha de inicio es requerida');
-      return;
+      startDate = null;
+    } else {
+      startDate = parseDate(_startDateController.text.trim());
     }
 
-    if (_selectedLotIds.isEmpty) {
-      context.showErrorSnack('Debes seleccionar al menos un lote');
-      return;
-    }
+    // if (_selectedSupplyType == null) {
+    //   context.showErrorSnack('El tipo de insumo es requerido');
+    // }
 
     if (_endDateController.text.isEmpty) {
-      context.showErrorSnack('La fecha de fin es requerida');
-      return;
+      endDate = null;
+    } else {
+      endDate = parseDate(_endDateController.text.trim());
     }
-
-    final startDate = parseDate(_startDateController.text.trim());
-    final endDate = parseDate(_endDateController.text.trim());
 
     setState(() => _isLoading = true);
 
     try {
       await ref
           .read(reportsProvider.notifier)
-          .generateProductionReport(
+          .generateSupplyReport(
             start: startDate,
             end: endDate,
-            loteIds: _selectedLotIds,
+            supplyType: _selectedSupplyType,
           );
 
       if (mounted) {

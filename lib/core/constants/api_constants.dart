@@ -4,7 +4,7 @@
 
 class ApiConstants {
   // --- Base URL ---
-  static const String baseUrl = 'https://agrosmartrest.onrender.com/api';
+  static const String baseUrl = 'http://localhost:8080/api';
 
   // --- Authentication ---
   static const String authenticate = '/auth/authenticate'; // Login
@@ -28,6 +28,7 @@ class ApiConstants {
   static const String upload = '/farm/{farmId}/upload'; // Subir archivos
 
   static const String productionReport = '/farm/{farmId}/reportes/produccion'; // Reportes de produccion
+  static const String supplyReport = '/farm/{farmId}/reportes/insumos'; // Reportes de insumos
 
   // static const String dashboardMetricsEndpoint = "/api/farm/metrics/dashboard";
 }
