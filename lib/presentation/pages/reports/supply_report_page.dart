@@ -111,6 +111,7 @@ class _SupplyReportPageState extends ConsumerState<SupplyReportPage> {
                                         controller: _endDateController,
                                         hintText: "Seleccione la fecha fin",
                                         labelText: "Fecha fin *",
+                                        afterToday: true,
                                         onSelected: null,
                                         prefixIcon: Icons.calendar_today,
                                         suffixIcon: Icons.edit_calendar_rounded,
