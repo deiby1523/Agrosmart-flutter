@@ -492,6 +492,8 @@ class _MainMetricsGrid extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.extension<AppColors>()!;
     return GridView(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -507,28 +509,28 @@ class _MainMetricsGrid extends StatelessWidget {
           value: metrics.summary.totalAnimals.toString(),
           subtitle: 'Total activos',
           icon: Icons.pets,
-          primaryColor: primaryColor,
+          primaryColor: theme.colorScheme.primary,
         ),
         _MetricCard(
           title: 'Lotes',
           value: metrics.summary.totalLots.toString(),
           subtitle: 'En producción',
           icon: Icons.grid_view,
-          primaryColor: primaryColor,
+          primaryColor: theme.colorScheme.primary,
         ),
         _MetricCard(
           title: 'Potreros',
           value: metrics.summary.totalPaddocks.toString(),
           subtitle: 'Disponibles',
           icon: Icons.landscape,
-          primaryColor: primaryColor,
+          primaryColor: theme.colorScheme.primary,
         ),
         _MetricCard(
           title: 'Razas',
           value: metrics.summary.totalBreeds.toString(),
           subtitle: 'Diferentes',
           icon: Icons.agriculture,
-          primaryColor: primaryColor,
+          primaryColor: theme.colorScheme.primary,
         ),
       ],
     );
@@ -672,10 +674,10 @@ class _MetricCard extends StatelessWidget {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withAlpha(30),
+                    color: primaryColor.withAlpha(30),
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: Icon(icon, color: theme.colorScheme.primary, size: 25),
+                  child: Icon(icon, color: primaryColor, size: 25),
                 ),
               ],
             ),

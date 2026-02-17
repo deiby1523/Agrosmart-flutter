@@ -10,45 +10,6 @@ class ReportMainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final List<ReportOption> reportOptions = [
-      ReportOption(
-        title: 'Producción',
-        icon: Icons.bar_chart_rounded,
-        color: Colors.blue,
-        subtitle: 'Reportes de rendimiento',
-      ),
-      ReportOption(
-        title: 'Insumos',
-        icon: Icons.inventory_2_rounded,
-        color: Colors.orange,
-        subtitle: 'Gestión de recursos',
-      ),
-      ReportOption(
-        title: 'Animales',
-        icon: Icons.pets,
-        color: Colors.brown,
-        subtitle: 'Seguimiento ganadero',
-      ),
-      ReportOption(
-        title: 'Potreros',
-        icon: Icons.landscape_rounded,
-        color: Colors.green,
-        subtitle: 'Análisis de terrenos',
-      ),
-      ReportOption(
-        title: 'Lotes',
-        icon: Icons.grid_view_rounded,
-        color: Colors.purple,
-        subtitle: 'Control por secciones',
-      ),
-      ReportOption(
-        title: 'Sanidad',
-        icon: Icons.medical_services_rounded,
-        color: Colors.redAccent,
-        subtitle: 'Monitoreo de salud',
-      ),
-    ];
-
     return DashboardLayout(
       child: FadeEntryWrapper(
         child: Padding(
@@ -76,108 +37,6 @@ class ReportMainPage extends StatelessWidget {
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildReportCard({
-    required BuildContext context,
-    required ReportOption option,
-    required int index,
-  }) {
-    final theme = Theme.of(context);
-    final colors = theme.extension<AppColors>()!;
-
-    return Container(
-      height: 200,
-      decoration: BoxDecoration(
-        color: Colors.red,
-        borderRadius: BorderRadius.circular(20),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 20,
-            offset: const Offset(0, 6),
-            spreadRadius: 0,
-          ),
-          BoxShadow(
-            color: option.color.withOpacity(0.05),
-            blurRadius: 10,
-            offset: const Offset(0, 2),
-          ),
-        ],
-        border: Border.all(color: colors.card!.withOpacity(0.8), width: 1),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Ícono con efecto de gradiente sutil
-            Container(
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topLeft,
-                  end: Alignment.bottomRight,
-                  colors: [
-                    option.color.withOpacity(0.15),
-                    option.color.withOpacity(0.05),
-                  ],
-                ),
-                shape: BoxShape.circle,
-                border: Border.all(
-                  color: option.color.withOpacity(0.2),
-                  width: 1.5,
-                ),
-              ),
-              child: Icon(option.icon, size: 28, color: option.color),
-            ),
-            const SizedBox(height: 16),
-
-            // Título
-            Text(
-              option.title,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-                fontSize: 16,
-                color: theme.colorScheme.onSurface,
-              ),
-            ),
-            const SizedBox(height: 6),
-
-            // Subtítulo
-            Text(
-              option.subtitle,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodySmall?.copyWith(
-                color: Colors.grey[600],
-                fontSize: 12,
-                fontWeight: FontWeight.w500,
-                height: 1.4,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-            const SizedBox(height: 8),
-
-            // Indicador de acción (flecha sutil)
-            Container(
-              margin: const EdgeInsets.only(top: 4),
-              padding: const EdgeInsets.all(4),
-              decoration: BoxDecoration(
-                color: option.color.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                Icons.arrow_forward_rounded,
-                size: 14,
-                color: option.color,
-              ),
-            ),
-          ],
         ),
       ),
     );
@@ -265,42 +124,42 @@ class _MainMetricsGrid extends StatelessWidget {
           title: 'Producción',
           subtitle: 'Reportes de rendimiento',
           icon: Icons.local_drink_rounded,
-          primaryColor: colors.category1,
+          primaryColor: theme.colorScheme.primary,
           route: '/reports/production',
         ),
         _ReportCard(
           title: 'Insumos',
           subtitle: 'Gestión de recursos',
           icon: Icons.compost_rounded,
-          primaryColor: colors.category4,
+          primaryColor: theme.colorScheme.primary,
           route: '/reports/supplies',
         ),
         _ReportCard(
           title: 'Animales',
           subtitle: 'Seguimiento ganadero',
           icon: Icons.pets_rounded,
-          primaryColor: colors.category3,
+          primaryColor: theme.colorScheme.primary,
           route: '/reports/animals',
         ),
         _ReportCard(
           title: 'Alimentación',
           subtitle: 'Información nutricional',
           icon: Icons.grass_rounded,
-          primaryColor: colors.category2,
+          primaryColor: theme.colorScheme.primary,
           route: '/reports/feedings',
         ),
         _ReportCard(
           title: 'Potreros',
           subtitle: 'Análisis de terrenos',
           icon: Icons.fence_rounded,
-          primaryColor: colors.category5,
+          primaryColor: theme.colorScheme.primary,
           route: '/reports/paddocks',
         ),
         _ReportCard(
           title: 'Lotes',
           subtitle: 'Control por secciones',
           icon: Icons.grid_view_rounded,
-          primaryColor: colors.category6,
+          primaryColor: theme.colorScheme.primary,
           route: '/reports/lots',
         ),
       ],
