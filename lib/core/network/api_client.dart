@@ -149,8 +149,6 @@ class AuthInterceptor extends Interceptor {
 
   // --- Private: Refrescar Access Token ---
   Future<bool> _refreshToken() async {
-    final prefs = await SharedPreferences.getInstance();
-    final jwtService = JwtService(prefs);
     try {
       final secure = const FlutterSecureStorage();
       final prefs = await SharedPreferences.getInstance();

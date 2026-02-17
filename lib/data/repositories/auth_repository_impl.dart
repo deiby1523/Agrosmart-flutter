@@ -101,7 +101,7 @@ class AuthRepositoryImpl implements AuthRepository {
         farm: farmModel,
       );
 
-      final authResponse = await remoteDataSource.register(request);
+      await remoteDataSource.register(request);
 
       return login(email, password);
 

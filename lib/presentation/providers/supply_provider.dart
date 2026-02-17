@@ -1,7 +1,5 @@
 import 'package:agrosmart_flutter/data/repositories/supply_repository_impl.dart';
 import 'package:agrosmart_flutter/domain/entities/supply.dart';
-import 'package:agrosmart_flutter/domain/entities/lot.dart';
-import 'package:agrosmart_flutter/domain/entities/farm.dart';
 import 'package:agrosmart_flutter/domain/entities/paginated_response.dart';
 import 'package:agrosmart_flutter/presentation/providers/dashboard_provider.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

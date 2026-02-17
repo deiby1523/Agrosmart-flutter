@@ -71,8 +71,6 @@ class AnimalCreatePageState extends ConsumerState<AnimalCreatePage> {
   List<Breed> _breeds = [];
   List<Lot> _lots = [];
   List<Paddock> _paddocks = [];
-  List<Animal> _animals = [];
-  List<Farm> _farms = [];
 
   @override
   void initState() {
@@ -547,13 +545,11 @@ class AnimalCreatePageState extends ConsumerState<AnimalCreatePage> {
               onPressed: _isLoading ? null : () => context.go('/animals'),
               style: OutlinedButton.styleFrom(
                 foregroundColor:
-                    colors.cancelTextButton ??
-                    Theme.of(context).colorScheme.error,
+                    colors.cancelTextButton,
                 padding: const EdgeInsets.symmetric(vertical: 16),
                 side: BorderSide(
                   color:
-                      colors.cancelTextButton ??
-                      Theme.of(context).colorScheme.error,
+                      colors.cancelTextButton,
                 ),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(8),

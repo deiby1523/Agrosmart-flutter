@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:agrosmart_flutter/data/repositories/feeding_repository_impl.dart';
 import 'package:agrosmart_flutter/domain/entities/feeding.dart';
 import 'package:agrosmart_flutter/domain/entities/farm.dart';

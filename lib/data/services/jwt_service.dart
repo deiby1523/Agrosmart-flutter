@@ -3,7 +3,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../models/jwt_claims_model.dart';
 
 class JwtService {
-  static const String _activeUserKey = 'active_user';
+  // static const String _activeUserKey = 'active_user';
   static const String _activeFarmKey = 'active_farm';
   final SharedPreferences _prefs;
 

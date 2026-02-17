@@ -1,5 +1,4 @@
 import 'dart:developer';
-
 import 'package:agrosmart_flutter/core/constants/api_constants.dart';
 import 'package:agrosmart_flutter/core/network/api_client.dart';
 import 'package:agrosmart_flutter/domain/entities/lot.dart';
@@ -25,7 +24,7 @@ class ReportRepositoryImpl implements ReportRepository {
     const endpoint = ApiConstants.productionReport;
 
     try {
-      final response = await _apiClient.dio.download(
+      await _apiClient.dio.download(
         endpoint,
         savePath,
         options: Options(
@@ -58,7 +57,7 @@ class ReportRepositoryImpl implements ReportRepository {
     const endpoint = ApiConstants.supplyReport;
 
     try {
-      final response = await _apiClient.dio.download(
+      await _apiClient.dio.download(
         endpoint,
         savePath,
         options: Options(
@@ -93,7 +92,7 @@ class ReportRepositoryImpl implements ReportRepository {
     const endpoint = ApiConstants.animalReport;
 
     try {
-      final response = await _apiClient.dio.download(
+      await _apiClient.dio.download(
         endpoint,
         savePath,
         options: Options(
@@ -126,7 +125,7 @@ class ReportRepositoryImpl implements ReportRepository {
     const endpoint = ApiConstants.feedingReport;
 
     try {
-      final response = await _apiClient.dio.download(
+      await _apiClient.dio.download(
         endpoint,
         savePath,
         options: Options(
@@ -151,7 +150,7 @@ class ReportRepositoryImpl implements ReportRepository {
     const endpoint = ApiConstants.paddockReport;
 
     try {
-      final response = await _apiClient.dio.download(
+      await _apiClient.dio.download(
         endpoint,
         savePath,
         options: Options(
@@ -175,7 +174,7 @@ class ReportRepositoryImpl implements ReportRepository {
     const endpoint = ApiConstants.lotReport;
 
     try {
-      final response = await _apiClient.dio.download(
+      await _apiClient.dio.download(
         endpoint,
         savePath,
         options: Options(
