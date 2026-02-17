@@ -2,6 +2,7 @@ import 'dart:developer';
 
 import 'package:agrosmart_flutter/core/constants/api_constants.dart';
 import 'package:agrosmart_flutter/core/network/api_client.dart';
+import 'package:agrosmart_flutter/domain/entities/lot.dart';
 import 'package:agrosmart_flutter/domain/repositories/report_repository.dart';
 import 'package:dio/dio.dart';
 
@@ -55,6 +56,41 @@ class ReportRepositoryImpl implements ReportRepository {
     };
 
     const endpoint = ApiConstants.supplyReport;
+
+    try {
+      final response = await _apiClient.dio.download(
+        endpoint,
+        savePath,
+        options: Options(
+          method: 'POST',
+          responseType: ResponseType.bytes,
+          followRedirects: false,
+          validateStatus: (status) => status! < 500,
+        ),
+        data: payload,
+      );
+      log("Peticion de reporte: $payload");
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<void> downloadAnimalReport({
+    required Lot? lote,
+    required String? sexo,
+    required String? estado,
+    required String? estadoSalud,
+    required String savePath,
+  }) async {
+    final payload = {
+      "loteId" : lote?.id,
+      "sexo": sexo,
+      "estado": estado,
+      "estadoSalud": estadoSalud,
+    };
+
+    const endpoint = ApiConstants.animalReport;
 
     try {
       final response = await _apiClient.dio.download(

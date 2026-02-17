@@ -1,4 +1,5 @@
 import 'package:agrosmart_flutter/data/repositories/report_repository_impl.dart';
+import 'package:agrosmart_flutter/domain/entities/lot.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_file_plus/open_file_plus.dart';
 import 'package:path_provider/path_provider.dart';
@@ -68,6 +69,37 @@ class Reports extends _$Reports {
         tipoInsumo: supplyType,
         fechaInicio: start,
         fechaFin: end,
+        savePath: savePath,
+      );
+
+      // 3. Abrir
+      await OpenFile.open(savePath);
+    });
+  }
+
+  Future<void> generateAnimalReport({
+    required Lot? lot,
+    required String? sex,
+    required String? status,
+    required String? healthStatus,
+  }) async {
+    state = const AsyncLoading();
+
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(reportRepositoryProvider);
+      
+      // 1. Definir nombre y ruta del archivo
+      final dir = await getApplicationDocumentsDirectory();
+      // Tip: Usar fecha en el nombre para no sobrescribir siempre el mismo
+      final fileName = "reporte_animales_${DateTime.now().millisecondsSinceEpoch}.pdf";
+      final savePath = "${dir.path}/$fileName";
+
+      // 2. Llamar al repo
+      await repository.downloadAnimalReport(
+        lote: lot,
+        sexo: sex,
+        estado: status,
+        estadoSalud: healthStatus,
         savePath: savePath,
       );
 

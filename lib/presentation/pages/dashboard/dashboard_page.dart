@@ -1198,7 +1198,7 @@ class _EfficiencyCard extends StatelessWidget {
                 // Mostramos los litros del día de mayor producción
                 value: metrics.efficiencyIndicators.peakProductionDay != null
                     ? '${metrics.efficiencyIndicators.peakProductionDay!.liters.toStringAsFixed(1)} L'
-                    : '',
+                    : 'N/A',
               ),
             ],
           ),

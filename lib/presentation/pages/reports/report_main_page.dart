@@ -280,7 +280,7 @@ class _MainMetricsGrid extends StatelessWidget {
           subtitle: 'Seguimiento ganadero',
           icon: Icons.pets_rounded,
           primaryColor: colors.category3,
-          route: '/reports/production',
+          route: '/reports/animals',
         ),
         _ReportCard(
           title: 'Alimentación',
