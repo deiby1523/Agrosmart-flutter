@@ -30,6 +30,9 @@ class ApiConstants {
   static const String productionReport = '/farm/{farmId}/reportes/produccion'; // Reportes de produccion
   static const String supplyReport = '/farm/{farmId}/reportes/insumos'; // Reportes de insumos
   static const String animalReport = '/farm/{farmId}/reportes/animales'; // Reportes de animales
+  static const String feedingReport = '/farm/{farmId}/reportes/alimentacion'; // Reportes de alimentacion
+  static const String paddockReport = '/farm/{farmId}/reportes/potreros'; // Reportes de alimentacion
+  static const String lotReport = '/farm/{farmId}/reportes/lotes'; // Reportes de alimentacion
 
   // static const String dashboardMetricsEndpoint = "/api/farm/metrics/dashboard";
 }

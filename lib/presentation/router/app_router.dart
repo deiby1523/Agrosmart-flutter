@@ -31,6 +31,9 @@ import 'package:agrosmart_flutter/presentation/pages/milkings/milking_create_pag
 import 'package:agrosmart_flutter/presentation/pages/milkings/milking_edit_page.dart';
 import 'package:agrosmart_flutter/presentation/pages/milkings/milking_index_page.dart';
 import 'package:agrosmart_flutter/presentation/pages/reports/animal_report_page.dart';
+import 'package:agrosmart_flutter/presentation/pages/reports/feeding_report_page.dart';
+import 'package:agrosmart_flutter/presentation/pages/reports/lot_report_page.dart';
+import 'package:agrosmart_flutter/presentation/pages/reports/paddock_report_page.dart';
 import 'package:agrosmart_flutter/presentation/pages/reports/production_report_page.dart';
 import 'package:agrosmart_flutter/presentation/pages/reports/report_main_page.dart';
 import 'package:agrosmart_flutter/presentation/pages/reports/supply_report_page.dart';
@@ -294,6 +297,33 @@ final routerProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const AnimalReportPage(),
+          transitionsBuilder: (_, __, ___, child) => child,
+          transitionDuration: Duration.zero,
+        ),
+      ),
+      GoRoute(
+        path: '/reports/feedings',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const FeedingReportPage(),
+          transitionsBuilder: (_, __, ___, child) => child,
+          transitionDuration: Duration.zero,
+        ),
+      ),
+      GoRoute(
+        path: '/reports/paddocks',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const PaddockReportPage(),
+          transitionsBuilder: (_, __, ___, child) => child,
+          transitionDuration: Duration.zero,
+        ),
+      ),
+      GoRoute(
+        path: '/reports/lots',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const LotReportPage(),
           transitionsBuilder: (_, __, ___, child) => child,
           transitionDuration: Duration.zero,
         ),

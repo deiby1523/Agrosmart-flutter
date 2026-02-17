@@ -84,7 +84,7 @@ class ReportRepositoryImpl implements ReportRepository {
     required String savePath,
   }) async {
     final payload = {
-      "loteId" : lote?.id,
+      "loteId": lote?.id,
       "sexo": sexo,
       "estado": estado,
       "estadoSalud": estadoSalud,
@@ -105,6 +105,87 @@ class ReportRepositoryImpl implements ReportRepository {
         data: payload,
       );
       log("Peticion de reporte: $payload");
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<void> downloadFeedingReport({
+    required Lot? lote,
+    required DateTime? fechaInicio,
+    required DateTime? fechaFin,
+    required String savePath,
+  }) async {
+    final payload = {
+      "loteId": lote?.id,
+      "fechaInicio": fechaInicio?.toIso8601String(),
+      "fechaFin": fechaFin?.toIso8601String(),
+    };
+
+    const endpoint = ApiConstants.feedingReport;
+
+    try {
+      final response = await _apiClient.dio.download(
+        endpoint,
+        savePath,
+        options: Options(
+          method: 'POST',
+          responseType: ResponseType.bytes,
+          followRedirects: false,
+          validateStatus: (status) => status! < 500,
+        ),
+        data: payload,
+      );
+      log("Peticion de reporte: $payload");
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<void> downloadPaddockReport({
+    required String savePath,
+  }) async {
+
+    const endpoint = ApiConstants.paddockReport;
+
+    try {
+      final response = await _apiClient.dio.download(
+        endpoint,
+        savePath,
+        options: Options(
+          method: 'GET',
+          responseType: ResponseType.bytes,
+          followRedirects: false,
+          validateStatus: (status) => status! < 500,
+        ),
+      );
+      log("Peticion de reporte de potreros");
+    } catch (e) {
+      throw _handleError(e);
+    }
+  }
+
+  @override
+  Future<void> downloadLotReport({
+    required String savePath,
+  }) async {
+
+    const endpoint = ApiConstants.lotReport;
+
+    try {
+      final response = await _apiClient.dio.download(
+        endpoint,
+        savePath,
+        options: Options(
+          method: 'GET',
+          responseType: ResponseType.bytes,
+          followRedirects: false,
+          validateStatus: (status) => status! < 500,
+        ),
+      );
+      log("Peticion de reporte de lotes");
     } catch (e) {
       throw _handleError(e);
     }

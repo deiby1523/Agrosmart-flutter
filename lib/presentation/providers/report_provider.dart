@@ -108,5 +108,78 @@ class Reports extends _$Reports {
     });
   }
 
+  Future<void> generateFeedingReport({
+    required Lot? lot,
+    required DateTime? start,
+    required DateTime? end,
+  }) async {
+    state = const AsyncLoading();
+
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(reportRepositoryProvider);
+      
+      // 1. Definir nombre y ruta del archivo
+      final dir = await getApplicationDocumentsDirectory();
+      // Tip: Usar fecha en el nombre para no sobrescribir siempre el mismo
+      final fileName = "reporte_alimentacion_${DateTime.now().millisecondsSinceEpoch}.pdf";
+      final savePath = "${dir.path}/$fileName";
+
+      // 2. Llamar al repo
+      await repository.downloadFeedingReport(
+        lote: lot,
+        fechaInicio: start,
+        fechaFin: end,
+        savePath: savePath,
+      );
+
+      // 3. Abrir
+      await OpenFile.open(savePath);
+    });
+  }
+
+  Future<void> generatePaddockReport() async {
+    state = const AsyncLoading();
+
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(reportRepositoryProvider);
+      
+      // 1. Definir nombre y ruta del archivo
+      final dir = await getApplicationDocumentsDirectory();
+      // Tip: Usar fecha en el nombre para no sobrescribir siempre el mismo
+      final fileName = "reporte_potreros_${DateTime.now().millisecondsSinceEpoch}.pdf";
+      final savePath = "${dir.path}/$fileName";
+
+      // 2. Llamar al repo
+      await repository.downloadPaddockReport(
+        savePath: savePath,
+      );
+
+      // 3. Abrir
+      await OpenFile.open(savePath);
+    });
+  }
+
+  Future<void> generateLotReport() async {
+    state = const AsyncLoading();
+
+    state = await AsyncValue.guard(() async {
+      final repository = ref.read(reportRepositoryProvider);
+      
+      // 1. Definir nombre y ruta del archivo
+      final dir = await getApplicationDocumentsDirectory();
+      // Tip: Usar fecha en el nombre para no sobrescribir siempre el mismo
+      final fileName = "reporte_lotes_${DateTime.now().millisecondsSinceEpoch}.pdf";
+      final savePath = "${dir.path}/$fileName";
+
+      // 2. Llamar al repo
+      await repository.downloadLotReport(
+        savePath: savePath,
+      );
+
+      // 3. Abrir
+      await OpenFile.open(savePath);
+    });
+  }
+
 
 }
