@@ -1,4 +1,5 @@
 import 'package:agrosmart_flutter/data/repositories/report_repository_impl.dart';
+import 'package:agrosmart_flutter/data/services/files/file_service.dart';
 import 'package:agrosmart_flutter/domain/entities/lot.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:open_file_plus/open_file_plus.dart';
@@ -29,22 +30,18 @@ class Reports extends _$Reports {
     state = await AsyncValue.guard(() async {
       final repository = ref.read(reportRepositoryProvider);
       
-      // 1. Definir nombre y ruta del archivo
-      final dir = await getApplicationDocumentsDirectory();
-      // Tip: Usar fecha en el nombre para no sobrescribir siempre el mismo
       final fileName = "reporte_produccion_${DateTime.now().millisecondsSinceEpoch}.pdf";
-      final savePath = "${dir.path}/$fileName";
+      // final savePath = "${dir.path}/$fileName";
 
       // 2. Llamar al repo
-      await repository.downloadProductionReport(
+      final bytes =await repository.downloadProductionReport(
         loteIds: loteIds,
         fechaInicio: start,
         fechaFin: end,
-        savePath: savePath,
       );
 
-      // 3. Abrir
-      await OpenFile.open(savePath);
+      await FileServiceImp().saveAndOpen(bytes, fileName);
+
     });
   }
 
@@ -58,22 +55,16 @@ class Reports extends _$Reports {
     state = await AsyncValue.guard(() async {
       final repository = ref.read(reportRepositoryProvider);
       
-      // 1. Definir nombre y ruta del archivo
-      final dir = await getApplicationDocumentsDirectory();
-      // Tip: Usar fecha en el nombre para no sobrescribir siempre el mismo
       final fileName = "reporte_insumos_${DateTime.now().millisecondsSinceEpoch}.pdf";
-      final savePath = "${dir.path}/$fileName";
 
       // 2. Llamar al repo
-      await repository.downloadSupplyReport(
+      final bytes = await repository.downloadSupplyReport(
         tipoInsumo: supplyType,
         fechaInicio: start,
         fechaFin: end,
-        savePath: savePath,
       );
 
-      // 3. Abrir
-      await OpenFile.open(savePath);
+      await FileServiceImp().saveAndOpen(bytes, fileName);
     });
   }
 
@@ -88,23 +79,18 @@ class Reports extends _$Reports {
     state = await AsyncValue.guard(() async {
       final repository = ref.read(reportRepositoryProvider);
       
-      // 1. Definir nombre y ruta del archivo
-      final dir = await getApplicationDocumentsDirectory();
-      // Tip: Usar fecha en el nombre para no sobrescribir siempre el mismo
+      
       final fileName = "reporte_animales_${DateTime.now().millisecondsSinceEpoch}.pdf";
-      final savePath = "${dir.path}/$fileName";
 
       // 2. Llamar al repo
-      await repository.downloadAnimalReport(
+      final bytes = await repository.downloadAnimalReport(
         lote: lot,
         sexo: sex,
         estado: status,
         estadoSalud: healthStatus,
-        savePath: savePath,
       );
 
-      // 3. Abrir
-      await OpenFile.open(savePath);
+      await FileServiceImp().saveAndOpen(bytes, fileName);
     });
   }
 
@@ -118,22 +104,16 @@ class Reports extends _$Reports {
     state = await AsyncValue.guard(() async {
       final repository = ref.read(reportRepositoryProvider);
       
-      // 1. Definir nombre y ruta del archivo
-      final dir = await getApplicationDocumentsDirectory();
-      // Tip: Usar fecha en el nombre para no sobrescribir siempre el mismo
       final fileName = "reporte_alimentacion_${DateTime.now().millisecondsSinceEpoch}.pdf";
-      final savePath = "${dir.path}/$fileName";
 
       // 2. Llamar al repo
-      await repository.downloadFeedingReport(
+      final bytes = await repository.downloadFeedingReport(
         lote: lot,
         fechaInicio: start,
         fechaFin: end,
-        savePath: savePath,
       );
 
-      // 3. Abrir
-      await OpenFile.open(savePath);
+      await FileServiceImp().saveAndOpen(bytes, fileName);
     });
   }
 
@@ -143,19 +123,12 @@ class Reports extends _$Reports {
     state = await AsyncValue.guard(() async {
       final repository = ref.read(reportRepositoryProvider);
       
-      // 1. Definir nombre y ruta del archivo
-      final dir = await getApplicationDocumentsDirectory();
-      // Tip: Usar fecha en el nombre para no sobrescribir siempre el mismo
       final fileName = "reporte_potreros_${DateTime.now().millisecondsSinceEpoch}.pdf";
-      final savePath = "${dir.path}/$fileName";
 
       // 2. Llamar al repo
-      await repository.downloadPaddockReport(
-        savePath: savePath,
-      );
+      final bytes = await repository.downloadPaddockReport();
 
-      // 3. Abrir
-      await OpenFile.open(savePath);
+      await FileServiceImp().saveAndOpen(bytes, fileName);
     });
   }
 
@@ -164,20 +137,13 @@ class Reports extends _$Reports {
 
     state = await AsyncValue.guard(() async {
       final repository = ref.read(reportRepositoryProvider);
-      
-      // 1. Definir nombre y ruta del archivo
-      final dir = await getApplicationDocumentsDirectory();
-      // Tip: Usar fecha en el nombre para no sobrescribir siempre el mismo
+
       final fileName = "reporte_lotes_${DateTime.now().millisecondsSinceEpoch}.pdf";
-      final savePath = "${dir.path}/$fileName";
 
       // 2. Llamar al repo
-      await repository.downloadLotReport(
-        savePath: savePath,
-      );
+      final bytes = await repository.downloadLotReport();
 
-      // 3. Abrir
-      await OpenFile.open(savePath);
+      await FileServiceImp().saveAndOpen(bytes, fileName);
     });
   }
 

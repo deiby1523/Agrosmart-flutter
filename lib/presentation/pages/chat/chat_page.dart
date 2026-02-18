@@ -1,5 +1,4 @@
 import 'package:agrosmart_flutter/presentation/widgets/animations/fade_entry_wrapper.dart';
-import 'package:agrosmart_flutter/presentation/widgets/chat-deepseek.dart';
 import 'package:agrosmart_flutter/presentation/widgets/chat-gemini.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

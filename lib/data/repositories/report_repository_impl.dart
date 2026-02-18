@@ -9,11 +9,10 @@ class ReportRepositoryImpl implements ReportRepository {
   final ApiClient _apiClient = ApiClient();
 
   @override
-  Future<void> downloadProductionReport({
+  Future<List<int>> downloadProductionReport({
     required List<int> loteIds,
     required DateTime fechaInicio,
     required DateTime fechaFin,
-    required String savePath,
   }) async {
     final payload = {
       "loteIds": loteIds,
@@ -24,29 +23,22 @@ class ReportRepositoryImpl implements ReportRepository {
     const endpoint = ApiConstants.productionReport;
 
     try {
-      await _apiClient.dio.download(
+      final response = await _apiClient.dio.post(
         endpoint,
-        savePath,
-        options: Options(
-          method: 'POST',
-          responseType: ResponseType.bytes,
-          followRedirects: false,
-          validateStatus: (status) => status! < 500,
-        ),
         data: payload,
+        options: Options(responseType: ResponseType.bytes),
       );
-      log("Peticion de reporte: $payload");
+      return response.data as List<int>; // Retornamos los bytes directamente
     } catch (e) {
       throw _handleError(e);
     }
   }
 
   @override
-  Future<void> downloadSupplyReport({
+  Future<List<int>> downloadSupplyReport({
     required String? tipoInsumo,
     required DateTime? fechaInicio,
     required DateTime? fechaFin,
-    required String savePath,
   }) async {
     final payload = {
       "tipoInsumo": tipoInsumo,
@@ -57,30 +49,23 @@ class ReportRepositoryImpl implements ReportRepository {
     const endpoint = ApiConstants.supplyReport;
 
     try {
-      await _apiClient.dio.download(
+      final response = await _apiClient.dio.post(
         endpoint,
-        savePath,
-        options: Options(
-          method: 'POST',
-          responseType: ResponseType.bytes,
-          followRedirects: false,
-          validateStatus: (status) => status! < 500,
-        ),
         data: payload,
+        options: Options(responseType: ResponseType.bytes),
       );
-      log("Peticion de reporte: $payload");
+      return response.data as List<int>; // Retornamos los bytes directamente
     } catch (e) {
       throw _handleError(e);
     }
   }
 
   @override
-  Future<void> downloadAnimalReport({
+  Future<List<int>> downloadAnimalReport({
     required Lot? lote,
     required String? sexo,
     required String? estado,
     required String? estadoSalud,
-    required String savePath,
   }) async {
     final payload = {
       "loteId": lote?.id,
@@ -92,29 +77,22 @@ class ReportRepositoryImpl implements ReportRepository {
     const endpoint = ApiConstants.animalReport;
 
     try {
-      await _apiClient.dio.download(
+      final response = await _apiClient.dio.post(
         endpoint,
-        savePath,
-        options: Options(
-          method: 'POST',
-          responseType: ResponseType.bytes,
-          followRedirects: false,
-          validateStatus: (status) => status! < 500,
-        ),
         data: payload,
+        options: Options(responseType: ResponseType.bytes),
       );
-      log("Peticion de reporte: $payload");
+      return response.data as List<int>; // Retornamos los bytes directamente
     } catch (e) {
       throw _handleError(e);
     }
   }
 
   @override
-  Future<void> downloadFeedingReport({
+  Future<List<int>> downloadFeedingReport({
     required Lot? lote,
     required DateTime? fechaInicio,
     required DateTime? fechaFin,
-    required String savePath,
   }) async {
     final payload = {
       "loteId": lote?.id,
@@ -125,66 +103,42 @@ class ReportRepositoryImpl implements ReportRepository {
     const endpoint = ApiConstants.feedingReport;
 
     try {
-      await _apiClient.dio.download(
+      final response = await _apiClient.dio.post(
         endpoint,
-        savePath,
-        options: Options(
-          method: 'POST',
-          responseType: ResponseType.bytes,
-          followRedirects: false,
-          validateStatus: (status) => status! < 500,
-        ),
         data: payload,
+        options: Options(responseType: ResponseType.bytes),
       );
-      log("Peticion de reporte: $payload");
+      return response.data as List<int>; // Retornamos los bytes directamente
     } catch (e) {
       throw _handleError(e);
     }
   }
 
   @override
-  Future<void> downloadPaddockReport({
-    required String savePath,
-  }) async {
-
+  Future<List<int>> downloadPaddockReport() async {
     const endpoint = ApiConstants.paddockReport;
 
     try {
-      await _apiClient.dio.download(
+      final response = await _apiClient.dio.get(
         endpoint,
-        savePath,
-        options: Options(
-          method: 'GET',
-          responseType: ResponseType.bytes,
-          followRedirects: false,
-          validateStatus: (status) => status! < 500,
-        ),
+        options: Options(responseType: ResponseType.bytes),
       );
-      log("Peticion de reporte de potreros");
+      return response.data as List<int>; // Retornamos los bytes directamente
     } catch (e) {
       throw _handleError(e);
     }
   }
 
   @override
-  Future<void> downloadLotReport({
-    required String savePath,
-  }) async {
-
+  Future<List<int>> downloadLotReport() async {
     const endpoint = ApiConstants.lotReport;
 
     try {
-      await _apiClient.dio.download(
+      final response = await _apiClient.dio.get(
         endpoint,
-        savePath,
-        options: Options(
-          method: 'GET',
-          responseType: ResponseType.bytes,
-          followRedirects: false,
-          validateStatus: (status) => status! < 500,
-        ),
+        options: Options(responseType: ResponseType.bytes),
       );
-      log("Peticion de reporte de lotes");
+      return response.data as List<int>; // Retornamos los bytes directamente
     } catch (e) {
       throw _handleError(e);
     }

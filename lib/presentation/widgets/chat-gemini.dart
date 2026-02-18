@@ -1,5 +1,8 @@
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:agrosmart_flutter/presentation/providers/chat_provider.dart';
+import 'package:flutter_markdown/flutter_markdown.dart';
 
 // Modelo de datos simple para los mensajes
 class ChatMessage {
@@ -14,14 +17,27 @@ class ChatMessage {
   });
 }
 
-class CattleChatWidget extends StatefulWidget {
+class CattleChatWidget extends ConsumerStatefulWidget {
   const CattleChatWidget({super.key});
 
   @override
-  State<CattleChatWidget> createState() => _CattleChatWidgetState();
+  ConsumerState<CattleChatWidget> createState() => _CattleChatWidgetState();
 }
 
-class _CattleChatWidgetState extends State<CattleChatWidget> {
+class _CattleChatWidgetState extends ConsumerState<CattleChatWidget> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        _hasStarted ? _buildChatHistory() : _buildWelcomeScreen(),
+        Padding(
+          padding: EdgeInsetsGeometry.only(bottom: 30),
+          child: _buildInputArea(),
+        ),
+      ],
+    );
+  }
+
   final TextEditingController _textController = TextEditingController();
   final ScrollController _scrollController = ScrollController();
 
@@ -31,12 +47,6 @@ class _CattleChatWidgetState extends State<CattleChatWidget> {
   // Estado para controlar si la conversación ha comenzado
   bool _hasStarted = false;
   bool _isTyping = false;
-
-  // Colores principales definidos aquí para reutilizar
-  final Color _primaryColor = Colors.green.shade700;
-  final Color _botBubbleColor = Colors.grey.shade200;
-  final Color _userTextColor = Colors.white;
-  final Color _botTextColor = Colors.black87;
 
   @override
   void dispose() {
@@ -57,66 +67,63 @@ class _CattleChatWidgetState extends State<CattleChatWidget> {
     });
   }
 
-  void _handleSubmitted(String text) {
+  Future<void> _handleSubmitted(String text) async {
     if (text.trim().isEmpty) return;
 
     _textController.clear();
 
     setState(() {
-      // Si es el primer mensaje, marcamos que ha comenzado
       if (!_hasStarted) {
         _hasStarted = true;
       }
+
       _messages.add(
         ChatMessage(text: text, isUser: true, timestamp: DateTime.now()),
       );
+
       _isTyping = true;
     });
 
     _scrollToBottom();
 
-    // SIMULACIÓN DE RESPUESTA (Borrar esto cuando integres tu backend)
-    Future.delayed(const Duration(seconds: 2), () {
-      if (mounted) {
-        setState(() {
-          _isTyping = false;
-          // Respuesta genérica inicial
-          String replyStr = _messages.length == 1
-              ? "¡Hola! Soy Agrosmart, tu asistente. ¿En qué puedo ayudarte con tu ganado hoy?"
-              : "Entendido. Procesando esa información sobre el hato.";
+    try {
+      final chatRepository = ref.read(chatRepositoryProvider);
 
-          _messages.add(
-            ChatMessage(
-              text: replyStr,
-              isUser: false,
-              timestamp: DateTime.now(),
-            ),
-          );
-        });
-        _scrollToBottom();
-      }
-    });
-  }
+      final response = await chatRepository.sendMessage(
+        user: "ADMIN", // TODO: usuario logueado
+        date: DateTime.now(),
+        message: text,
+      );
 
-  String _formatTime(DateTime date) {
-    return "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
-  }
+      if (!mounted) return;
 
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        // --- ÁREA CENTRAL VARIABLE ---
-        // Si no ha comenzado, muestra la presentación. Si sí, el chat.
-        if (!_hasStarted) _buildWelcomeScreen() else _buildChatHistory(),
+      setState(() {
+        _isTyping = false;
 
-        // --- ÁREA DE INPUT ---
-        Padding(
-          padding: EdgeInsetsGeometry.only(bottom: 30),
-          child: _buildInputArea(),
-        ),
-      ],
-    );
+        _messages.add(
+          ChatMessage(text: response, isUser: false, timestamp: DateTime.now()),
+        );
+      });
+
+      _scrollToBottom();
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() {
+        _isTyping = false;
+
+        _messages.add(
+          ChatMessage(
+            text:
+                "Ocurrió un error al comunicarse con el servidor. Intenta nuevamente.",
+            isUser: false,
+            timestamp: DateTime.now(),
+          ),
+        );
+      });
+
+      _scrollToBottom();
+    }
   }
 
   // Widget para la pantalla de presentación inicial
@@ -215,14 +222,28 @@ class _CattleChatWidgetState extends State<CattleChatWidget> {
                       ),
                     ],
                   ),
-                  child: Text(
-                    message.text,
-                    style: TextStyle(
-                      color: isUser
-                          ? theme.colorScheme.onPrimary
-                          : colors.textDefault,
-                      fontSize: 16,
-                      height: 1.4,
+                  child: MarkdownBody(
+                    data: message.text,
+                    selectable: false,
+                    styleSheet: MarkdownStyleSheet(
+                      p: TextStyle(
+                        color: isUser
+                            ? theme.colorScheme.onPrimary
+                            : colors.textDefault,
+                        fontSize: 16,
+                        height: 1.4,
+                      ),
+                      strong: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        color: isUser
+                            ? theme.colorScheme.onPrimary
+                            : colors.textDefault,
+                      ),
+                      listBullet: TextStyle(
+                        color: isUser
+                            ? theme.colorScheme.onPrimary
+                            : colors.textDefault,
+                      ),
                     ),
                   ),
                 ),
@@ -237,6 +258,10 @@ class _CattleChatWidgetState extends State<CattleChatWidget> {
         },
       ),
     );
+  }
+
+  String _formatTime(DateTime date) {
+    return "${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}";
   }
 
   // Widget del área de input inferior
