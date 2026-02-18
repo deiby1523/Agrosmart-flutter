@@ -46,6 +46,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../pages/auth/login_page.dart';
 import '../pages/auth/register_page.dart';
 import '../pages/dashboard/dashboard_page.dart';
+import '../pages/chat/chat_page.dart';
 import '../pages/breeds/breeds_index_page.dart';
 import '../pages/lots/lots_index_page.dart';
 import '../pages/paddocks/paddocks_index_page.dart';
@@ -133,6 +134,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         pageBuilder: (context, state) => CustomTransitionPage(
           key: state.pageKey,
           child: const DashboardPage(),
+          transitionsBuilder: (_, __, ___, child) => child,
+          transitionDuration: Duration.zero,
+        ),
+      ),
+      GoRoute(
+        path: '/chat',
+        pageBuilder: (context, state) => CustomTransitionPage(
+          key: state.pageKey,
+          child: const ChatPage(),
           transitionsBuilder: (_, __, ___, child) => child,
           transitionDuration: Duration.zero,
         ),

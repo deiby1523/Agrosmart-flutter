@@ -565,6 +565,14 @@ class _DashboardLayoutState extends ConsumerState<DashboardLayout> {
                   isSelected: currentRoute == '/dashboard',
                   isGroupItem: true,
                 ),
+                _buildMenuItem(
+                  context,
+                  icon: Icons.chat_rounded,
+                  title: 'Chat',
+                  route: '/chat',
+                  isSelected: currentRoute == '/chat',
+                  isGroupItem: true,
+                ),
 
                 const SizedBox(height: 16),
 
