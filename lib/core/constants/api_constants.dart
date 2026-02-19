@@ -11,7 +11,8 @@ class ApiConstants {
   static const String register = '/auth/register'; // Registro
   static const String refresh = '/auth/refresh'; // Refresh token
 
-  // static const String farms = '/farm/{farmId}/farms';
+  static const String resetPasswordLink = '/auth/reset-link'; // reestablecer contraseña
+
 
   // --- Farm Resources ---
   static const String breeds = '/farm/{farmId}/breeds'; // CRUD Razas
@@ -25,8 +26,7 @@ class ApiConstants {
   static const String dashboard =
       '/farm/{farmId}/metrics/dashboard'; // Estadísticas
 
-  static const String chat =
-      '/farm/{farmId}/chat'; // Chat inteligente
+  static const String chat = '/farm/{farmId}/chat'; // Chat inteligente
 
   static const String upload = '/farm/{farmId}/upload'; // Subir archivos
 
@@ -43,5 +43,4 @@ class ApiConstants {
   static const String lotReport =
       '/farm/{farmId}/reportes/lotes'; // Reportes de alimentacion
 
-  // static const String dashboardMetricsEndpoint = "/api/farm/metrics/dashboard";
 }

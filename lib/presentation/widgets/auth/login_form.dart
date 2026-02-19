@@ -1,5 +1,7 @@
 import 'dart:ui';
 
+import 'package:agrosmart_flutter/core/constants/api_constants.dart';
+import 'package:agrosmart_flutter/core/network/api_client.dart';
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
 import 'package:agrosmart_flutter/core/utils/responsive.dart';
 import 'package:agrosmart_flutter/core/utils/validators.dart';
@@ -335,79 +337,110 @@ class _LoginFormState extends ConsumerState<LoginForm> {
   void _showForgotPasswordDialog() {
     final emailController = TextEditingController();
     final formKey = GlobalKey<FormState>();
+    bool isLoading = false; // Estado inicial
 
     showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: !isLoading, // Evita cerrar el diálogo mientras carga
       builder: (context) {
         final theme = Theme.of(context);
         final colors = theme.extension<AppColors>()!;
 
-        return AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: const Text(
-            'Recuperar contraseña',
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          content: Form(
-            key: formKey,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                const Text(
-                  'Ingresa tu correo electrónico asociado. Te enviaremos un enlace para restablecer tu contraseña.',
-                  style: TextStyle(fontSize: 14),
+        // Usamos StatefulBuilder para poder llamar a setState dentro del diálogo
+        return StatefulBuilder(
+          builder: (context, setDialogState) {
+            return AlertDialog(
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              title: const Text(
+                'Recuperar contraseña',
+                style: TextStyle(fontWeight: FontWeight.w600),
+              ),
+              content: Form(
+                key: formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      'Ingresa tu correo electrónico asociado. Te enviaremos un enlace para restablecer tu contraseña.',
+                      style: TextStyle(fontSize: 14),
+                    ),
+                    const SizedBox(height: 16),
+                    CustomTextField(
+                      controller: emailController,
+                      hintText: 'Correo electrónico',
+                      labelText: 'Correo',
+                      prefixIcon: Icons.email_outlined,
+                      validator: Validators.email,
+                    ),
+                  ],
                 ),
-                const SizedBox(height: 16),
-                CustomTextField(
-                  controller: emailController,
-                  hintText: 'Correo electrónico',
-                  labelText: 'Correo',
-                  prefixIcon: Icons.email_outlined,
-                  validator: Validators.email,
+              ),
+              actionsPadding: const EdgeInsets.symmetric(
+                horizontal: 16,
+                vertical: 12,
+              ),
+              actions: [
+                TextButton(
+                  onPressed: isLoading ? null : () => Navigator.pop(context),
+                  child: Text(
+                    'Cancelar',
+                    style: TextStyle(color: colors.cancelTextButton),
+                  ),
+                ),
+                ElevatedButton(
+                  onPressed: isLoading
+                      ? null
+                      : () async {
+                          if (!formKey.currentState!.validate()) return;
+
+                          // 1. Activar loading
+                          setDialogState(() => isLoading = true);
+
+                          try {
+                            final email = emailController.text.trim();
+                            final ApiClient _apiClient = ApiClient();
+
+                            // 2. Petición POST
+                            await _apiClient.dio.post(
+                              ApiConstants.resetPasswordLink,
+                              data: {"email": email},
+                            );
+
+                            if (context.mounted) {
+                              Navigator.pop(context); // Cierra el diálogo
+                              context.showSuccessSnack(
+                                'Se ha enviado un enlace de recuperación a tu correo.',
+                              );
+                            }
+                          } catch (error) {
+                            // 3. Desactivar loading si hay error para dejar reintentar
+                            setDialogState(() => isLoading = false);
+
+                            if (context.mounted) {
+                              context.showErrorSnack(
+                                'Error: $error',
+                                backgroundColor: colors.deleteButton,
+                                iconColor: colors.deleteIcon,
+                              );
+                            }
+                          }
+                        },
+                  child: isLoading
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
+                        )
+                      : const Text('Enviar'),
                 ),
               ],
-            ),
-          ),
-          actionsPadding: const EdgeInsets.symmetric(
-            horizontal: 16,
-            vertical: 12,
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(
-                'Cancelar',
-                style: TextStyle(color: colors.cancelTextButton),
-              ),
-            ),
-            ElevatedButton(
-              onPressed: () async {
-                if (!formKey.currentState!.validate()) return;
-
-                try {
-                  final email = emailController.text.trim();
-                  if (mounted) {
-                    Navigator.pop(context);
-                    context.showSuccessSnack(
-                      'Se ha enviado un enlace de recuperación a tu correo.',
-                    );
-                  }
-                } catch (error) {
-                  if (mounted) {
-                    context.showErrorSnack(
-                      'Error: $error',
-                      backgroundColor: colors.deleteButton,
-                      iconColor: colors.deleteIcon,
-                    );
-                  }
-                }
-              },
-              child: const Text('Enviar'),
-            ),
-          ],
+            );
+          },
         );
       },
     );

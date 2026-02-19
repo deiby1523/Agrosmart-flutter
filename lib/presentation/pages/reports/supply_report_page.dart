@@ -280,42 +280,59 @@ class _SupplyReportPageState extends ConsumerState<SupplyReportPage> {
   }
 
   List<DropdownMenuItem<String>> _buildSupplyList(
-    BuildContext context,
-    WidgetRef ref,
-  ) {
-    final suppliesState = ref.watch(suppliesProvider);
-    suppliesState.when(
-      loading: () => null,
-      error: (error, stack) => null,
-      data: (supplies) => {_supplies = supplies.items},
+  BuildContext context,
+  WidgetRef ref,
+) {
+  final suppliesState = ref.watch(suppliesProvider);
+  suppliesState.when(
+    loading: () => null,
+    error: (error, stack) => null,
+    data: (supplies) => {_supplies = supplies.items},
+  );
+
+  List<DropdownMenuItem<String>> supplyOptions = List.empty(growable: true);
+  
+  // 1. Creamos un Set para guardar los nombres normalizados (en minúsculas)
+  // Un Set es una colección que no permite duplicados.
+  final Set<String> processedTypes = {}; 
+
+  if (_supplies.isEmpty) {
+    supplyOptions.add(
+      const DropdownMenuItem<String>( // Agregué const por rendimiento
+        enabled: false,
+        value: null,
+        child: Text("No existen Insumos"),
+      ),
     );
+  } else {
+    // Usamos un ciclo for convencional para mayor claridad
+    for (var supply in _supplies) {
+      
+      // 2. Normalizamos el texto: quitamos espacios y pasamos a minúsculas
+      final String normalizedType = supply.type.trim().toLowerCase();
 
-    List<DropdownMenuItem<String>> supplyOptions = List.empty(growable: true);
+      // 3. Verificamos si ya procesamos este tipo
+      if (!processedTypes.contains(normalizedType)) {
+        
+        // Si no existe, lo marcamos como procesado
+        processedTypes.add(normalizedType);
 
-    if (_supplies.isEmpty) {
-      supplyOptions.add(
-        DropdownMenuItem<String>(
-          enabled: false,
-          value: null,
-          child: Text("No existen Insumos"),
-        ),
-      );
-    } else {
-      _supplies.map((supply) {
-        if (true) {
-          supplyOptions.add(
-            DropdownMenuItem<String>(
-              value: supply.type,
-              child: Text(supply.type),
-            ),
-          );
-          _supplyTypes.add(supply.type);
-        }
-      }).toList();
+        // Agregamos el DropdownItem
+        supplyOptions.add(
+          DropdownMenuItem<String>(
+            value: supply.type, // Mantenemos el formato original (mayúsculas/minúsculas) visualmente
+            child: Text(supply.type),
+          ),
+        );
+        
+        // Agregamos a tu lista auxiliar si es necesario
+        _supplyTypes.add(supply.type);
+      }
     }
-
-    return supplyOptions;
   }
+
+  return supplyOptions;
+}
 
   Widget _buildHeader(BuildContext context) {
     return Row(
