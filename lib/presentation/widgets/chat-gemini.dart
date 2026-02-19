@@ -3,6 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agrosmart_flutter/presentation/providers/chat_provider.dart';
 import 'package:flutter_markdown/flutter_markdown.dart';
+import 'package:speech_to_text/speech_to_text.dart' as stt;
+
+import 'package:agrosmart_flutter/data/services/elevenlabs_tts_service.dart';
+
+// ElevenLabs API KEY: sk_c0d2bb73eb5e0b6928daa1920838a6d64c7c6a8e24219e38
+
+// id voz nTkjq09AuYgsNR8E4sDe
 
 // Modelo de datos simple para los mensajes
 class ChatMessage {
@@ -48,11 +55,80 @@ class _CattleChatWidgetState extends ConsumerState<CattleChatWidget> {
   bool _hasStarted = false;
   bool _isTyping = false;
 
+  // variables de estado de tts y stt
+  final stt.SpeechToText _speech = stt.SpeechToText();
+  bool _isListening = false;
+  bool _speechAvailable = false;
+
+  final ElevenLabsTtsService _tts = ElevenLabsTtsService();
+
+  bool _voiceModeActive = false; // true si el usuario usó el micrófono
+
+  @override
+  void initState() {
+    super.initState();
+    _initSpeech();
+  }
+
+  Future<void> _initSpeech() async {
+    _speechAvailable = await _speech.initialize(
+      onStatus: (status) {
+        if (status == 'done' || status == 'notListening') {
+          setState(() => _isListening = false);
+        }
+      },
+      onError: (error) {
+        setState(() => _isListening = false);
+      },
+    );
+    setState(() {});
+  }
+
+  Future<void> _toggleListening() async {
+    if (_isListening) {
+      await _stopListening();
+    } else {
+      _voiceModeActive = true; // ← marca que el usuario usó voz
+      await _startListening();
+    }
+  }
+
   @override
   void dispose() {
     _textController.dispose();
     _scrollController.dispose();
+    _speech.stop();
+    _tts.dispose();
     super.dispose();
+  }
+
+  Future<void> _startListening() async {
+    if (!_speechAvailable) return;
+
+    setState(() => _isListening = true);
+
+    await _speech.listen(
+      onResult: (result) {
+        setState(() {
+          _textController.text = result.recognizedWords;
+          _textController.selection = TextSelection.fromPosition(
+            TextPosition(offset: _textController.text.length),
+          );
+        });
+
+        if (result.finalResult) {
+          _handleSubmitted(_textController.text);
+        }
+      },
+      localeId: 'es_ES',
+      listenMode: stt.ListenMode.confirmation,
+      pauseFor: const Duration(seconds: 3),
+    );
+  }
+
+  Future<void> _stopListening() async {
+    await _speech.stop();
+    setState(() => _isListening = false);
   }
 
   void _scrollToBottom() {
@@ -68,63 +144,80 @@ class _CattleChatWidgetState extends ConsumerState<CattleChatWidget> {
   }
 
   Future<void> _handleSubmitted(String text) async {
-    if (text.trim().isEmpty) return;
+  _stopListening();
 
-    _textController.clear();
+  if (text.trim().isEmpty) return;
+
+  _textController.clear();
+
+  setState(() {
+    if (!_hasStarted) _hasStarted = true;
+
+    _messages.add(
+      ChatMessage(text: text, isUser: true, timestamp: DateTime.now()),
+    );
+
+    _isTyping = true;
+  });
+
+  _scrollToBottom();
+
+  try {
+    final chatRepository = ref.read(chatRepositoryProvider);
+
+    final response = await chatRepository.sendMessage(
+      user: "Deiby",
+      date: DateTime.now(),
+      message: text,
+    );
+
+    if (!mounted) return;
+
+    // Prepara el audio temprano (solo si estamos en modo voz)
+    await Future.wait([
+      if (_voiceModeActive) _tts.prepare(response),
+      Future.value(),
+    ]);
+
+    if (!mounted) return;
 
     setState(() {
-      if (!_hasStarted) {
-        _hasStarted = true;
-      }
-
+      _isTyping = false;
       _messages.add(
-        ChatMessage(text: text, isUser: true, timestamp: DateTime.now()),
+        ChatMessage(text: response, isUser: false, timestamp: DateTime.now()),
       );
-
-      _isTyping = true;
     });
 
     _scrollToBottom();
 
-    try {
-      final chatRepository = ref.read(chatRepositoryProvider);
+    // ==================== BLOQUE DE VOZ CORREGIDO ====================
+    if (_voiceModeActive) {
+      await _tts.play(); // Espera a que termine de hablar
 
-      final response = await chatRepository.sendMessage(
-        user: "ADMIN", // TODO: usuario logueado
-        date: DateTime.now(),
-        message: text,
-      );
-
-      if (!mounted) return;
-
-      setState(() {
-        _isTyping = false;
-
-        _messages.add(
-          ChatMessage(text: response, isUser: false, timestamp: DateTime.now()),
-        );
-      });
-
-      _scrollToBottom();
-    } catch (e) {
-      if (!mounted) return;
-
-      setState(() {
-        _isTyping = false;
-
-        _messages.add(
-          ChatMessage(
-            text:
-                "Ocurrió un error al comunicarse con el servidor. Intenta nuevamente.",
-            isUser: false,
-            timestamp: DateTime.now(),
-          ),
-        );
-      });
-
-      _scrollToBottom();
+      if (mounted) {
+        _tts.stop();           // Opcional pero seguro
+        // ←←←← ELIMINAMOS _tts.dispose() ←←←←
+        // ←←←← ELIMINAMOS _voiceModeActive = false; ←←←←
+        await _startListening(); // Reinicia el ciclo automáticamente
+      }
     }
+    // =================================================================
+  } catch (e) {
+    if (!mounted) return;
+
+    setState(() {
+      _isTyping = false;
+      _messages.add(
+        ChatMessage(
+          text: "Ocurrió un error al comunicarme con el servidor. Intenta nuevamente.",
+          isUser: false,
+          timestamp: DateTime.now(),
+        ),
+      );
+    });
+    _scrollToBottom();
   }
+}
 
   // Widget para la pantalla de presentación inicial
   Widget _buildWelcomeScreen() {
@@ -320,6 +413,23 @@ class _CattleChatWidgetState extends ConsumerState<CattleChatWidget> {
               ),
             ),
             const SizedBox(width: 8),
+            // Botón de micrófono
+            CircleAvatar(
+              backgroundColor: _isListening
+                  ? Colors.red.shade400
+                  : colors.icon.withAlpha(80),
+              radius: 24,
+              child: IconButton(
+                icon: Icon(
+                  _isListening ? Icons.mic : Icons.mic_none,
+                  color: Colors.white,
+                ),
+                onPressed: (_speechAvailable && !_isTyping)
+                    ? _toggleListening
+                    : null,
+              ),
+            ),
+            const SizedBox(width: 8),
             CircleAvatar(
               backgroundColor: _textController.text.trim().isEmpty
                   ? colors.icon.withAlpha(100)
@@ -329,7 +439,7 @@ class _CattleChatWidgetState extends ConsumerState<CattleChatWidget> {
                 icon: const Icon(Icons.arrow_upward, color: Colors.white),
                 onPressed: _textController.text.trim().isEmpty
                     ? null
-                    : () => _handleSubmitted(_textController.text),
+                    : () => {_handleSubmitted(_textController.text)},
               ),
             ),
           ],
