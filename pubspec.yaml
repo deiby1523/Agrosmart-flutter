@@ -13,10 +13,10 @@ dependencies:
     sdk: flutter
 
   # Interaccion
-  speech_to_text: ^6.6.0
-  flutter_tts: ^4.0.2
+  speech_to_text: ^7.3.0
+  flutter_tts: ^4.2.5
   http: ^1.2.0
-  just_audio: ^0.9.40
+  just_audio: ^0.10.5
 
   # Estado y Arquitectura
   flutter_riverpod: ^2.4.9

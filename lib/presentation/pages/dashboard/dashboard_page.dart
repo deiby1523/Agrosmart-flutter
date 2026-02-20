@@ -5,6 +5,7 @@
 // =============================================================================
 
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
+import 'package:agrosmart_flutter/core/utils/responsiveUnit.dart';
 import 'package:agrosmart_flutter/data/models/dashboard_models.dart';
 import 'package:agrosmart_flutter/presentation/widgets/animations/fade_entry_wrapper.dart';
 import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
@@ -93,10 +94,12 @@ class _DashboardContentState extends State<_DashboardContent> {
             controller: _controller,
             child: Column(
               children: [
+                SizedBox(height: 30),
                 // Contenido principal
                 // Tarjeta de producción del día
                 _DailyProductionCard(metrics: widget.metrics),
-                const SizedBox(height: 20),
+
+                SizedBox(height: 20),
 
                 // Grid de métricas principales (Ahora es Responsive)
                 Responsive(
@@ -119,7 +122,8 @@ class _DashboardContentState extends State<_DashboardContent> {
                     childAspectRatio: 1.2,
                   ),
                 ),
-                const SizedBox(height: 20),
+
+                SizedBox(height: 20),
 
                 // Sección de gráficos (Ahora es Responsive)
                 Responsive(
@@ -128,7 +132,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                       _MilkTrendLineChart(
                         data: widget.metrics.milkTrend.byDate,
                       ),
-                      const SizedBox(height: 16),
+                      const SizedBox(height: 20),
                       _MilkByLotDonutChart(
                         data: widget.metrics.milkTrend.byLot,
                       ),
@@ -243,6 +247,7 @@ class _DashboardContentState extends State<_DashboardContent> {
                   data: widget.metrics.milkTrend.byLot,
                   primaryColor: widget.primaryColor,
                 ),
+                SizedBox(height: 20)
               ],
             ),
 

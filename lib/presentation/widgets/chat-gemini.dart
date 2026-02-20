@@ -1,4 +1,5 @@
 import 'package:agrosmart_flutter/core/themes/app_colors.dart';
+import 'package:fading_edge_scrollview/fading_edge_scrollview.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:agrosmart_flutter/presentation/providers/chat_provider.dart';
@@ -38,7 +39,7 @@ class _CattleChatWidgetState extends ConsumerState<CattleChatWidget> {
       children: [
         _hasStarted ? _buildChatHistory() : _buildWelcomeScreen(),
         Padding(
-          padding: EdgeInsetsGeometry.only(bottom: 30),
+          padding: EdgeInsetsGeometry.only(bottom: 17),
           child: _buildInputArea(),
         ),
       ],
@@ -122,7 +123,7 @@ class _CattleChatWidgetState extends ConsumerState<CattleChatWidget> {
       },
       localeId: 'es_ES',
       listenMode: stt.ListenMode.confirmation,
-      pauseFor: const Duration(seconds: 3),
+      pauseFor: const Duration(seconds: 4),
     );
   }
 
@@ -144,80 +145,81 @@ class _CattleChatWidgetState extends ConsumerState<CattleChatWidget> {
   }
 
   Future<void> _handleSubmitted(String text) async {
-  _stopListening();
+    _stopListening();
 
-  if (text.trim().isEmpty) return;
+    if (text.trim().isEmpty) return;
 
-  _textController.clear();
-
-  setState(() {
-    if (!_hasStarted) _hasStarted = true;
-
-    _messages.add(
-      ChatMessage(text: text, isUser: true, timestamp: DateTime.now()),
-    );
-
-    _isTyping = true;
-  });
-
-  _scrollToBottom();
-
-  try {
-    final chatRepository = ref.read(chatRepositoryProvider);
-
-    final response = await chatRepository.sendMessage(
-      user: "Deiby",
-      date: DateTime.now(),
-      message: text,
-    );
-
-    if (!mounted) return;
-
-    // Prepara el audio temprano (solo si estamos en modo voz)
-    await Future.wait([
-      if (_voiceModeActive) _tts.prepare(response),
-      Future.value(),
-    ]);
-
-    if (!mounted) return;
+    _textController.clear();
 
     setState(() {
-      _isTyping = false;
+      if (!_hasStarted) _hasStarted = true;
+
       _messages.add(
-        ChatMessage(text: response, isUser: false, timestamp: DateTime.now()),
+        ChatMessage(text: text, isUser: true, timestamp: DateTime.now()),
       );
+
+      _isTyping = true;
     });
 
     _scrollToBottom();
 
-    // ==================== BLOQUE DE VOZ CORREGIDO ====================
-    if (_voiceModeActive) {
-      await _tts.play(); // Espera a que termine de hablar
+    try {
+      final chatRepository = ref.read(chatRepositoryProvider);
 
-      if (mounted) {
-        _tts.stop();           // Opcional pero seguro
-        // ←←←← ELIMINAMOS _tts.dispose() ←←←←
-        // ←←←← ELIMINAMOS _voiceModeActive = false; ←←←←
-        await _startListening(); // Reinicia el ciclo automáticamente
+      final response = await chatRepository.sendMessage(
+        user: "Deiby",
+        date: DateTime.now(),
+        message: text,
+      );
+
+      if (!mounted) return;
+
+      // Prepara el audio temprano (solo si estamos en modo voz)
+      await Future.wait([
+        if (_voiceModeActive) _tts.prepare(response),
+        Future.value(),
+      ]);
+
+      if (!mounted) return;
+
+      setState(() {
+        _isTyping = false;
+        _messages.add(
+          ChatMessage(text: response, isUser: false, timestamp: DateTime.now()),
+        );
+      });
+
+      _scrollToBottom();
+
+      // ==================== BLOQUE DE VOZ CORREGIDO ====================
+      if (_voiceModeActive) {
+        await _tts.play(); // Espera a que termine de hablar
+
+        if (mounted) {
+          _tts.stop(); // Opcional pero seguro
+          // ←←←← ELIMINAMOS _tts.dispose() ←←←←
+          // ←←←← ELIMINAMOS _voiceModeActive = false; ←←←←
+          await _startListening(); // Reinicia el ciclo automáticamente
+        }
       }
-    }
-    // =================================================================
-  } catch (e) {
-    if (!mounted) return;
+      // =================================================================
+    } catch (e) {
+      if (!mounted) return;
 
-    setState(() {
-      _isTyping = false;
-      _messages.add(
-        ChatMessage(
-          text: "Ocurrió un error al comunicarme con el servidor. Intenta nuevamente.",
-          isUser: false,
-          timestamp: DateTime.now(),
-        ),
-      );
-    });
-    _scrollToBottom();
+      setState(() {
+        _isTyping = false;
+        _messages.add(
+          ChatMessage(
+            text:
+                "Ocurrió un error al comunicarme con el servidor. Intenta nuevamente.",
+            isUser: false,
+            timestamp: DateTime.now(),
+          ),
+        );
+      });
+      _scrollToBottom();
+    }
   }
-}
 
   // Widget para la pantalla de presentación inicial
   Widget _buildWelcomeScreen() {
@@ -268,87 +270,91 @@ class _CattleChatWidgetState extends ConsumerState<CattleChatWidget> {
     final theme = Theme.of(context);
     final colors = Theme.of(context).extension<AppColors>()!;
     return Expanded(
-      child: ListView.builder(
-        controller: _scrollController,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
-        itemCount: _messages.length + (_isTyping ? 1 : 0),
-        itemBuilder: (context, index) {
-          if (_isTyping && index == _messages.length) {
-            return _buildTypingIndicator();
-          }
-
-          final message = _messages[index];
-          final isUser = message.isUser;
-
-          return Padding(
-            padding: const EdgeInsets.only(bottom: 16.0),
-            child: Column(
-              crossAxisAlignment: isUser
-                  ? CrossAxisAlignment.end
-                  : CrossAxisAlignment.start,
-              children: [
-                Container(
-                  constraints: BoxConstraints(
-                    maxWidth: MediaQuery.of(context).size.width * 0.75,
-                  ),
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 12,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isUser ? theme.colorScheme.primary : colors.card,
-                    borderRadius: BorderRadius.only(
-                      topLeft: const Radius.circular(16),
-                      topRight: const Radius.circular(16),
-                      bottomLeft: isUser
-                          ? const Radius.circular(16)
-                          : const Radius.circular(4),
-                      bottomRight: isUser
-                          ? const Radius.circular(4)
-                          : const Radius.circular(16),
+      child: FadingEdgeScrollView.fromScrollView(
+        gradientFractionOnEnd: 0.1,
+        gradientFractionOnStart: 0.1,
+        child: ListView.builder(
+          controller: _scrollController,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
+          itemCount: _messages.length + (_isTyping ? 1 : 0),
+          itemBuilder: (context, index) {
+            if (_isTyping && index == _messages.length) {
+              return _buildTypingIndicator();
+            }
+        
+            final message = _messages[index];
+            final isUser = message.isUser;
+        
+            return Padding(
+              padding: const EdgeInsets.only(bottom: 16.0),
+              child: Column(
+                crossAxisAlignment: isUser
+                    ? CrossAxisAlignment.end
+                    : CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    constraints: BoxConstraints(
+                      maxWidth: MediaQuery.of(context).size.width * 0.75,
                     ),
-                    boxShadow: [
-                      BoxShadow(
-                        color: Colors.black.withOpacity(0.12),
-                        blurRadius: 15,
-                        offset: const Offset(0, 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
+                    decoration: BoxDecoration(
+                      color: isUser ? theme.colorScheme.primary : colors.card,
+                      borderRadius: BorderRadius.only(
+                        topLeft: const Radius.circular(16),
+                        topRight: const Radius.circular(16),
+                        bottomLeft: isUser
+                            ? const Radius.circular(16)
+                            : const Radius.circular(4),
+                        bottomRight: isUser
+                            ? const Radius.circular(4)
+                            : const Radius.circular(16),
                       ),
-                    ],
-                  ),
-                  child: MarkdownBody(
-                    data: message.text,
-                    selectable: false,
-                    styleSheet: MarkdownStyleSheet(
-                      p: TextStyle(
-                        color: isUser
-                            ? theme.colorScheme.onPrimary
-                            : colors.textDefault,
-                        fontSize: 16,
-                        height: 1.4,
-                      ),
-                      strong: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: isUser
-                            ? theme.colorScheme.onPrimary
-                            : colors.textDefault,
-                      ),
-                      listBullet: TextStyle(
-                        color: isUser
-                            ? theme.colorScheme.onPrimary
-                            : colors.textDefault,
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.12),
+                          blurRadius: 15,
+                          offset: const Offset(0, 4),
+                        ),
+                      ],
+                    ),
+                    child: MarkdownBody(
+                      data: message.text,
+                      selectable: false,
+                      styleSheet: MarkdownStyleSheet(
+                        p: TextStyle(
+                          color: isUser
+                              ? theme.colorScheme.onPrimary
+                              : colors.textDefault,
+                          fontSize: 16,
+                          height: 1.4,
+                        ),
+                        strong: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: isUser
+                              ? theme.colorScheme.onPrimary
+                              : colors.textDefault,
+                        ),
+                        listBullet: TextStyle(
+                          color: isUser
+                              ? theme.colorScheme.onPrimary
+                              : colors.textDefault,
+                        ),
                       ),
                     ),
                   ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  _formatTime(message.timestamp),
-                  style: TextStyle(color: Colors.grey.shade400, fontSize: 11),
-                ),
-              ],
-            ),
-          );
-        },
+                  const SizedBox(height: 4),
+                  Text(
+                    _formatTime(message.timestamp),
+                    style: TextStyle(color: Colors.grey.shade400, fontSize: 11),
+                  ),
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }
@@ -362,20 +368,20 @@ class _CattleChatWidgetState extends ConsumerState<CattleChatWidget> {
     final theme = Theme.of(context);
     final colors = Theme.of(context).extension<AppColors>()!;
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: colors.card,
-        borderRadius: BorderRadius.circular(16),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.12),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: SafeArea(
+    return SafeArea(
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+        decoration: BoxDecoration(
+          color: colors.card,
+          borderRadius: BorderRadius.circular(40),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.12),
+              blurRadius: 15,
+              offset: const Offset(0, 5),
+            ),
+          ],
+        ),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.end,
           children: [
@@ -402,7 +408,7 @@ class _CattleChatWidgetState extends ConsumerState<CattleChatWidget> {
                   hintText: "Escribe sobre tu ganado...",
                   hintStyle: TextStyle(color: Colors.grey),
                   contentPadding: EdgeInsets.symmetric(
-                    horizontal: 20,
+                    horizontal: 4,
                     vertical: 14,
                   ),
                   isDense: true,
@@ -417,12 +423,12 @@ class _CattleChatWidgetState extends ConsumerState<CattleChatWidget> {
             CircleAvatar(
               backgroundColor: _isListening
                   ? Colors.red.shade400
-                  : colors.icon.withAlpha(80),
+                  : Colors.transparent,
               radius: 24,
               child: IconButton(
                 icon: Icon(
                   _isListening ? Icons.mic : Icons.mic_none,
-                  color: Colors.white,
+                  color: _isListening ? theme.colorScheme.onError : colors.icon,
                 ),
                 onPressed: (_speechAvailable && !_isTyping)
                     ? _toggleListening
@@ -432,14 +438,22 @@ class _CattleChatWidgetState extends ConsumerState<CattleChatWidget> {
             const SizedBox(width: 8),
             CircleAvatar(
               backgroundColor: _textController.text.trim().isEmpty
-                  ? colors.icon.withAlpha(100)
+                  ? colors.icon.withAlpha(50)
                   : theme.colorScheme.primary,
               radius: 24,
               child: IconButton(
-                icon: const Icon(Icons.arrow_upward, color: Colors.white),
+                icon: Icon(
+                  Icons.arrow_upward,
+                  color: _textController.text.trim().isEmpty
+                      ? colors.icon
+                      : theme.colorScheme.onPrimary,
+                ),
                 onPressed: _textController.text.trim().isEmpty
                     ? null
-                    : () => {_handleSubmitted(_textController.text)},
+                    : () => {
+                        _handleSubmitted(_textController.text),
+                        _voiceModeActive = false,
+                      },
               ),
             ),
           ],

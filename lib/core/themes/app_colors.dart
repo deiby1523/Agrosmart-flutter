@@ -66,7 +66,7 @@ class AppColorSchemes {
   // Dark colors
   // =========================
   static const Color darkPrimary = Color.fromARGB(255, 104, 190, 51);
-  static const Color darkOnPrimary = Color.fromARGB(255, 6, 10, 13);
+  static const Color darkOnPrimary = Color.fromARGB(255, 27, 34, 30);
 
   static const Color darkSecondary = Color.fromARGB(255, 29, 29, 29);
   static const Color darkOnSecondary = Colors.white;
