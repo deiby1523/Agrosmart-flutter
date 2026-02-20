@@ -2,7 +2,7 @@ import 'package:agrosmart_flutter/data/repositories/report_repository_impl.dart'
 import 'package:agrosmart_flutter/data/services/files/file_service.dart';
 import 'package:agrosmart_flutter/domain/entities/lot.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:open_file_plus/open_file_plus.dart';
+import 'package:open_file/open_file.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
